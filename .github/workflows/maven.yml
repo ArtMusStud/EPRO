@@ -5,7 +5,7 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ $default-branch, feature-ep-11-ci-with-github-actions ]
+    branches: [ $default-branch ]
   pull_request:
     branches: [ $default-branch ]
 
