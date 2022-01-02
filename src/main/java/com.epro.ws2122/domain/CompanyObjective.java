@@ -10,4 +10,6 @@ public class CompanyObjective {
     private Long id;
     private String name;
     private Date createdAt = new Date();
+    private double overall;
+
 }

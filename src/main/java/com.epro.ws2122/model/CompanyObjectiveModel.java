@@ -9,7 +9,10 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper=true)
 public class CompanyObjectiveModel extends RepresentationModel<CompanyObjectiveModel> {
+
     private Long id;
     private String name;
     private Date createdAt;
+    private double overall;
+
 }
