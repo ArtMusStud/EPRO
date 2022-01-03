@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CompanyObjectiveController {
 
-    private CompanyObjectiveRepository companyObjectiveRepository;
-    private CompanyObjectiveAssembler companyObjectiveAssembler;
+    private final CompanyObjectiveRepository companyObjectiveRepository;
+
+    public CompanyObjectiveController(CompanyObjectiveRepository companyObjectiveRepository) {
+        this.companyObjectiveRepository = companyObjectiveRepository;
+    }
 
     @GetMapping("/company-objectives/{id}")
     public ResponseEntity<CompanyObjective> companyObjectiveById(@PathVariable("id") Long id) {
@@ -21,4 +24,8 @@ public class CompanyObjectiveController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/company-objectives")
+    public Iterable<CompanyObjective> companyObjectives() {
+        return companyObjectiveRepository.findAll();
+    }
 }
