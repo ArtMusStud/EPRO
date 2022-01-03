@@ -55,7 +55,7 @@ class CompanyObjectiveControllerTest {
     }
 
     @Test
-    public void HttpRequestAllTest() throws Exception {
+    public void Requesting_All_Company_Objective_Should_Return_Ok() throws Exception {
         this.mockMvc.perform(get("/company-objectives")).andDo(print()).andExpect(status().isOk());
     }
 }
