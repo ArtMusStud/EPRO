@@ -10,13 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.hateoas.MediaTypes;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Date;
 import java.util.Optional;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CompanyObjectiveController.class)
 @AutoConfigureMockMvc
@@ -28,21 +32,20 @@ class CompanyObjectiveControllerTest {
     @MockBean
     CompanyObjectiveRepository mockRepository;
 
-    @Autowired
-    CompanyObjectiveRepository companyObjectiveRepository;
-
     @BeforeEach
     public void initializeData() {
         var companyObjective_0 = CompanyObjective.builder()
                 .id(1L)
                 .name("Company Objective 1")
                 .overall(0.75)
+                .createdAt(new Date(1640991600L))
                 .build();
 
         var companyObjective_1 = CompanyObjective.builder()
                 .id(2L)
                 .name("Company Objective 2")
                 .overall(0.1)
+                .createdAt(new Date(978303600L))
                 .build();
 
         Mockito.when(mockRepository.findById(1L)).thenReturn(Optional.of(companyObjective_0));
@@ -51,7 +54,13 @@ class CompanyObjectiveControllerTest {
 
     @Test
     public void Requesting_Single_Company_Objective_By_Id_Should_Return_Ok() throws Exception {
-        this.mockMvc.perform(get("/company-objectives/1")).andDo(print()).andExpect(status().isOk());
+        this.mockMvc.perform(get("/company-objectives/1").accept(MediaTypes.HAL_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("$._embedded.name", is("Company Objective 1")))
+                .andExpect(jsonPath("$._embedded.overall", is(0.75)))
+                .andExpect(jsonPath("$._embedded.createdAt", is(1640991600L)));
     }
 
     @Test

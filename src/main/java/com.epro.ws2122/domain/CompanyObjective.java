@@ -20,6 +20,6 @@ public class CompanyObjective {
     @Id
     private Long id;
     private String name;
-    private Date createdAt = new Date();
+    private Date createdAt;
     private double overall;
 }
