@@ -1,5 +1,6 @@
 package com.epro.ws2122;
 
+import com.epro.ws2122.assembler.CompanyObjectiveAssembler;
 import com.epro.ws2122.controller.CompanyObjectiveController;
 import com.epro.ws2122.domain.CompanyObjective;
 import com.epro.ws2122.repository.CompanyObjectiveRepository;
@@ -22,7 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(CompanyObjectiveController.class)
+@WebMvcTest(controllers = {CompanyObjectiveController.class, CompanyObjectiveAssembler.class})
 @AutoConfigureMockMvc
 class CompanyObjectiveControllerTest {
 
@@ -58,13 +59,16 @@ class CompanyObjectiveControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
-                .andExpect(jsonPath("$._embedded.name", is("Company Objective 1")))
-                .andExpect(jsonPath("$._embedded.overall", is(0.75)))
-                .andExpect(jsonPath("$._embedded.createdAt", is(1640991600L)));
+                .andExpect(jsonPath("$.name", is("Company Objective 1")))
+                .andExpect(jsonPath("$.overall", is(0.75)))
+                .andExpect(jsonPath("$.createdAt", is(1640991600)));
     }
 
-    @Test
+/*    @Test
     public void Requesting_All_Company_Objective_Should_Return_Ok() throws Exception {
-        this.mockMvc.perform(get("/company-objectives")).andDo(print()).andExpect(status().isOk());
-    }
+        this.mockMvc.perform(get("/company-objectives"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath());
+    }*/
 }

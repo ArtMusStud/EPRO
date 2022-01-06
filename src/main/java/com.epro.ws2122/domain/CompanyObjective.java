@@ -1,6 +1,6 @@
 package com.epro.ws2122.domain;
 
-import com.epro.ws2122.assembler.CompanyObjectiveAssembler;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +20,7 @@ public class CompanyObjective {
     @Id
     private Long id;
     private String name;
+    @JsonFormat(shape=JsonFormat.Shape.NUMBER)
     private Date createdAt;
     private double overall;
 }
