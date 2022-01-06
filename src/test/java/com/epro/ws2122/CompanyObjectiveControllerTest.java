@@ -15,8 +15,7 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -51,6 +50,7 @@ class CompanyObjectiveControllerTest {
 
         Mockito.when(mockRepository.findById(1L)).thenReturn(Optional.of(companyObjective_0));
         Mockito.when(mockRepository.findById(2L)).thenReturn(Optional.of(companyObjective_1));
+        Mockito.when(mockRepository.findAll()).thenReturn(Arrays.asList(companyObjective_0, companyObjective_1));
     }
 
     @Test
@@ -61,14 +61,16 @@ class CompanyObjectiveControllerTest {
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("$.name", is("Company Objective 1")))
                 .andExpect(jsonPath("$.overall", is(0.75)))
-                .andExpect(jsonPath("$.createdAt", is(1640991600)));
+                .andExpect(jsonPath("$.createdAt", is(1640991600)))
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/1")));
     }
 
-/*    @Test
+    @Test
     public void Requesting_All_Company_Objective_Should_Return_Ok() throws Exception {
         this.mockMvc.perform(get("/company-objectives"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath());
-    }*/
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives")));
+    }
 }

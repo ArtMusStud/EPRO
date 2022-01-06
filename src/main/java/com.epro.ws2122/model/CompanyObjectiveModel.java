@@ -4,13 +4,13 @@ import com.epro.ws2122.domain.CompanyObjective;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.Date;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class CompanyObjectiveModel extends EntityModel<CompanyObjectiveModel> {
+public class CompanyObjectiveModel extends RepresentationModel<CompanyObjectiveModel> {
 
     private String name;
     @JsonFormat(shape=JsonFormat.Shape.NUMBER)
