@@ -54,7 +54,7 @@ class CompanyObjectiveControllerTest {
     }
 
     @Test
-    public void Requesting_Single_Company_Objective_By_Id_Should_Return_Ok() throws Exception {
+    public void should_return_single_company_objective() throws Exception {
         this.mockMvc.perform(get("/company-objectives/1").accept(MediaTypes.HAL_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -66,7 +66,7 @@ class CompanyObjectiveControllerTest {
     }
 
     @Test
-    public void Requesting_All_Company_Objective_Should_Return_Ok() throws Exception {
+    public void should_return_all_company_objectives() throws Exception {
         this.mockMvc.perform(get("/company-objectives"))
                 .andDo(print())
                 .andExpect(status().isOk())
