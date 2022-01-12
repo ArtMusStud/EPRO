@@ -30,6 +30,11 @@ public class CompanyObjectiveKeyResultController {
         this.assembler = assembler;
     }
 
+    /*
+    ToDo:
+      - list of all cokrs should have common CO with id 'coId'
+      - missing collection resource BU KR
+    */
     @GetMapping("/{id}")
     public ResponseEntity<RepresentationModel<CompanyObjectiveKeyResultModel>> cokrById(
             @PathVariable long coId, @PathVariable("id") long id) {
@@ -41,7 +46,10 @@ public class CompanyObjectiveKeyResultController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-    /* ToDo list of all cokrs should have common co with id 'coId'
+    /*
+        ToDo:
+          - list of all cokrs should have common CO with id 'coId'
+          - missing resource CO
      */
     @GetMapping
     public ResponseEntity<CollectionModel<CompanyObjectiveKeyResultModel>> cokr(@PathVariable long coId) {

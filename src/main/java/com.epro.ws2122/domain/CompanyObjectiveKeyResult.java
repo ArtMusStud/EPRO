@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+/*
+    Todo: implement properties
+ */
 @Data
 @Builder
 @NoArgsConstructor
