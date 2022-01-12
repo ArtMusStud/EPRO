@@ -51,4 +51,13 @@ public class CompanyObjectiveKeyResultControllerTest {
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/0/company-objectives-key-results/0")));
     }
+
+    @Test
+    public void should_return_all_cokr() throws Exception {
+        this.mockMvc.perform(get("/company-objectives/0/company-objectives-key-results"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/0/company-objectives-key-results")));
+    }
 }
