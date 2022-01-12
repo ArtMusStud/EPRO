@@ -41,7 +41,7 @@ public class CompanyObjectiveKeyResultController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-    /* ToDo list of all cokrs should have common co of id 'coId'
+    /* ToDo list of all cokrs should have common co with id 'coId'
      */
     @GetMapping
     public ResponseEntity<CollectionModel<CompanyObjectiveKeyResultModel>> cokr(@PathVariable long coId) {
