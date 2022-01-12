@@ -32,6 +32,7 @@ public class CompanyObjectiveKeyResultController {
     ToDo:
       - list of all cokrs should have common CO with id 'coId'
       - missing collection resource BU KR
+      - missing resource CO
     */
     @GetMapping("/{id}")
     public ResponseEntity<RepresentationModel<CompanyObjectiveKeyResultModel>> cokrById(

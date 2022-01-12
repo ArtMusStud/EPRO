@@ -49,7 +49,8 @@ public class CompanyObjectiveKeyResultControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
-                .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/0/company-objectives-key-results/0")));
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/0/company-objectives-key-results/0")))
+                .andExpect(jsonPath("$._links.dashboard.href", is("http://localhost/dashboard")));
     }
 
     @Test
