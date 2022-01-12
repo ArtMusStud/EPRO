@@ -1,11 +1,8 @@
 package com.epro.ws2122.assembler;
 
-import com.epro.ws2122.controller.CompanyObjectiveController;
 import com.epro.ws2122.controller.CompanyObjectiveKeyResultController;
-import com.epro.ws2122.domain.CompanyObjective;
 import com.epro.ws2122.domain.CompanyObjectiveKeyResult;
 import com.epro.ws2122.model.CompanyObjectiveKeyResultModel;
-import com.epro.ws2122.model.CompanyObjectiveModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
@@ -22,8 +19,10 @@ public class CompanyObjectiveKeyResultAssembler
         return new CompanyObjectiveKeyResultModel(companyObjectiveKeyResult);
     }
 
+    /* Todo: implement access of co id through corresponding cokr object and delete placeholder argument '0L'
+     */
     @Override
     public CompanyObjectiveKeyResultModel toModel(CompanyObjectiveKeyResult companyObjectiveKeyResult) {
-        return createModelWithId(companyObjectiveKeyResult.getId(), companyObjectiveKeyResult);
+        return createModelWithId(companyObjectiveKeyResult.getId(), companyObjectiveKeyResult, 0L);
     }
 }
