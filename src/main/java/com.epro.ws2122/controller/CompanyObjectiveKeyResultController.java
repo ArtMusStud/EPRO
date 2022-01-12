@@ -2,7 +2,6 @@ package com.epro.ws2122.controller;
 
 import com.epro.ws2122.assembler.CompanyObjectiveKeyResultAssembler;
 import com.epro.ws2122.model.CompanyObjectiveKeyResultModel;
-import com.epro.ws2122.model.CompanyObjectiveModel;
 import com.epro.ws2122.repository.CompanyObjectiveKeyResultRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
@@ -19,7 +18,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/company-objectives/{coId}/company-objectives-key-results")
-@ExposesResourceFor(CompanyObjectiveKeyResultModel.class)
 public class CompanyObjectiveKeyResultController {
 
     private final CompanyObjectiveKeyResultRepository repository;
