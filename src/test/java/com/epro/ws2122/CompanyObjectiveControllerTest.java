@@ -14,7 +14,9 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -53,13 +55,15 @@ public class CompanyObjectiveControllerTest {
 
     @Test
     public void should_return_single_company_objective() throws Exception {
-        this.mockMvc.perform(get("/company-objectives/1").accept(MediaTypes.HAL_JSON))
+        this.mockMvc.perform(get("/company-objectives/1").accept(MediaTypes.HAL_FORMS_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_FORMS_JSON.toString()))
                 .andExpect(jsonPath("$.name", is("Company Objective 1")))
                 .andExpect(jsonPath("$.overall", is(0.75)))
                 .andExpect(jsonPath("$.createdAt", is(1640991600)))
+                .andExpect(jsonPath("$._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._templates.deleteCompanyObjective.method", is("DELETE")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/1")));
     }
 

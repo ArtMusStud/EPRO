@@ -1,6 +1,7 @@
 package com.epro.ws2122.controller;
 
 import com.epro.ws2122.assembler.CompanyObjectiveAssembler;
+import com.epro.ws2122.domain.CompanyObjective;
 import com.epro.ws2122.model.CompanyObjectiveModel;
 import com.epro.ws2122.repository.CompanyObjectiveRepository;
 import org.springframework.hateoas.CollectionModel;
@@ -36,9 +37,6 @@ public class CompanyObjectiveController {
         var companyObjective =  repository.findById(id);
         if (companyObjective.isPresent()) {
             var companyObjectiveResource = assembler.toModel(companyObjective.get());
-            companyObjectiveResource.add(
-                    linkTo(methodOn(CompanyObjectiveController.class).companyObjectives())
-                            .withRel("Company Objectives"));
             return new ResponseEntity<>(companyObjectiveResource, HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
