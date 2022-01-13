@@ -9,8 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/company-objectives")
@@ -52,6 +51,9 @@ public class CompanyObjectiveController {
     public ResponseEntity<CollectionModel<CompanyObjectiveModel>> companyObjectives() {
         var companyObjectives = repository.findAll();
         var companyObjectiveResources = assembler.toCollectionModel(companyObjectives);
+        companyObjectiveResources.add(
+                linkTo(methodOn(CompanyObjectiveController.class).companyObjectives()).withSelfRel()
+                        .andAffordance(afford(methodOn(CompanyObjectiveController.class).newCompanyObjective())));
         return new ResponseEntity<>(companyObjectiveResources, HttpStatus.OK);
     }
 

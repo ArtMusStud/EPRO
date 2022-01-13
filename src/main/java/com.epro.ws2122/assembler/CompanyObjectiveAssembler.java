@@ -3,7 +3,6 @@ package com.epro.ws2122.assembler;
 import com.epro.ws2122.controller.CompanyObjectiveController;
 import com.epro.ws2122.domain.CompanyObjective;
 import com.epro.ws2122.model.CompanyObjectiveModel;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
@@ -30,14 +29,5 @@ public class CompanyObjectiveAssembler
                         .andAffordance(afford(methodOn(CompanyObjectiveController.class).updateCompanyObjective(companyObjective.getId())))
                         .andAffordance(afford(methodOn(CompanyObjectiveController.class).deleteCompanyObjective(companyObjective.getId()))));
         return coModel;
-    }
-
-    @Override
-    public CollectionModel<CompanyObjectiveModel> toCollectionModel(Iterable<? extends CompanyObjective> entities) {
-        var coCollectionModel = super.toCollectionModel(entities);
-        coCollectionModel.add(
-                linkTo(methodOn(CompanyObjectiveController.class).companyObjectives())
-                        .withRel("self"));
-        return coCollectionModel;
     }
 }

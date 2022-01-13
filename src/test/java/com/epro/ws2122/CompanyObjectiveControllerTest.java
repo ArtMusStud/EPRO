@@ -90,6 +90,7 @@ public class CompanyObjectiveControllerTest {
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1]._templates.default.method", is("PUT")))
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1]._templates.deleteCompanyObjective.method", is("DELETE")))
 
-                .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives")));
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives")))
+                .andExpect(jsonPath("$._templates.default.method", is("POST")));
     }
 }
