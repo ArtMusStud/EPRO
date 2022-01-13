@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.hateoas.MediaTypes;
@@ -24,14 +23,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = {CompanyObjectiveKeyResultController.class, CompanyObjectiveKeyResultAssembler.class})
-@AutoConfigureMockMvc
 public class CompanyObjectiveKeyResultControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    CompanyObjectiveKeyResultRepository mockRepository;
+    private CompanyObjectiveKeyResultRepository mockRepository;
 
     @BeforeEach
     public void initializeData() {
