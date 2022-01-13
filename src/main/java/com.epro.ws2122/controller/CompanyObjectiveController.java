@@ -37,6 +37,9 @@ public class CompanyObjectiveController {
         var companyObjective =  repository.findById(id);
         if (companyObjective.isPresent()) {
             var companyObjectiveResource = assembler.toModel(companyObjective.get());
+            companyObjectiveResource.add(
+                    linkTo(methodOn(CompanyObjectiveController.class).companyObjectives()).withRel("Company Objectives"),
+                    linkTo(methodOn(DashboardController.class).dashboard()).withRel("dashboard"));
             return new ResponseEntity<>(companyObjectiveResource, HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

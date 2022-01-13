@@ -24,10 +24,9 @@ public class CompanyObjectiveAssembler
 
     @Override
     public CompanyObjectiveModel toModel(CompanyObjective companyObjective) {
-        var coModel = createModelWithId(companyObjective.getId(), companyObjective);
+        var coModel = instantiateModel(companyObjective);
         coModel.add(
-                linkTo(methodOn(CompanyObjectiveController.class).companyObjectives()).withRel("Company Objectives"),
-                linkTo(methodOn(DashboardController.class).dashboard()).withRel("dashboard")
+                linkTo(methodOn(CompanyObjectiveController.class).companyObjectiveById(companyObjective.getId())).withSelfRel()
                         .andAffordance(afford(methodOn(CompanyObjectiveController.class).updateCompanyObjective(companyObjective.getId())))
                         .andAffordance(afford(methodOn(CompanyObjectiveController.class).deleteCompanyObjective(companyObjective.getId()))));
         return coModel;
