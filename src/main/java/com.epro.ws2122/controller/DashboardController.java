@@ -14,6 +14,6 @@ public class DashboardController {
 
     @GetMapping("/dashboard")
     public ResponseEntity<?> dashboard() {
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("dashboard not implemented yet");
     }
 }

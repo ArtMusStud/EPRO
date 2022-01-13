@@ -5,13 +5,9 @@ import com.epro.ws2122.model.CompanyObjectiveKeyResultModel;
 import com.epro.ws2122.repository.CompanyObjectiveKeyResultRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
-import org.springframework.hateoas.server.ExposesResourceFor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -58,5 +54,32 @@ public class CompanyObjectiveKeyResultController {
                 linkTo(methodOn(CompanyObjectiveKeyResultController.class).cokr(coId))
                         .withRel("self"));
         return new ResponseEntity<>(cokrResources, HttpStatus.OK);
+    }
+
+    /*
+    Todo:
+        - implement method
+    */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCokr(@PathVariable long coId, @PathVariable("id") long id) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP DELETE not implemented yet");
+    }
+
+    /*
+    Todo:
+        - implement method
+    */
+    @PostMapping()
+    public ResponseEntity<?> newCokr(@PathVariable long coId) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP POST not implemented yet");
+    }
+
+    /*
+    Todo:
+        - implement method
+    */
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateCokr(@PathVariable long coId, @PathVariable("id") long id) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
     }
 }

@@ -7,10 +7,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -27,10 +24,12 @@ public class CompanyObjectiveController {
         this.assembler = assembler;
     }
 
-    /* ToDo add remaining resources and links to response:
-        collection resource of all CO KR corresponding to requested CO
-        link to complete aggregation at level of requested CO
-        link to dashboard
+    /*
+        ToDo:
+         - add remaining resources and links to response:
+            - collection resource of all CO KR corresponding to requested CO
+            - link to complete aggregation at level of requested CO
+            - link to dashboard
      */
     @GetMapping( "/{id}")
     public ResponseEntity<RepresentationModel<CompanyObjectiveModel>> companyObjectiveById(@PathVariable("id") long id) {
@@ -45,7 +44,9 @@ public class CompanyObjectiveController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-    /* ToDo add collection resource of all CO KR corresponding to each requested CO
+    /*
+        ToDo:
+         - add collection resource of all CO KR corresponding to each requested CO
      */
     @GetMapping
     public ResponseEntity<CollectionModel<CompanyObjectiveModel>> companyObjectives() {
@@ -55,5 +56,32 @@ public class CompanyObjectiveController {
                 linkTo(methodOn(CompanyObjectiveController.class).companyObjectives())
                         .withRel("self"));
         return new ResponseEntity<>(companyObjectiveResources, HttpStatus.OK);
+    }
+
+    /*
+        Todo:
+            - implement method
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCompanyObjective(@PathVariable long id) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP DELETE not implemented yet");
+    }
+
+    /*
+    Todo:
+        - implement method
+    */
+    @PostMapping()
+    public ResponseEntity<?> newCompanyObjective() {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP POST not implemented yet");
+    }
+
+    /*
+    Todo:
+        - implement method
+    */
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateCompanyObjective(@PathVariable long id) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
     }
 }
