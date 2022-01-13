@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -72,7 +73,23 @@ public class CompanyObjectiveControllerTest {
         this.mockMvc.perform(get("/company-objectives"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_FORMS_JSON.toString()))
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList", hasSize(2)))
+
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0].name", is("Company Objective 1")))
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0].createdAt", is(1640991600)))
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0].overall", is(0.75)))
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0]._links.self.href", is("http://localhost/company-objectives/1")))
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0]._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0]._templates.deleteCompanyObjective.method", is("DELETE")))
+
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1].name", is("Company Objective 2")))
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1].createdAt", is(978303600)))
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1].overall", is(0.1)))
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1]._links.self.href", is("http://localhost/company-objectives/2")))
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1]._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1]._templates.deleteCompanyObjective.method", is("DELETE")))
+
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives")));
     }
 }
