@@ -10,8 +10,8 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @Entity
-public class CompanyObjective extends Objective {
+public class BusinessUnitObjective extends Objective {
 
     @OneToMany
-    private List<CompanyKeyResult> companyKeyResults;
+    private List<BusinessUnitKeyResult> businessUnitKeyResults;
 }
