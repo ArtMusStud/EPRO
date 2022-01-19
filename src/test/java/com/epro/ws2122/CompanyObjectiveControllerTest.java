@@ -64,6 +64,7 @@ public class CompanyObjectiveControllerTest {
                 .andExpect(jsonPath("$.overall", is(0.75)))
                 .andExpect(jsonPath("$.createdAt", is(1640991600)))
                 .andExpect(jsonPath("$._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._templates.patchCompanyObjective.method", is("PATCH")))
                 .andExpect(jsonPath("$._templates.deleteCompanyObjective.method", is("DELETE")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/1")));
     }
@@ -81,6 +82,7 @@ public class CompanyObjectiveControllerTest {
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0].overall", is(0.75)))
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0]._links.self.href", is("http://localhost/company-objectives/1")))
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0]._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0]._templates.patchCompanyObjective.method", is("PATCH")))
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0]._templates.deleteCompanyObjective.method", is("DELETE")))
 
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1].name", is("Company Objective 2")))
@@ -88,6 +90,7 @@ public class CompanyObjectiveControllerTest {
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1].overall", is(0.1)))
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1]._links.self.href", is("http://localhost/company-objectives/2")))
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1]._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1]._templates.patchCompanyObjective.method", is("PATCH")))
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1]._templates.deleteCompanyObjective.method", is("DELETE")))
 
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives")))
