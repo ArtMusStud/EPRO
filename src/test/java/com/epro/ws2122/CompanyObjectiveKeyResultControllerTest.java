@@ -51,6 +51,7 @@ public class CompanyObjectiveKeyResultControllerTest {
                 .andExpect(jsonPath("$._templates.patchCokr.method", is("PATCH")))
                 .andExpect(jsonPath("$._templates.deleteCokr.method", is("DELETE")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/0/company-objectives-key-results/0")))
+                .andExpect(jsonPath("$._links.companyObjective.href", is("http://localhost/company-objectives/0")))
                 .andExpect(jsonPath("$._links.dashboard.href", is("http://localhost/dashboard")));
     }
 
@@ -71,6 +72,7 @@ public class CompanyObjectiveKeyResultControllerTest {
                 .andExpect(jsonPath("$._embedded.companyObjectiveKeyResultModelList[1]._templates.patchCokr.method", is("PATCH")))
                 .andExpect(jsonPath("$._embedded.companyObjectiveKeyResultModelList[1]._templates.deleteCokr.method", is("DELETE")))
 
+                .andExpect(jsonPath("$._templates.default.method", is("POST")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/0/company-objectives-key-results")));
     }
 }

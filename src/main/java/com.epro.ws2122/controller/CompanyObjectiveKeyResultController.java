@@ -9,8 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/company-objectives/{coId}/company-objectives-key-results")
@@ -27,8 +26,7 @@ public class CompanyObjectiveKeyResultController {
     /*
     ToDo:
       - list of all cokrs should have common CO with id 'coId'
-      - missing collection resource BU KR
-      - missing resource CO
+      - missing collection resource BUKR and/or BUO
     */
     @GetMapping("/{id}")
     public ResponseEntity<RepresentationModel<CompanyObjectiveKeyResultModel>> cokrById(
@@ -36,23 +34,29 @@ public class CompanyObjectiveKeyResultController {
         var cokr = repository.findById(0L);
         if (cokr.isPresent()) {
             var cokrResource = assembler.toModel(cokr.get());
+            cokrResource.add(
+                    linkTo(methodOn(CompanyObjectiveController.class).companyObjectiveById(coId)).withRel("companyObjective"),
+                    linkTo(methodOn(DashboardController.class).dashboard()).withRel("dashboard"));
             return new ResponseEntity<>(cokrResource, HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     /*
-        ToDo:
-          - list of all cokrs should have common CO with id 'coId'
-          - missing resource CO
+    ToDo:
+      - list of all cokrs should have common CO with id 'coId'
+      - missing single resource CO
+      - missing collection resource BUKR and/or BUO
      */
     @GetMapping
     public ResponseEntity<CollectionModel<CompanyObjectiveKeyResultModel>> cokr(@PathVariable long coId) {
         var cokrAll = repository.findAll();
         var cokrResources = assembler.toCollectionModel(cokrAll);
         cokrResources.add(
-                linkTo(methodOn(CompanyObjectiveKeyResultController.class).cokr(coId))
-                        .withRel("self"));
+                linkTo(methodOn(CompanyObjectiveKeyResultController.class).cokr(coId)).withSelfRel()
+                        .andAffordance(afford(methodOn(CompanyObjectiveKeyResultController.class).newCokr(coId))),
+                linkTo(methodOn(CompanyObjectiveController.class).companyObjectiveById(coId)).withRel("companyObjective"),
+                linkTo(methodOn(DashboardController.class).dashboard()).withRel("dashboard"));
         return new ResponseEntity<>(cokrResources, HttpStatus.OK);
     }
 

@@ -1,5 +1,6 @@
 package com.epro.ws2122.assembler;
 
+import com.epro.ws2122.controller.CompanyObjectiveController;
 import com.epro.ws2122.controller.CompanyObjectiveKeyResultController;
 import com.epro.ws2122.controller.DashboardController;
 import com.epro.ws2122.domain.CompanyObjectiveKeyResult;
@@ -22,15 +23,15 @@ public class CompanyObjectiveKeyResultAssembler
         return new CompanyObjectiveKeyResultModel(companyObjectiveKeyResult);
     }
 
-    /* Todo: implement access of co id through corresponding cokr object and delete placeholderID
+    /* Todo:
+        - implement access of co id through corresponding cokr object and delete placeholderID
      */
     @Override
     public CompanyObjectiveKeyResultModel toModel(CompanyObjectiveKeyResult cokr) {
         var placeHolderID = 0L;
-        var cokrModel = createModelWithId(cokr.getId(), cokr, placeHolderID);
+        var cokrModel = instantiateModel(cokr);
         cokrModel.add(
-                linkTo(methodOn(DashboardController.class).dashboard())
-                        .withRel("dashboard")
+                linkTo(methodOn(CompanyObjectiveKeyResultController.class).cokrById(placeHolderID, cokr.getId())).withSelfRel()
                         .andAffordance(afford(methodOn(CompanyObjectiveKeyResultController.class).putCokr(placeHolderID, cokr.getId())))
                         .andAffordance(afford(methodOn(CompanyObjectiveKeyResultController.class).patchCokr(placeHolderID, cokr.getId())))
                         .andAffordance(afford(methodOn(CompanyObjectiveKeyResultController.class).deleteCokr(placeHolderID, cokr.getId()))));
