@@ -47,6 +47,9 @@ public class CompanyObjectiveKeyResultControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_FORMS_JSON.toString()))
+                .andExpect(jsonPath("$._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._templates.patchCokr.method", is("PATCH")))
+                .andExpect(jsonPath("$._templates.deleteCokr.method", is("DELETE")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/0/company-objectives-key-results/0")))
                 .andExpect(jsonPath("$._links.dashboard.href", is("http://localhost/dashboard")));
     }
@@ -57,6 +60,17 @@ public class CompanyObjectiveKeyResultControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_FORMS_JSON.toString()))
+
+                .andExpect(jsonPath("$._embedded.companyObjectiveKeyResultModelList[0]._links.self.href", is("http://localhost/company-objectives/0/company-objectives-key-results/0")))
+                .andExpect(jsonPath("$._embedded.companyObjectiveKeyResultModelList[0]._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._embedded.companyObjectiveKeyResultModelList[0]._templates.patchCokr.method", is("PATCH")))
+                .andExpect(jsonPath("$._embedded.companyObjectiveKeyResultModelList[0]._templates.deleteCokr.method", is("DELETE")))
+
+                .andExpect(jsonPath("$._embedded.companyObjectiveKeyResultModelList[1]._links.self.href", is("http://localhost/company-objectives/0/company-objectives-key-results/1")))
+                .andExpect(jsonPath("$._embedded.companyObjectiveKeyResultModelList[1]._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._embedded.companyObjectiveKeyResultModelList[1]._templates.patchCokr.method", is("PATCH")))
+                .andExpect(jsonPath("$._embedded.companyObjectiveKeyResultModelList[1]._templates.deleteCokr.method", is("DELETE")))
+
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/0/company-objectives-key-results")));
     }
 }
