@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import java.sql.Date;
+import java.time.LocalDate;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -24,7 +24,7 @@ public abstract class Objective {
     private long id;
 
     private String name;
-    private Date startDate;
+    private LocalDate startDate;
 
     //TODO overall
 }
