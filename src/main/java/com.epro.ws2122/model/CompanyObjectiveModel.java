@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.hateoas.RepresentationModel;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -14,12 +14,12 @@ public class CompanyObjectiveModel extends RepresentationModel<CompanyObjectiveM
 
     private String name;
     @JsonFormat(shape=JsonFormat.Shape.NUMBER)
-    private Date createdAt;
-    private double overall;
+    private LocalDate startDate;
+//    private double overall;
 
     public CompanyObjectiveModel(CompanyObjective companyObjective) {
         this.name = companyObjective.getName();
-        this.createdAt = companyObjective.getCreatedAt();
-        this.overall = companyObjective.getOverall();
+        this.startDate = companyObjective.getStartDate();
+//        this.overall = companyObjective.getOverall();
     }
 }
