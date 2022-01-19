@@ -31,7 +31,7 @@ public class CompanyObjectiveKeyResultAssembler
         cokrModel.add(
                 linkTo(methodOn(DashboardController.class).dashboard())
                         .withRel("dashboard")
-                        .andAffordance(afford(methodOn(CompanyObjectiveKeyResultController.class).updateCokr(placeHolderID, cokr.getId())))
+                        .andAffordance(afford(methodOn(CompanyObjectiveKeyResultController.class).putCokr(placeHolderID, cokr.getId())))
                         .andAffordance(afford(methodOn(CompanyObjectiveKeyResultController.class).deleteCokr(placeHolderID, cokr.getId()))));
         return cokrModel;
     }

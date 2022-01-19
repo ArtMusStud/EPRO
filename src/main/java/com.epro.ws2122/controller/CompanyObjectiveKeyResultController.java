@@ -79,7 +79,16 @@ public class CompanyObjectiveKeyResultController {
         - implement method
     */
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCokr(@PathVariable long coId, @PathVariable("id") long id) {
+    public ResponseEntity<?> putCokr(@PathVariable long coId, @PathVariable("id") long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
+    }
+
+    /*
+    Todo:
+        - implement method
+    */
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> patchCokr(@PathVariable long coId, @PathVariable("id") long id) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
     }
 }

@@ -26,7 +26,7 @@ public class CompanyObjectiveAssembler
         var coModel = instantiateModel(companyObjective);
         coModel.add(
                 linkTo(methodOn(CompanyObjectiveController.class).companyObjectiveById(companyObjective.getId())).withSelfRel()
-                        .andAffordance(afford(methodOn(CompanyObjectiveController.class).updateCompanyObjective(companyObjective.getId())))
+                        .andAffordance(afford(methodOn(CompanyObjectiveController.class).putCompanyObjective(companyObjective.getId())))
                         .andAffordance(afford(methodOn(CompanyObjectiveController.class).deleteCompanyObjective(companyObjective.getId()))));
         return coModel;
     }

@@ -25,7 +25,7 @@ public class CompanyObjectiveController {
 
     /*
         ToDo:
-         - add remaining resources and links to response:
+            - add remaining resources and links to response:
             - collection resource of all CO KR corresponding to requested CO
             - link to complete aggregation at level of requested CO
             - link to dashboard
@@ -45,7 +45,7 @@ public class CompanyObjectiveController {
 
     /*
         ToDo:
-         - add collection resource of all CO KR corresponding to each requested CO
+            - add collection resource of all CO KR corresponding to each requested CO
      */
     @GetMapping
     public ResponseEntity<CollectionModel<CompanyObjectiveModel>> companyObjectives() {
@@ -80,7 +80,16 @@ public class CompanyObjectiveController {
         - implement method
     */
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCompanyObjective(@PathVariable long id) {
+    public ResponseEntity<?> putCompanyObjective(@PathVariable long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
+    }
+
+    /*
+    Todo:
+        - implement method
+    */
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> patchCompanyObjective(@PathVariable long id) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
     }
 }
