@@ -1,9 +1,9 @@
 package com.epro.ws2122;
 
-import com.epro.ws2122.assembler.CompanyObjectiveKeyResultAssembler;
-import com.epro.ws2122.controller.CompanyObjectiveKeyResultController;
-import com.epro.ws2122.domain.CompanyObjectiveKeyResult;
-import com.epro.ws2122.repository.CompanyObjectiveKeyResultRepository;
+import com.epro.ws2122.assembler.CompanyKeyResultAssembler;
+import com.epro.ws2122.controller.CompanyKeyResultController;
+import com.epro.ws2122.domain.CompanyKeyResult;
+import com.epro.ws2122.repository.CompanyKeyResultRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -22,19 +22,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = {CompanyObjectiveKeyResultController.class, CompanyObjectiveKeyResultAssembler.class})
-public class CompanyObjectiveKeyResultControllerTest {
+@WebMvcTest(controllers = {CompanyKeyResultController.class, CompanyKeyResultAssembler.class})
+public class CompanyKeyResultControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private CompanyObjectiveKeyResultRepository mockRepository;
+    private CompanyKeyResultRepository mockRepository;
 
     @BeforeEach
     public void initializeData() {
-        var cokr_0 = CompanyObjectiveKeyResult.builder().id(0L).build();
-        var cokr_1 = CompanyObjectiveKeyResult.builder().id(1L).build();
+        var cokr_0 = CompanyKeyResult.builder().id(0L).build();
+        var cokr_1 = CompanyKeyResult.builder().id(1L).build();
 
         Mockito.when(mockRepository.findById(0L)).thenReturn(Optional.of(cokr_0));
         Mockito.when(mockRepository.findById(1L)).thenReturn(Optional.of(cokr_1));

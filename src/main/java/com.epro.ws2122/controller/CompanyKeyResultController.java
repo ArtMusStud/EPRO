@@ -5,20 +5,25 @@ import com.epro.ws2122.model.CompanyObjectiveKeyResultModel;
 import com.epro.ws2122.repository.CompanyObjectiveKeyResultRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.ExposesResourceFor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/company-objectives/{coId}/company-objectives-key-results")
-public class CompanyObjectiveKeyResultController {
+public class CompanyKeyResultController {
 
-    private final CompanyObjectiveKeyResultRepository repository;
-    private final CompanyObjectiveKeyResultAssembler assembler;
+    private final CompanyKeyResultRepository repository;
+    private final CompanyKeyResultAssembler assembler;
 
-    public CompanyObjectiveKeyResultController(CompanyObjectiveKeyResultRepository repository, CompanyObjectiveKeyResultAssembler assembler) {
+    public CompanyKeyResultController(CompanyKeyResultRepository repository, CompanyKeyResultAssembler assembler) {
         this.repository = repository;
         this.assembler = assembler;
     }
@@ -29,7 +34,7 @@ public class CompanyObjectiveKeyResultController {
       - missing collection resource BUKR and/or BUO
     */
     @GetMapping("/{id}")
-    public ResponseEntity<RepresentationModel<CompanyObjectiveKeyResultModel>> cokrById(
+    public ResponseEntity<RepresentationModel<CompanyKeyResultModel>> cokrById(
             @PathVariable long coId, @PathVariable("id") long id) {
         var cokr = repository.findById(0L);
         if (cokr.isPresent()) {
@@ -49,7 +54,7 @@ public class CompanyObjectiveKeyResultController {
       - missing collection resource BUKR and/or BUO
      */
     @GetMapping
-    public ResponseEntity<CollectionModel<CompanyObjectiveKeyResultModel>> cokr(@PathVariable long coId) {
+    public ResponseEntity<CollectionModel<CompanyKeyResultModel>> cokr(@PathVariable long coId) {
         var cokrAll = repository.findAll();
         var cokrResources = assembler.toCollectionModel(cokrAll);
         cokrResources.add(

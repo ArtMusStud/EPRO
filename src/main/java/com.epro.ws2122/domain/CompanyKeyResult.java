@@ -4,14 +4,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import java.util.List;
 
 @SuperBuilder
 @NoArgsConstructor
 @Entity
-public class CompanyObjective extends Objective {
-
-    @OneToMany
-    private List<CompanyKeyResult> companyKeyResults;
+public class CompanyKeyResult extends KeyResult {
 }
