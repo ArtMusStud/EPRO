@@ -1,23 +1,18 @@
 package com.epro.ws2122.controller;
 
-import com.epro.ws2122.assembler.CompanyObjectiveKeyResultAssembler;
-import com.epro.ws2122.model.CompanyObjectiveKeyResultModel;
-import com.epro.ws2122.repository.CompanyObjectiveKeyResultRepository;
+import com.epro.ws2122.assembler.CompanyKeyResultAssembler;
+import com.epro.ws2122.model.CompanyKeyResultModel;
+import com.epro.ws2122.repository.CompanyKeyResultRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
-import org.springframework.hateoas.server.ExposesResourceFor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
-@RequestMapping("/company-objectives/{coId}/company-objectives-key-results")
+@RequestMapping("/company-objectives/{coId}/company-key-results")
 public class CompanyKeyResultController {
 
     private final CompanyKeyResultRepository repository;
@@ -58,8 +53,8 @@ public class CompanyKeyResultController {
         var cokrAll = repository.findAll();
         var cokrResources = assembler.toCollectionModel(cokrAll);
         cokrResources.add(
-                linkTo(methodOn(CompanyObjectiveKeyResultController.class).cokr(coId)).withSelfRel()
-                        .andAffordance(afford(methodOn(CompanyObjectiveKeyResultController.class).newCokr(coId))),
+                linkTo(methodOn(CompanyKeyResultController.class).cokr(coId)).withSelfRel()
+                        .andAffordance(afford(methodOn(CompanyKeyResultController.class).newCokr(coId))),
                 linkTo(methodOn(CompanyObjectiveController.class).companyObjectiveById(coId)).withRel("companyObjective"),
                 linkTo(methodOn(DashboardController.class).dashboard()).withRel("dashboard"));
         return new ResponseEntity<>(cokrResources, HttpStatus.OK);

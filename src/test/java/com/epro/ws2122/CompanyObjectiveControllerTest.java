@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -61,7 +62,6 @@ public class CompanyObjectiveControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_FORMS_JSON.toString()))
                 .andExpect(jsonPath("$.name", is("Company Objective 1")))
-//                .andExpect(jsonPath("$.overall", is(0.75)))
                 .andExpect(jsonPath("$.startDate[0]", is(1970)))
                 .andExpect(jsonPath("$.startDate[1]", is(1)))
                 .andExpect(jsonPath("$.startDate[2]", is(19)))
@@ -80,16 +80,18 @@ public class CompanyObjectiveControllerTest {
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList", hasSize(2)))
 
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0].name", is("Company Objective 1")))
-                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0].createdAt", is(1640991600)))
-                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0].overall", is(0.75)))
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0].startDate[0]", is(1970)))
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0].startDate[1]", is(1)))
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0].startDate[2]", is(19)))
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0]._links.self.href", is("http://localhost/company-objectives/1")))
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0]._templates.default.method", is("PUT")))
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0]._templates.patchCompanyObjective.method", is("PATCH")))
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[0]._templates.deleteCompanyObjective.method", is("DELETE")))
 
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1].name", is("Company Objective 2")))
-                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1].createdAt", is(978303600)))
-                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1].overall", is(0.1)))
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1].startDate[0]", is(1970)))
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1].startDate[1]", is(1)))
+                .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1].startDate[2]", is(12)))
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1]._links.self.href", is("http://localhost/company-objectives/2")))
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1]._templates.default.method", is("PUT")))
                 .andExpect(jsonPath("$._embedded.companyObjectiveModelList[1]._templates.patchCompanyObjective.method", is("PATCH")))

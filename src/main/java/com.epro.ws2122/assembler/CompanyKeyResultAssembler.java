@@ -7,8 +7,7 @@ import com.epro.ws2122.model.CompanyKeyResultModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @Component
 public class CompanyKeyResultAssembler
@@ -23,14 +22,18 @@ public class CompanyKeyResultAssembler
         return new CompanyKeyResultModel(companyKeyResult);
     }
 
-    /* Todo: implement access of co id through corresponding cokr object and delete placeholder argument '0L'
+    /* Todo:
+        - implement access of co id through corresponding cokr object and delete placeholderID
      */
     @Override
     public CompanyKeyResultModel toModel(CompanyKeyResult companyKeyResult) {
-        var cokrModel = createModelWithId(companyKeyResult.getId(), companyKeyResult, 0L);
-        cokrModel.add(
-                linkTo(methodOn(DashboardController.class).dashboard())
-                        .withRel("dashboard"));
-        return cokrModel;
+        var placeHolderID = 0L;
+        var companyKeyResultModel = instantiateModel(companyKeyResult);
+        companyKeyResultModel.add(
+                linkTo(methodOn(CompanyKeyResultController.class).cokrById(placeHolderID, companyKeyResult.getId())).withSelfRel()
+                        .andAffordance(afford(methodOn(CompanyKeyResultController.class).putCokr(placeHolderID, companyKeyResult.getId())))
+                        .andAffordance(afford(methodOn(CompanyKeyResultController.class).patchCokr(placeHolderID, companyKeyResult.getId())))
+                        .andAffordance(afford(methodOn(CompanyKeyResultController.class).deleteCokr(placeHolderID, companyKeyResult.getId()))));
+        return companyKeyResultModel;
     }
 }
