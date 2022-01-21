@@ -33,12 +33,12 @@ public class CompanyKeyResultControllerTest {
 
     @BeforeEach
     public void initializeData() {
-        var cokr_0 = CompanyKeyResult.builder().id(0L).build();
-        var cokr_1 = CompanyKeyResult.builder().id(1L).build();
+        var companyKeyResult_0 = CompanyKeyResult.builder().id(0L).build();
+        var companyKeyResult_1 = CompanyKeyResult.builder().id(1L).build();
 
-        Mockito.when(mockRepository.findById(0L)).thenReturn(Optional.of(cokr_0));
-        Mockito.when(mockRepository.findById(1L)).thenReturn(Optional.of(cokr_1));
-        Mockito.when(mockRepository.findAll()).thenReturn(Arrays.asList(cokr_0, cokr_1));
+        Mockito.when(mockRepository.findById(0L)).thenReturn(Optional.of(companyKeyResult_0));
+        Mockito.when(mockRepository.findById(1L)).thenReturn(Optional.of(companyKeyResult_1));
+        Mockito.when(mockRepository.findAll()).thenReturn(Arrays.asList(companyKeyResult_0, companyKeyResult_1));
     }
 
     @Test

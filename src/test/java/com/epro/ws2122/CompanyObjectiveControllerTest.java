@@ -1,14 +1,15 @@
 package com.epro.ws2122;
 
+import com.epro.ws2122.assembler.CompanyKeyResultAssembler;
 import com.epro.ws2122.assembler.CompanyObjectiveAssembler;
 import com.epro.ws2122.controller.CompanyObjectiveController;
+import com.epro.ws2122.domain.CompanyKeyResult;
 import com.epro.ws2122.domain.CompanyObjective;
 import com.epro.ws2122.repository.CompanyObjectiveRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.hateoas.MediaTypes;
@@ -19,13 +20,14 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = {CompanyObjectiveController.class, CompanyObjectiveAssembler.class})
+@SuppressWarnings("ConstantConditions")
+@WebMvcTest(controllers = {CompanyObjectiveController.class, CompanyObjectiveAssembler.class, CompanyKeyResultAssembler.class})
 public class CompanyObjectiveControllerTest {
 
     @Autowired
@@ -36,39 +38,84 @@ public class CompanyObjectiveControllerTest {
 
     @BeforeEach
     public void initializeData() {
-        var companyObjective_0 = CompanyObjective.builder()
+        var companyKeyResult_0 = CompanyKeyResult.builder()
+                .id(0L)
+                .name("Company Key Result 0")
+                .current(7)
+                .goal(10)
+                .confidence(0.99)
+                .build();
+
+        var companyKeyResult_1 = CompanyKeyResult.builder()
                 .id(1L)
-                .name("Company Objective 1")
-//                .overall(0.75)
+                .name("Company Key Result 1")
+                .current(0)
+                .goal(200)
+                .confidence(0)
+                .build();
+
+        var companyKeyResult_2 = CompanyKeyResult.builder()
+                .id(2L)
+                .name("Company Key Result 2")
+                .current(99)
+                .goal(100)
+                .confidence(1)
+                .build();
+
+        var companyKeyResult_3 = CompanyKeyResult.builder()
+                .id(3L)
+                .name("Company Key Result 3")
+                .current(50)
+                .goal(100)
+                .confidence(0.49)
+                .build();
+
+        var companyObjective_0 = CompanyObjective.builder()
+                .id(0L)
+                .name("Company Objective 0")
                 .startDate(LocalDate.of(1970, 1, 19))
+                .companyKeyResults(Arrays.asList(companyKeyResult_0, companyKeyResult_1))
                 .build();
 
         var companyObjective_1 = CompanyObjective.builder()
-                .id(2L)
-                .name("Company Objective 2")
-//                .overall(0.1)
+                .id(1L)
+                .name("Company Objective 1")
                 .startDate(LocalDate.of(1970, 1, 12))
+                .companyKeyResults(Arrays.asList(companyKeyResult_2, companyKeyResult_3))
                 .build();
 
-        Mockito.when(mockRepository.findById(1L)).thenReturn(Optional.of(companyObjective_0));
-        Mockito.when(mockRepository.findById(2L)).thenReturn(Optional.of(companyObjective_1));
+        Mockito.when(mockRepository.findById(0L)).thenReturn(Optional.of(companyObjective_0));
+        Mockito.when(mockRepository.findById(1L)).thenReturn(Optional.of(companyObjective_1));
         Mockito.when(mockRepository.findAll()).thenReturn(Arrays.asList(companyObjective_0, companyObjective_1));
     }
 
     @Test
     public void should_return_single_company_objective() throws Exception {
-        this.mockMvc.perform(get("/company-objectives/1").accept(MediaTypes.HAL_FORMS_JSON))
+        this.mockMvc.perform(get("/company-objectives/0").accept(MediaTypes.HAL_FORMS_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_FORMS_JSON.toString()))
-                .andExpect(jsonPath("$.name", is("Company Objective 1")))
+
+                .andExpect(jsonPath("$.name", is("Company Objective 0")))
                 .andExpect(jsonPath("$.startDate[0]", is(1970)))
                 .andExpect(jsonPath("$.startDate[1]", is(1)))
                 .andExpect(jsonPath("$.startDate[2]", is(19)))
+
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/0")))
+                .andExpect(jsonPath("$._links.companyKeyResults[0].href", is("http://localhost/company-objectives/0/company-key-results/0")))
+                .andExpect(jsonPath("$._links.companyKeyResults[1].href", is("http://localhost/company-objectives/0/company-key-results/1")))
+
                 .andExpect(jsonPath("$._templates.default.method", is("PUT")))
                 .andExpect(jsonPath("$._templates.patchCompanyObjective.method", is("PATCH")))
                 .andExpect(jsonPath("$._templates.deleteCompanyObjective.method", is("DELETE")))
-                .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/1")));
+
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0].name", is("Company Key Result 0")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0].overall", is(0.7)))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._links.self.href", is("http://localhost/company-objectives/0/company-key-results/0")))
+
+                .andExpect(jsonPath("$._embedded.companyKeyResults[1].name", is("Company Key Result 1")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[1].overall", is(0.0)))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[1]._links.self.href", is("http://localhost/company-objectives/0/company-key-results/1")));
     }
 
     @Test

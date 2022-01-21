@@ -1,10 +1,12 @@
 package com.epro.ws2122.controller;
 
 import com.epro.ws2122.assembler.CompanyObjectiveAssembler;
+import com.epro.ws2122.model.CompanyKeyResultSubresourceModel;
 import com.epro.ws2122.model.CompanyObjectiveModel;
 import com.epro.ws2122.repository.CompanyObjectiveRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,20 +27,32 @@ public class CompanyObjectiveController {
 
     /*
         ToDo:
-            - add remaining resources and links to response:
-            - collection resource of all CO KR corresponding to requested CO
-            - link to complete aggregation at level of requested CO
-            - link to dashboard
+            - add link to complete aggregation at level of requested CO
+            - add link to dashboard
      */
     @GetMapping( "/{id}")
     public ResponseEntity<RepresentationModel<CompanyObjectiveModel>> companyObjectiveById(@PathVariable("id") long id) {
-        var companyObjective =  repository.findById(id);
-        if (companyObjective.isPresent()) {
-            var companyObjectiveResource = assembler.toModel(companyObjective.get());
-            companyObjectiveResource.add(
-                    linkTo(methodOn(CompanyObjectiveController.class).companyObjectives()).withRel("Company Objectives"),
-                    linkTo(methodOn(DashboardController.class).dashboard()).withRel("dashboard"));
-            return new ResponseEntity<>(companyObjectiveResource, HttpStatus.OK);
+        var companyObjectiveOptional = repository.findById(id);
+        if (companyObjectiveOptional.isPresent()) {
+            var companyObjective = companyObjectiveOptional.get();
+            var companyObjectiveResource = new CompanyObjectiveModel(companyObjective);
+
+            var companyKeyResultSubresourceModelList = companyObjective.getCompanyKeyResults();
+
+            var halModelBuilder = HalModelBuilder.halModelOf(companyObjectiveResource)
+                    .link(linkTo(methodOn(CompanyObjectiveController.class).companyObjectiveById(id)).withSelfRel()
+                            .andAffordance(afford(methodOn(CompanyObjectiveController.class).putCompanyObjective(id)))
+                            .andAffordance(afford(methodOn(CompanyObjectiveController.class).patchCompanyObjective(id)))
+                            .andAffordance(afford(methodOn(CompanyObjectiveController.class).deleteCompanyObjective(id))));
+
+            for (var subresource : companyKeyResultSubresourceModelList) {
+                halModelBuilder.preview(new CompanyKeyResultSubresourceModel(id, subresource))
+                        .forLink(linkTo((
+                                methodOn(CompanyKeyResultController.class).cokrById(id, subresource.getId())))
+                                .withRel("companyKeyResults"));
+            }
+
+            return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
