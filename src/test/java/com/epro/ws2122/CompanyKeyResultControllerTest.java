@@ -3,7 +3,9 @@ package com.epro.ws2122;
 import com.epro.ws2122.assembler.CompanyKeyResultAssembler;
 import com.epro.ws2122.controller.CompanyKeyResultController;
 import com.epro.ws2122.domain.CompanyKeyResult;
+import com.epro.ws2122.domain.CompanyObjective;
 import com.epro.ws2122.repository.CompanyKeyResultRepository;
+import com.epro.ws2122.repository.CompanyObjectiveRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,6 +16,7 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -22,23 +25,69 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = {CompanyKeyResultController.class, CompanyKeyResultAssembler.class})
+@WebMvcTest(controllers = {CompanyKeyResultController.class, CompanyObjectiveRepository.class, CompanyKeyResultAssembler.class})
 public class CompanyKeyResultControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private CompanyKeyResultRepository mockRepository;
+    private CompanyKeyResultRepository mockCompanyKeyResultRepository;
+    @MockBean
+    private CompanyObjectiveRepository mockCompanyObjectiveRepository;
 
     @BeforeEach
     public void initializeData() {
-        var companyKeyResult_0 = CompanyKeyResult.builder().id(0L).build();
-        var companyKeyResult_1 = CompanyKeyResult.builder().id(1L).build();
+        var companyKeyResult_0 = CompanyKeyResult.builder()
+                .id(0L)
+                .name("Company Key Result 0")
+                .current(7)
+                .goal(10)
+                .confidence(0.99)
+                .build();
 
-        Mockito.when(mockRepository.findById(0L)).thenReturn(Optional.of(companyKeyResult_0));
-        Mockito.when(mockRepository.findById(1L)).thenReturn(Optional.of(companyKeyResult_1));
-        Mockito.when(mockRepository.findAll()).thenReturn(Arrays.asList(companyKeyResult_0, companyKeyResult_1));
+        var companyKeyResult_1 = CompanyKeyResult.builder()
+                .id(1L)
+                .name("Company Key Result 1")
+                .current(0)
+                .goal(200)
+                .confidence(0)
+                .build();
+
+        var companyKeyResult_2 = CompanyKeyResult.builder()
+                .id(2L)
+                .name("Company Key Result 2")
+                .current(99)
+                .goal(100)
+                .confidence(1)
+                .build();
+
+        var companyKeyResult_3 = CompanyKeyResult.builder()
+                .id(3L)
+                .name("Company Key Result 3")
+                .current(50)
+                .goal(100)
+                .confidence(0.49)
+                .build();
+
+        var companyObjective_0 = CompanyObjective.builder()
+                .id(0L)
+                .name("Company Objective 0")
+                .startDate(LocalDate.of(1970, 1, 19))
+                .companyKeyResults(Arrays.asList(companyKeyResult_0, companyKeyResult_1))
+                .build();
+
+        var companyObjective_1 = CompanyObjective.builder()
+                .id(1L)
+                .name("Company Objective 1")
+                .startDate(LocalDate.of(1970, 1, 12))
+                .companyKeyResults(Arrays.asList(companyKeyResult_2, companyKeyResult_3))
+                .build();
+
+        Mockito.when(mockCompanyKeyResultRepository.findById(0L)).thenReturn(Optional.of(companyKeyResult_0));
+        Mockito.when(mockCompanyObjectiveRepository.findById(0L)).thenReturn(Optional.ofNullable(companyObjective_0));
+        Mockito.when(mockCompanyKeyResultRepository.findAll()).thenReturn(
+                Arrays.asList(companyKeyResult_0, companyKeyResult_1, companyKeyResult_2, companyKeyResult_3));
     }
 
     @Test
