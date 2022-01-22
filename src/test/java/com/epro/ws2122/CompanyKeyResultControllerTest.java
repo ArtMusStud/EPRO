@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -77,13 +78,6 @@ public class CompanyKeyResultControllerTest {
                 .companyKeyResults(Arrays.asList(companyKeyResult_0, companyKeyResult_1))
                 .build();
 
-        var companyObjective_1 = CompanyObjective.builder()
-                .id(1L)
-                .name("Company Objective 1")
-                .startDate(LocalDate.of(1970, 1, 12))
-                .companyKeyResults(Arrays.asList(companyKeyResult_2, companyKeyResult_3))
-                .build();
-
         Mockito.when(mockCompanyKeyResultRepository.findById(0L)).thenReturn(Optional.of(companyKeyResult_0));
         Mockito.when(mockCompanyObjectiveRepository.findById(0L)).thenReturn(Optional.ofNullable(companyObjective_0));
         Mockito.when(mockCompanyKeyResultRepository.findAll()).thenReturn(
@@ -91,7 +85,7 @@ public class CompanyKeyResultControllerTest {
     }
 
     @Test
-    public void should_return_single_cokr() throws Exception {
+    public void should_return_single_ckr() throws Exception {
         this.mockMvc.perform(get("/company-objectives/0/company-key-results/0").accept(MediaTypes.HAL_FORMS_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -113,23 +107,36 @@ public class CompanyKeyResultControllerTest {
     }
 
     @Test
-    public void should_return_all_cokr() throws Exception {
+    public void should_return_all_ckr() throws Exception {
         this.mockMvc.perform(get("/company-objectives/0/company-key-results"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_FORMS_JSON.toString()))
+                .andExpect(jsonPath("$._embedded.companyKeyResults", hasSize(4)))
 
-                .andExpect(jsonPath("$._embedded.companyKeyResultModelList[0]._links.self.href", is("http://localhost/company-objectives/0/company-key-results/0")))
-                .andExpect(jsonPath("$._embedded.companyKeyResultModelList[0]._templates.default.method", is("PUT")))
-                .andExpect(jsonPath("$._embedded.companyKeyResultModelList[0]._templates.patchCokr.method", is("PATCH")))
-                .andExpect(jsonPath("$._embedded.companyKeyResultModelList[0]._templates.deleteCokr.method", is("DELETE")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0].name", is("Company Key Result 0")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0].current", is(7.0)))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0].goal", is(10.0)))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0].confidence", is(0.99)))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._links.self.href", is("http://localhost/company-objectives/0/company-key-results/0")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.update.method", is("PATCH")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.delete.method", is("DELETE")))
 
-                .andExpect(jsonPath("$._embedded.companyKeyResultModelList[1]._links.self.href", is("http://localhost/company-objectives/0/company-key-results/1")))
-                .andExpect(jsonPath("$._embedded.companyKeyResultModelList[1]._templates.default.method", is("PUT")))
-                .andExpect(jsonPath("$._embedded.companyKeyResultModelList[1]._templates.patchCokr.method", is("PATCH")))
-                .andExpect(jsonPath("$._embedded.companyKeyResultModelList[1]._templates.deleteCokr.method", is("DELETE")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[1].name", is("Company Key Result 1")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[1].current", is(0.0)))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[1].goal", is(200.0)))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[1].confidence", is(0.0)))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[1]._links.self.href", is("http://localhost/company-objectives/0/company-key-results/1")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[1]._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[1]._templates.update.method", is("PATCH")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[1]._templates.delete.method", is("DELETE")))
 
-                .andExpect(jsonPath("$._templates.default.method", is("POST")))
-                .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/0/company-key-results")));
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/0/company-key-results")))
+                .andExpect(jsonPath("$._links.companyObjective.href", is("http://localhost/company-objectives/0")))
+                .andExpect(jsonPath("$._links.companyKeyResults.href", is("http://localhost/company-objectives/0/company-key-results")))
+                .andExpect(jsonPath("$._links.dashboard.href", is("http://localhost/dashboard")))
+
+                .andExpect(jsonPath("$._templates.default.method", is("POST")));
     }
 }

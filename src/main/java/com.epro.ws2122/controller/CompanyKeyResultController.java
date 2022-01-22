@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
@@ -58,20 +61,29 @@ public class CompanyKeyResultController {
 
     /*
     ToDo:
-      - list of all cokrs should have common CO with id 'coId'
-      - missing single resource CO
       - missing collection resource BUKR and/or BUO
      */
     @GetMapping
     public ResponseEntity<CollectionModel<CompanyKeyResultModel>> findAll(@PathVariable long coId) {
-        var cokrAll = companyKeyResultRepository.findAll();
-        var cokrResources = assembler.toCollectionModel(cokrAll);
-        cokrResources.add(
+        var companyKeyResultModels = StreamSupport
+                .stream(companyKeyResultRepository.findAll().spliterator(), false)
+                .map(companyKeyResult -> new CompanyKeyResultModel(companyKeyResult).add(
+                        linkTo((methodOn(CompanyKeyResultController.class)
+                                .findOne(coId, companyKeyResult.getId()))).withSelfRel()
+                                .andAffordance(afford(methodOn(CompanyKeyResultController.class).replace(coId, companyKeyResult.getId())))
+                                .andAffordance(afford(methodOn(CompanyKeyResultController.class).update(coId, companyKeyResult.getId())))
+                                .andAffordance(afford(methodOn(CompanyKeyResultController.class).delete(coId, companyKeyResult.getId())))))
+                .collect(Collectors.toList());
+
+        var companyKeyResultResources = CollectionModel.of(
+                companyKeyResultModels,
                 linkTo(methodOn(CompanyKeyResultController.class).findAll(coId)).withSelfRel()
                         .andAffordance(afford(methodOn(CompanyKeyResultController.class).create(coId))),
                 linkTo(methodOn(CompanyObjectiveController.class).findOne(coId)).withRel("companyObjective"),
+                linkTo(methodOn(CompanyKeyResultController.class).findAll(coId)).withRel("companyKeyResults"),
                 linkTo(methodOn(DashboardController.class).dashboard()).withRel("dashboard"));
-        return new ResponseEntity<>(cokrResources, HttpStatus.OK);
+
+        return new ResponseEntity<>(companyKeyResultResources, HttpStatus.OK);
     }
 
     /*
