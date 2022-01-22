@@ -103,20 +103,19 @@ public class CompanyObjectiveControllerTest {
                 .andExpect(jsonPath("$._embedded.companyKeyResults[0].name", is("Company Key Result 0")))
                 .andExpect(jsonPath("$._embedded.companyKeyResults[0].overall", is(0.7)))
                 .andExpect(jsonPath("$._embedded.companyKeyResults[0]._links.self.href", is("http://localhost/company-objectives/0/company-key-results/0")))
-
                 .andExpect(jsonPath("$._embedded.companyKeyResults[1].name", is("Company Key Result 1")))
                 .andExpect(jsonPath("$._embedded.companyKeyResults[1].overall", is(0.0)))
                 .andExpect(jsonPath("$._embedded.companyKeyResults[1]._links.self.href", is("http://localhost/company-objectives/0/company-key-results/1")))
 
                 .andExpect(jsonPath("$._templates.default.method", is("PUT")))
-
-                .andExpect(jsonPath("$._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._templates.default.properties", hasSize(2)))
                 .andExpect(jsonPath("$._templates.default.properties[0].name", is("name")))
                 .andExpect(jsonPath("$._templates.default.properties[0].type", is("text")))
                 .andExpect(jsonPath("$._templates.default.properties[1].name", is("startDate")))
                 .andExpect(jsonPath("$._templates.default.properties[1].type", is("date")))
 
                 .andExpect(jsonPath("$._templates.update.method", is("PATCH")))
+                .andExpect(jsonPath("$._templates.update.properties", hasSize(2)))
                 .andExpect(jsonPath("$._templates.update.properties[0].name", is("name")))
                 .andExpect(jsonPath("$._templates.update.properties[0].type", is("text")))
                 .andExpect(jsonPath("$._templates.update.properties[1].name", is("startDate")))
@@ -143,12 +142,14 @@ public class CompanyObjectiveControllerTest {
                 .andExpect(jsonPath("$._embedded.companyObjectives[0]._links.self.href", is("http://localhost/company-objectives/0")))
 
                 .andExpect(jsonPath("$._embedded.companyObjectives[0]._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._embedded.companyObjectives[0]._templates.default.properties", hasSize(2)))
                 .andExpect(jsonPath("$._embedded.companyObjectives[0]._templates.default.properties[0].name", is("name")))
                 .andExpect(jsonPath("$._embedded.companyObjectives[0]._templates.default.properties[0].type", is("text")))
                 .andExpect(jsonPath("$._embedded.companyObjectives[0]._templates.default.properties[1].name", is("startDate")))
                 .andExpect(jsonPath("$._embedded.companyObjectives[0]._templates.default.properties[1].type", is("date")))
 
                 .andExpect(jsonPath("$._embedded.companyObjectives[0]._templates.update.method", is("PATCH")))
+                .andExpect(jsonPath("$._embedded.companyObjectives[0]._templates.update.properties", hasSize(2)))
                 .andExpect(jsonPath("$._embedded.companyObjectives[0]._templates.update.properties[0].name", is("name")))
                 .andExpect(jsonPath("$._embedded.companyObjectives[0]._templates.update.properties[0].type", is("text")))
                 .andExpect(jsonPath("$._embedded.companyObjectives[0]._templates.update.properties[1].name", is("startDate")))
