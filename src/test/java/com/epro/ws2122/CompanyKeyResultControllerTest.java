@@ -1,6 +1,5 @@
 package com.epro.ws2122;
 
-import com.epro.ws2122.assembler.CompanyKeyResultAssembler;
 import com.epro.ws2122.controller.CompanyKeyResultController;
 import com.epro.ws2122.domain.CompanyKeyResult;
 import com.epro.ws2122.domain.CompanyObjective;
@@ -26,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = {CompanyKeyResultController.class, CompanyObjectiveRepository.class, CompanyKeyResultAssembler.class})
+@WebMvcTest(controllers = {CompanyKeyResultController.class, CompanyObjectiveRepository.class})
 public class CompanyKeyResultControllerTest {
 
     @Autowired

@@ -1,6 +1,5 @@
 package com.epro.ws2122.controller;
 
-import com.epro.ws2122.assembler.CompanyKeyResultAssembler;
 import com.epro.ws2122.model.CompanyKeyResultModel;
 import com.epro.ws2122.model.CompanyObjectiveSubresourceModel;
 import com.epro.ws2122.repository.CompanyKeyResultRepository;
@@ -23,12 +22,10 @@ public class CompanyKeyResultController {
 
     private final CompanyKeyResultRepository companyKeyResultRepository;
     private final CompanyObjectiveRepository companyObjectiveRepository;
-    private final CompanyKeyResultAssembler assembler;
 
-    public CompanyKeyResultController(CompanyKeyResultRepository companyKeyResultRepository, CompanyObjectiveRepository companyObjectiveRepository, CompanyKeyResultAssembler assembler) {
+    public CompanyKeyResultController(CompanyKeyResultRepository companyKeyResultRepository, CompanyObjectiveRepository companyObjectiveRepository) {
         this.companyKeyResultRepository = companyKeyResultRepository;
         this.companyObjectiveRepository = companyObjectiveRepository;
-        this.assembler = assembler;
     }
 
     /*
