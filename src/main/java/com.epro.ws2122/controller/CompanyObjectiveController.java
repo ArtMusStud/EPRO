@@ -1,5 +1,6 @@
 package com.epro.ws2122.controller;
 
+import com.epro.ws2122.dto.CompanyObjective;
 import com.epro.ws2122.model.CompanyKeyResultSubresourceModel;
 import com.epro.ws2122.model.CompanyObjectiveModel;
 import com.epro.ws2122.repository.CompanyObjectiveRepository;
@@ -41,7 +42,7 @@ public class CompanyObjectiveController {
 
             var halModelBuilder = HalModelBuilder.halModelOf(companyObjectiveResource)
                     .link(linkTo(methodOn(CompanyObjectiveController.class).findOne(id)).withSelfRel()
-                            .andAffordance(afford(methodOn(CompanyObjectiveController.class).replace(id)))
+                            .andAffordance(afford(methodOn(CompanyObjectiveController.class).replace(null, id)))
                             .andAffordance(afford(methodOn(CompanyObjectiveController.class).update(id)))
                             .andAffordance(afford(methodOn(CompanyObjectiveController.class).delete(id))));
 
@@ -62,7 +63,7 @@ public class CompanyObjectiveController {
                 .map(companyObjective -> new CompanyObjectiveModel(companyObjective).add(
                         linkTo((methodOn(CompanyObjectiveController.class)
                                 .findOne(companyObjective.getId()))).withSelfRel()
-                                .andAffordance(afford(methodOn(CompanyObjectiveController.class).replace(companyObjective.getId())))
+                                .andAffordance(afford(methodOn(CompanyObjectiveController.class).replace(null, companyObjective.getId())))
                                 .andAffordance(afford(methodOn(CompanyObjectiveController.class).update(companyObjective.getId())))
                                 .andAffordance(afford(methodOn(CompanyObjectiveController.class).delete(companyObjective.getId())))))
                 .collect(Collectors.toList());
@@ -98,7 +99,7 @@ public class CompanyObjectiveController {
         - implement method
     */
     @PutMapping("/{id}")
-    public ResponseEntity<?> replace(@PathVariable long id) {
+    public ResponseEntity<?> replace(@RequestBody CompanyObjective companyObjectiveDTO, @PathVariable long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
     }
 
