@@ -43,7 +43,7 @@ public class CompanyObjectiveController {
             var halModelBuilder = HalModelBuilder.halModelOf(companyObjectiveResource)
                     .link(linkTo(methodOn(CompanyObjectiveController.class).findOne(id)).withSelfRel()
                             .andAffordance(afford(methodOn(CompanyObjectiveController.class).replace(null, id)))
-                            .andAffordance(afford(methodOn(CompanyObjectiveController.class).update(id)))
+                            .andAffordance(afford(methodOn(CompanyObjectiveController.class).update(null, id)))
                             .andAffordance(afford(methodOn(CompanyObjectiveController.class).delete(id))));
 
             for (var subresource : companyKeyResultSubresourceModelList) {
@@ -64,14 +64,14 @@ public class CompanyObjectiveController {
                         linkTo((methodOn(CompanyObjectiveController.class)
                                 .findOne(companyObjective.getId()))).withSelfRel()
                                 .andAffordance(afford(methodOn(CompanyObjectiveController.class).replace(null, companyObjective.getId())))
-                                .andAffordance(afford(methodOn(CompanyObjectiveController.class).update(companyObjective.getId())))
+                                .andAffordance(afford(methodOn(CompanyObjectiveController.class).update(null, companyObjective.getId())))
                                 .andAffordance(afford(methodOn(CompanyObjectiveController.class).delete(companyObjective.getId())))))
                 .collect(Collectors.toList());
 
         var companyObjectiveResources = CollectionModel.of(
                 companyObjectiveModels,
                 linkTo(methodOn(CompanyObjectiveController.class).findAll()).withSelfRel()
-                        .andAffordance(afford(methodOn(CompanyObjectiveController.class).create())));
+                        .andAffordance(afford(methodOn(CompanyObjectiveController.class).create(null))));
 
         return new ResponseEntity<>(companyObjectiveResources, HttpStatus.OK);
     }
@@ -90,7 +90,7 @@ public class CompanyObjectiveController {
         - implement method
     */
     @PostMapping()
-    public ResponseEntity<?> create() {
+    public ResponseEntity<?> create(@RequestBody CompanyObjective companyObjectiveDTO) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP POST not implemented yet");
     }
 
@@ -108,7 +108,7 @@ public class CompanyObjectiveController {
         - implement method
     */
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable long id) {
+    public ResponseEntity<?> update(@RequestBody CompanyObjective companyObjectiveDTO, @PathVariable long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
     }
 }
