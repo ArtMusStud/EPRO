@@ -2,21 +2,19 @@ package com.epro.ws2122.model;
 
 import com.epro.ws2122.domain.CompanyObjective;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
 import java.time.LocalDate;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
 @Relation(collectionRelation = "companyObjectives", value = "companyObjective")
 public class CompanyObjectiveModel extends RepresentationModel<CompanyObjectiveModel> {
 
-    private String name;
+    private final String name;
     @JsonFormat(shape=JsonFormat.Shape.NUMBER)
-    private LocalDate startDate;
+    private final LocalDate startDate;
 //    private double overall;
 
     public CompanyObjectiveModel(CompanyObjective companyObjective) {
