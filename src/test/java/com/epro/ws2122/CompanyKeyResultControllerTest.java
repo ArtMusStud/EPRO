@@ -93,6 +93,7 @@ public class CompanyKeyResultControllerTest {
                 .andExpect(jsonPath("$.current", is(7.0)))
                 .andExpect(jsonPath("$.goal", is(10.0)))
                 .andExpect(jsonPath("$.confidence", is(0.99)))
+
                 .andExpect(jsonPath("$._embedded.companyObjective.name", is("Company Objective 0")))
                 .andExpect(jsonPath("$._embedded.companyObjective._links.self.href", is("http://localhost/company-objectives/0")))
 
@@ -101,8 +102,29 @@ public class CompanyKeyResultControllerTest {
                 .andExpect(jsonPath("$._links.dashboard.href", is("http://localhost/dashboard")))
 
                 .andExpect(jsonPath("$._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._templates.default.properties", hasSize(4)))
+                .andExpect(jsonPath("$._templates.default.properties[0].name", is("confidence")))
+                .andExpect(jsonPath("$._templates.default.properties[0].type", is("number")))
+                .andExpect(jsonPath("$._templates.default.properties[1].name", is("current")))
+                .andExpect(jsonPath("$._templates.default.properties[1].type", is("number")))
+                .andExpect(jsonPath("$._templates.default.properties[2].name", is("goal")))
+                .andExpect(jsonPath("$._templates.default.properties[2].type", is("number")))
+                .andExpect(jsonPath("$._templates.default.properties[3].name", is("name")))
+                .andExpect(jsonPath("$._templates.default.properties[3].type", is("text")))
+
                 .andExpect(jsonPath("$._templates.update.method", is("PATCH")))
-                .andExpect(jsonPath("$._templates.delete.method", is("DELETE")));
+                .andExpect(jsonPath("$._templates.update.properties", hasSize(4)))
+                .andExpect(jsonPath("$._templates.update.properties[0].name", is("confidence")))
+                .andExpect(jsonPath("$._templates.update.properties[0].type", is("number")))
+                .andExpect(jsonPath("$._templates.update.properties[1].name", is("current")))
+                .andExpect(jsonPath("$._templates.update.properties[1].type", is("number")))
+                .andExpect(jsonPath("$._templates.update.properties[2].name", is("goal")))
+                .andExpect(jsonPath("$._templates.update.properties[2].type", is("number")))
+                .andExpect(jsonPath("$._templates.update.properties[3].name", is("name")))
+                .andExpect(jsonPath("$._templates.update.properties[3].type", is("text")))
+
+                .andExpect(jsonPath("$._templates.delete.method", is("DELETE")))
+                .andExpect(jsonPath("$._templates.delete.properties", hasSize(0)));
     }
 
     @Test
@@ -118,24 +140,59 @@ public class CompanyKeyResultControllerTest {
                 .andExpect(jsonPath("$._embedded.companyKeyResults[0].goal", is(10.0)))
                 .andExpect(jsonPath("$._embedded.companyKeyResults[0].confidence", is(0.99)))
                 .andExpect(jsonPath("$._embedded.companyKeyResults[0]._links.self.href", is("http://localhost/company-objectives/0/company-key-results/0")))
+
                 .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.default.properties", hasSize(4)))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.default.properties[0].name", is("confidence")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.default.properties[0].type", is("number")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.default.properties[1].name", is("current")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.default.properties[1].type", is("number")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.default.properties[2].name", is("goal")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.default.properties[2].type", is("number")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.default.properties[3].name", is("name")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.default.properties[3].type", is("text")))
+
                 .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.update.method", is("PATCH")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.update.properties", hasSize(4)))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.update.properties[0].name", is("confidence")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.update.properties[0].type", is("number")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.update.properties[1].name", is("current")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.update.properties[1].type", is("number")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.update.properties[2].name", is("goal")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.update.properties[2].type", is("number")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.update.properties[3].name", is("name")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.update.properties[3].type", is("text")))
+
                 .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.delete.method", is("DELETE")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[0]._templates.delete.properties", hasSize(0)))
 
                 .andExpect(jsonPath("$._embedded.companyKeyResults[1].name", is("Company Key Result 1")))
                 .andExpect(jsonPath("$._embedded.companyKeyResults[1].current", is(0.0)))
                 .andExpect(jsonPath("$._embedded.companyKeyResults[1].goal", is(200.0)))
                 .andExpect(jsonPath("$._embedded.companyKeyResults[1].confidence", is(0.0)))
                 .andExpect(jsonPath("$._embedded.companyKeyResults[1]._links.self.href", is("http://localhost/company-objectives/0/company-key-results/1")))
+
                 .andExpect(jsonPath("$._embedded.companyKeyResults[1]._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[1]._templates.default.properties", hasSize(4)))
                 .andExpect(jsonPath("$._embedded.companyKeyResults[1]._templates.update.method", is("PATCH")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[1]._templates.update.properties", hasSize(4)))
                 .andExpect(jsonPath("$._embedded.companyKeyResults[1]._templates.delete.method", is("DELETE")))
+                .andExpect(jsonPath("$._embedded.companyKeyResults[1]._templates.delete.properties", hasSize(0)))
 
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/0/company-key-results")))
                 .andExpect(jsonPath("$._links.companyObjective.href", is("http://localhost/company-objectives/0")))
                 .andExpect(jsonPath("$._links.companyKeyResults.href", is("http://localhost/company-objectives/0/company-key-results")))
                 .andExpect(jsonPath("$._links.dashboard.href", is("http://localhost/dashboard")))
 
-                .andExpect(jsonPath("$._templates.default.method", is("POST")));
+                .andExpect(jsonPath("$._templates.default.method", is("POST")))
+                .andExpect(jsonPath("$._templates.default.properties", hasSize(4)))
+                .andExpect(jsonPath("$._templates.default.properties[0].name", is("confidence")))
+                .andExpect(jsonPath("$._templates.default.properties[0].type", is("number")))
+                .andExpect(jsonPath("$._templates.default.properties[1].name", is("current")))
+                .andExpect(jsonPath("$._templates.default.properties[1].type", is("number")))
+                .andExpect(jsonPath("$._templates.default.properties[2].name", is("goal")))
+                .andExpect(jsonPath("$._templates.default.properties[2].type", is("number")))
+                .andExpect(jsonPath("$._templates.default.properties[3].name", is("name")))
+                .andExpect(jsonPath("$._templates.default.properties[3].type", is("text")));
     }
 }

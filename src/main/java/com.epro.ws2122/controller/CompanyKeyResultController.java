@@ -1,5 +1,6 @@
 package com.epro.ws2122.controller;
 
+import com.epro.ws2122.dto.CompanyKeyResult;
 import com.epro.ws2122.model.CompanyKeyResultModel;
 import com.epro.ws2122.model.CompanyObjectiveSubresourceModel;
 import com.epro.ws2122.repository.CompanyKeyResultRepository;
@@ -45,8 +46,8 @@ public class CompanyKeyResultController {
             var halModelBuilder = HalModelBuilder.halModelOf(companyKeyResultResource)
                     .embed(new CompanyObjectiveSubresourceModel(companyObjective))
                     .link(linkTo(methodOn(CompanyKeyResultController.class).findOne(coId, id)).withSelfRel()
-                            .andAffordance(afford(methodOn(CompanyKeyResultController.class).replace(coId, id)))
-                            .andAffordance(afford(methodOn(CompanyKeyResultController.class).update(coId, id)))
+                            .andAffordance(afford(methodOn(CompanyKeyResultController.class).replace(null, coId, id)))
+                            .andAffordance(afford(methodOn(CompanyKeyResultController.class).update(null, coId, id)))
                             .andAffordance(afford(methodOn(CompanyKeyResultController.class).delete(coId, id))))
                     .link(linkTo(methodOn(CompanyKeyResultController.class).findAll(coId)).withRel("companyKeyResults"))
                     .link(linkTo(methodOn(DashboardController.class).dashboard()).withRel("dashboard"));
@@ -67,15 +68,15 @@ public class CompanyKeyResultController {
                 .map(companyKeyResult -> new CompanyKeyResultModel(companyKeyResult).add(
                         linkTo((methodOn(CompanyKeyResultController.class)
                                 .findOne(coId, companyKeyResult.getId()))).withSelfRel()
-                                .andAffordance(afford(methodOn(CompanyKeyResultController.class).replace(coId, companyKeyResult.getId())))
-                                .andAffordance(afford(methodOn(CompanyKeyResultController.class).update(coId, companyKeyResult.getId())))
+                                .andAffordance(afford(methodOn(CompanyKeyResultController.class).replace(null, coId, companyKeyResult.getId())))
+                                .andAffordance(afford(methodOn(CompanyKeyResultController.class).update(null, coId, companyKeyResult.getId())))
                                 .andAffordance(afford(methodOn(CompanyKeyResultController.class).delete(coId, companyKeyResult.getId())))))
                 .collect(Collectors.toList());
 
         var companyKeyResultResources = CollectionModel.of(
                 companyKeyResultModels,
                 linkTo(methodOn(CompanyKeyResultController.class).findAll(coId)).withSelfRel()
-                        .andAffordance(afford(methodOn(CompanyKeyResultController.class).create(coId))),
+                        .andAffordance(afford(methodOn(CompanyKeyResultController.class).create(null, coId))),
                 linkTo(methodOn(CompanyObjectiveController.class).findOne(coId)).withRel("companyObjective"),
                 linkTo(methodOn(CompanyKeyResultController.class).findAll(coId)).withRel("companyKeyResults"),
                 linkTo(methodOn(DashboardController.class).dashboard()).withRel("dashboard"));
@@ -97,7 +98,7 @@ public class CompanyKeyResultController {
         - implement method
     */
     @PostMapping()
-    public ResponseEntity<?> create(@PathVariable long coId) {
+    public ResponseEntity<?> create(@RequestBody CompanyKeyResult companyKeyResultDTO, @PathVariable long coId) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP POST not implemented yet");
     }
 
@@ -106,7 +107,7 @@ public class CompanyKeyResultController {
         - implement method
     */
     @PutMapping("/{id}")
-    public ResponseEntity<?> replace(@PathVariable long coId, @PathVariable("id") long id) {
+    public ResponseEntity<?> replace(@RequestBody CompanyKeyResult companyKeyResultDTO, @PathVariable long coId, @PathVariable("id") long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
     }
 
@@ -115,7 +116,7 @@ public class CompanyKeyResultController {
         - implement method
     */
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable long coId, @PathVariable("id") long id) {
+    public ResponseEntity<?> update(@RequestBody CompanyKeyResult companyKeyResultDTO, @PathVariable long coId, @PathVariable("id") long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
     }
 }
