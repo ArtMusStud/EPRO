@@ -29,7 +29,7 @@ public class CompanyKeyResultController {
       - missing collection resource BUKR and/or BUO
     */
     @GetMapping("/{id}")
-    public ResponseEntity<RepresentationModel<CompanyKeyResultModel>> cokrById(
+    public ResponseEntity<RepresentationModel<CompanyKeyResultModel>> findOne(
             @PathVariable long coId, @PathVariable("id") long id) {
         var cokr = repository.findById(0L);
         if (cokr.isPresent()) {
@@ -49,12 +49,12 @@ public class CompanyKeyResultController {
       - missing collection resource BUKR and/or BUO
      */
     @GetMapping
-    public ResponseEntity<CollectionModel<CompanyKeyResultModel>> cokr(@PathVariable long coId) {
+    public ResponseEntity<CollectionModel<CompanyKeyResultModel>> findAll(@PathVariable long coId) {
         var cokrAll = repository.findAll();
         var cokrResources = assembler.toCollectionModel(cokrAll);
         cokrResources.add(
-                linkTo(methodOn(CompanyKeyResultController.class).cokr(coId)).withSelfRel()
-                        .andAffordance(afford(methodOn(CompanyKeyResultController.class).newCokr(coId))),
+                linkTo(methodOn(CompanyKeyResultController.class).findAll(coId)).withSelfRel()
+                        .andAffordance(afford(methodOn(CompanyKeyResultController.class).create(coId))),
                 linkTo(methodOn(CompanyObjectiveController.class).companyObjectiveById(coId)).withRel("companyObjective"),
                 linkTo(methodOn(DashboardController.class).dashboard()).withRel("dashboard"));
         return new ResponseEntity<>(cokrResources, HttpStatus.OK);
@@ -65,7 +65,7 @@ public class CompanyKeyResultController {
         - implement method
     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCokr(@PathVariable long coId, @PathVariable("id") long id) {
+    public ResponseEntity<?> delete(@PathVariable long coId, @PathVariable("id") long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP DELETE not implemented yet");
     }
 
@@ -74,7 +74,7 @@ public class CompanyKeyResultController {
         - implement method
     */
     @PostMapping()
-    public ResponseEntity<?> newCokr(@PathVariable long coId) {
+    public ResponseEntity<?> create(@PathVariable long coId) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP POST not implemented yet");
     }
 
@@ -83,7 +83,7 @@ public class CompanyKeyResultController {
         - implement method
     */
     @PutMapping("/{id}")
-    public ResponseEntity<?> putCokr(@PathVariable long coId, @PathVariable("id") long id) {
+    public ResponseEntity<?> replace(@PathVariable long coId, @PathVariable("id") long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
     }
 
@@ -92,7 +92,7 @@ public class CompanyKeyResultController {
         - implement method
     */
     @PatchMapping("/{id}")
-    public ResponseEntity<?> patchCokr(@PathVariable long coId, @PathVariable("id") long id) {
+    public ResponseEntity<?> update(@PathVariable long coId, @PathVariable("id") long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
     }
 }

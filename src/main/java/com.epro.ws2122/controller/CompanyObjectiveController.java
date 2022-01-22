@@ -41,9 +41,9 @@ public class CompanyObjectiveController {
 
             var halModelBuilder = HalModelBuilder.halModelOf(companyObjectiveResource)
                     .link(linkTo(methodOn(CompanyObjectiveController.class).companyObjectiveById(id)).withSelfRel()
-                            .andAffordance(afford(methodOn(CompanyObjectiveController.class).putCompanyObjective(id)))
-                            .andAffordance(afford(methodOn(CompanyObjectiveController.class).patchCompanyObjective(id)))
-                            .andAffordance(afford(methodOn(CompanyObjectiveController.class).deleteCompanyObjective(id))));
+                            .andAffordance(afford(methodOn(CompanyObjectiveController.class).replace(id)))
+                            .andAffordance(afford(methodOn(CompanyObjectiveController.class).update(id)))
+                            .andAffordance(afford(methodOn(CompanyObjectiveController.class).delete(id))));
 
             for (var subresource : companyKeyResultSubresourceModelList) {
                 var companyKeyResults = new CompanyKeyResultSubresourceModel(id, subresource);
@@ -60,12 +60,12 @@ public class CompanyObjectiveController {
             - add collection resource of all CO KR corresponding to each requested CO
      */
     @GetMapping
-    public ResponseEntity<CollectionModel<CompanyObjectiveModel>> companyObjectives() {
+    public ResponseEntity<CollectionModel<CompanyObjectiveModel>> findAll() {
         var companyObjectives = repository.findAll();
         var companyObjectiveResources = assembler.toCollectionModel(companyObjectives);
         companyObjectiveResources.add(
-                linkTo(methodOn(CompanyObjectiveController.class).companyObjectives()).withSelfRel()
-                        .andAffordance(afford(methodOn(CompanyObjectiveController.class).newCompanyObjective())));
+                linkTo(methodOn(CompanyObjectiveController.class).findAll()).withSelfRel()
+                        .andAffordance(afford(methodOn(CompanyObjectiveController.class).create())));
         return new ResponseEntity<>(companyObjectiveResources, HttpStatus.OK);
     }
 
@@ -74,7 +74,7 @@ public class CompanyObjectiveController {
             - implement method
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCompanyObjective(@PathVariable long id) {
+    public ResponseEntity<?> delete(@PathVariable long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP DELETE not implemented yet");
     }
 
@@ -83,7 +83,7 @@ public class CompanyObjectiveController {
         - implement method
     */
     @PostMapping()
-    public ResponseEntity<?> newCompanyObjective() {
+    public ResponseEntity<?> create() {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP POST not implemented yet");
     }
 
@@ -92,7 +92,7 @@ public class CompanyObjectiveController {
         - implement method
     */
     @PutMapping("/{id}")
-    public ResponseEntity<?> putCompanyObjective(@PathVariable long id) {
+    public ResponseEntity<?> replace(@PathVariable long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
     }
 
@@ -101,7 +101,7 @@ public class CompanyObjectiveController {
         - implement method
     */
     @PatchMapping("/{id}")
-    public ResponseEntity<?> patchCompanyObjective(@PathVariable long id) {
+    public ResponseEntity<?> update(@PathVariable long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
     }
 }

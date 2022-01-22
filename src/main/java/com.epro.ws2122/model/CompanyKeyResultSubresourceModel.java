@@ -19,7 +19,7 @@ public class CompanyKeyResultSubresourceModel extends RepresentationModel<Compan
         name = companyKeyResult.getName();
         overall = companyKeyResult.getCurrent() / companyKeyResult.getGoal();
         this.add(linkTo((methodOn(CompanyKeyResultController.class)
-                .cokrById(companyObjectiveID, companyKeyResult.getId()))).withSelfRel());
+                .findOne(companyObjectiveID, companyKeyResult.getId()))).withSelfRel());
     }
 }
 

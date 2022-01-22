@@ -1,7 +1,6 @@
 package com.epro.ws2122.assembler;
 
 import com.epro.ws2122.controller.CompanyKeyResultController;
-import com.epro.ws2122.controller.DashboardController;
 import com.epro.ws2122.domain.CompanyKeyResult;
 import com.epro.ws2122.model.CompanyKeyResultModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
@@ -30,10 +29,10 @@ public class CompanyKeyResultAssembler
         var placeHolderID = 0L;
         var companyKeyResultModel = instantiateModel(companyKeyResult);
         companyKeyResultModel.add(
-                linkTo(methodOn(CompanyKeyResultController.class).cokrById(placeHolderID, companyKeyResult.getId())).withSelfRel()
-                        .andAffordance(afford(methodOn(CompanyKeyResultController.class).putCokr(placeHolderID, companyKeyResult.getId())))
-                        .andAffordance(afford(methodOn(CompanyKeyResultController.class).patchCokr(placeHolderID, companyKeyResult.getId())))
-                        .andAffordance(afford(methodOn(CompanyKeyResultController.class).deleteCokr(placeHolderID, companyKeyResult.getId()))));
+                linkTo(methodOn(CompanyKeyResultController.class).findOne(placeHolderID, companyKeyResult.getId())).withSelfRel()
+                        .andAffordance(afford(methodOn(CompanyKeyResultController.class).replace(placeHolderID, companyKeyResult.getId())))
+                        .andAffordance(afford(methodOn(CompanyKeyResultController.class).update(placeHolderID, companyKeyResult.getId())))
+                        .andAffordance(afford(methodOn(CompanyKeyResultController.class).delete(placeHolderID, companyKeyResult.getId()))));
         return companyKeyResultModel;
     }
 }
