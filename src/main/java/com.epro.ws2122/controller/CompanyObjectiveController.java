@@ -11,6 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
@@ -30,8 +33,8 @@ public class CompanyObjectiveController {
             - add link to complete aggregation at level of requested CO
             - add link to dashboard
      */
-    @GetMapping( "/{id}")
-    public ResponseEntity<RepresentationModel<CompanyObjectiveModel>> companyObjectiveById(@PathVariable("id") long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<RepresentationModel<CompanyObjectiveModel>> findOne(@PathVariable("id") long id) {
         var companyObjectiveOptional = repository.findById(id);
         if (companyObjectiveOptional.isPresent()) {
             var companyObjective = companyObjectiveOptional.get();
@@ -40,7 +43,7 @@ public class CompanyObjectiveController {
             var companyKeyResultSubresourceModelList = companyObjective.getCompanyKeyResults();
 
             var halModelBuilder = HalModelBuilder.halModelOf(companyObjectiveResource)
-                    .link(linkTo(methodOn(CompanyObjectiveController.class).companyObjectiveById(id)).withSelfRel()
+                    .link(linkTo(methodOn(CompanyObjectiveController.class).findOne(id)).withSelfRel()
                             .andAffordance(afford(methodOn(CompanyObjectiveController.class).replace(id)))
                             .andAffordance(afford(methodOn(CompanyObjectiveController.class).update(id)))
                             .andAffordance(afford(methodOn(CompanyObjectiveController.class).delete(id))));
@@ -55,17 +58,23 @@ public class CompanyObjectiveController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-    /*
-        ToDo:
-            - add collection resource of all CO KR corresponding to each requested CO
-     */
     @GetMapping
     public ResponseEntity<CollectionModel<CompanyObjectiveModel>> findAll() {
-        var companyObjectives = repository.findAll();
-        var companyObjectiveResources = assembler.toCollectionModel(companyObjectives);
-        companyObjectiveResources.add(
+        var companyObjectiveModels = StreamSupport
+                .stream(repository.findAll().spliterator(), false)
+                .map(companyObjective -> new CompanyObjectiveModel(companyObjective).add(
+                        linkTo((methodOn(CompanyObjectiveController.class)
+                                .findOne(companyObjective.getId()))).withSelfRel()
+                                .andAffordance(afford(methodOn(CompanyObjectiveController.class).replace(companyObjective.getId())))
+                                .andAffordance(afford(methodOn(CompanyObjectiveController.class).update(companyObjective.getId())))
+                                .andAffordance(afford(methodOn(CompanyObjectiveController.class).delete(companyObjective.getId())))))
+                .collect(Collectors.toList());
+
+        var companyObjectiveResources = CollectionModel.of(
+                companyObjectiveModels,
                 linkTo(methodOn(CompanyObjectiveController.class).findAll()).withSelfRel()
                         .andAffordance(afford(methodOn(CompanyObjectiveController.class).create())));
+
         return new ResponseEntity<>(companyObjectiveResources, HttpStatus.OK);
     }
 

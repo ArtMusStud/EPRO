@@ -35,7 +35,7 @@ public class CompanyKeyResultController {
         if (cokr.isPresent()) {
             var cokrResource = assembler.toModel(cokr.get());
             cokrResource.add(
-                    linkTo(methodOn(CompanyObjectiveController.class).companyObjectiveById(coId)).withRel("companyObjective"),
+                    linkTo(methodOn(CompanyObjectiveController.class).findOne(coId)).withRel("companyObjective"),
                     linkTo(methodOn(DashboardController.class).dashboard()).withRel("dashboard"));
             return new ResponseEntity<>(cokrResource, HttpStatus.OK);
         }
@@ -55,7 +55,7 @@ public class CompanyKeyResultController {
         cokrResources.add(
                 linkTo(methodOn(CompanyKeyResultController.class).findAll(coId)).withSelfRel()
                         .andAffordance(afford(methodOn(CompanyKeyResultController.class).create(coId))),
-                linkTo(methodOn(CompanyObjectiveController.class).companyObjectiveById(coId)).withRel("companyObjective"),
+                linkTo(methodOn(CompanyObjectiveController.class).findOne(coId)).withRel("companyObjective"),
                 linkTo(methodOn(DashboardController.class).dashboard()).withRel("dashboard"));
         return new ResponseEntity<>(cokrResources, HttpStatus.OK);
     }
