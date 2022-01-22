@@ -1,6 +1,5 @@
 package com.epro.ws2122.controller;
 
-import com.epro.ws2122.assembler.CompanyObjectiveAssembler;
 import com.epro.ws2122.model.CompanyKeyResultSubresourceModel;
 import com.epro.ws2122.model.CompanyObjectiveModel;
 import com.epro.ws2122.repository.CompanyObjectiveRepository;
@@ -21,11 +20,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 public class CompanyObjectiveController {
 
     private final CompanyObjectiveRepository repository;
-    private final CompanyObjectiveAssembler assembler;
 
-    public CompanyObjectiveController(CompanyObjectiveRepository repository, CompanyObjectiveAssembler assembler) {
+    public CompanyObjectiveController(CompanyObjectiveRepository repository) {
         this.repository = repository;
-        this.assembler = assembler;
     }
 
     /*

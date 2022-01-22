@@ -1,7 +1,5 @@
 package com.epro.ws2122;
 
-import com.epro.ws2122.assembler.CompanyKeyResultAssembler;
-import com.epro.ws2122.assembler.CompanyObjectiveAssembler;
 import com.epro.ws2122.controller.CompanyObjectiveController;
 import com.epro.ws2122.domain.CompanyKeyResult;
 import com.epro.ws2122.domain.CompanyObjective;
@@ -27,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SuppressWarnings("ConstantConditions")
-@WebMvcTest(controllers = {CompanyObjectiveController.class, CompanyObjectiveAssembler.class, CompanyKeyResultAssembler.class})
+@WebMvcTest(controllers = {CompanyObjectiveController.class})
 public class CompanyObjectiveControllerTest {
 
     @Autowired
