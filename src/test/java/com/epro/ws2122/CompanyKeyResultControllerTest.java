@@ -96,12 +96,20 @@ public class CompanyKeyResultControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_FORMS_JSON.toString()))
-                .andExpect(jsonPath("$._templates.default.method", is("PUT")))
-                .andExpect(jsonPath("$._templates.patchCokr.method", is("PATCH")))
-                .andExpect(jsonPath("$._templates.deleteCokr.method", is("DELETE")))
+                .andExpect(jsonPath("$.name", is("Company Key Result 0")))
+                .andExpect(jsonPath("$.current", is(7.0)))
+                .andExpect(jsonPath("$.goal", is(10.0)))
+                .andExpect(jsonPath("$.confidence", is(0.99)))
+                .andExpect(jsonPath("$._embedded.companyObjective.name", is("Company Objective 0")))
+                .andExpect(jsonPath("$._embedded.companyObjective._links.self.href", is("http://localhost/company-objectives/0")))
+
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/0/company-key-results/0")))
-                .andExpect(jsonPath("$._links.companyObjective.href", is("http://localhost/company-objectives/0")))
-                .andExpect(jsonPath("$._links.dashboard.href", is("http://localhost/dashboard")));
+                .andExpect(jsonPath("$._links.companyKeyResults.href", is("http://localhost/company-objectives/0/company-key-results")))
+                .andExpect(jsonPath("$._links.dashboard.href", is("http://localhost/dashboard")))
+
+                .andExpect(jsonPath("$._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._templates.update.method", is("PATCH")))
+                .andExpect(jsonPath("$._templates.delete.method", is("DELETE")));
     }
 
     @Test
