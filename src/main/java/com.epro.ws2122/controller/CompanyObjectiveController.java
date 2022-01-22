@@ -46,10 +46,8 @@ public class CompanyObjectiveController {
                             .andAffordance(afford(methodOn(CompanyObjectiveController.class).deleteCompanyObjective(id))));
 
             for (var subresource : companyKeyResultSubresourceModelList) {
-                halModelBuilder.preview(new CompanyKeyResultSubresourceModel(id, subresource))
-                        .forLink(linkTo((
-                                methodOn(CompanyKeyResultController.class).cokrById(id, subresource.getId())))
-                                .withRel("companyKeyResults"));
+                var companyKeyResults = new CompanyKeyResultSubresourceModel(id, subresource);
+                halModelBuilder.embed(companyKeyResults);
             }
 
             return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.OK);

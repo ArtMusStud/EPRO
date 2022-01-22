@@ -100,14 +100,7 @@ public class CompanyObjectiveControllerTest {
                 .andExpect(jsonPath("$.startDate[0]", is(1970)))
                 .andExpect(jsonPath("$.startDate[1]", is(1)))
                 .andExpect(jsonPath("$.startDate[2]", is(19)))
-
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/0")))
-                .andExpect(jsonPath("$._links.companyKeyResults[0].href", is("http://localhost/company-objectives/0/company-key-results/0")))
-                .andExpect(jsonPath("$._links.companyKeyResults[1].href", is("http://localhost/company-objectives/0/company-key-results/1")))
-
-                .andExpect(jsonPath("$._templates.default.method", is("PUT")))
-                .andExpect(jsonPath("$._templates.patchCompanyObjective.method", is("PATCH")))
-                .andExpect(jsonPath("$._templates.deleteCompanyObjective.method", is("DELETE")))
 
                 .andExpect(jsonPath("$._embedded.companyKeyResults[0].name", is("Company Key Result 0")))
                 .andExpect(jsonPath("$._embedded.companyKeyResults[0].overall", is(0.7)))
@@ -115,7 +108,11 @@ public class CompanyObjectiveControllerTest {
 
                 .andExpect(jsonPath("$._embedded.companyKeyResults[1].name", is("Company Key Result 1")))
                 .andExpect(jsonPath("$._embedded.companyKeyResults[1].overall", is(0.0)))
-                .andExpect(jsonPath("$._embedded.companyKeyResults[1]._links.self.href", is("http://localhost/company-objectives/0/company-key-results/1")));
+                .andExpect(jsonPath("$._embedded.companyKeyResults[1]._links.self.href", is("http://localhost/company-objectives/0/company-key-results/1")))
+
+                .andExpect(jsonPath("$._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._templates.patchCompanyObjective.method", is("PATCH")))
+                .andExpect(jsonPath("$._templates.deleteCompanyObjective.method", is("DELETE")));
     }
 
     @Test
