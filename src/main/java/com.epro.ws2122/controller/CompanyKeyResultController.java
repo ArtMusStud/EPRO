@@ -17,11 +17,35 @@ import java.util.stream.StreamSupport;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
+/**
+ * A {@link RestController} for processing http client requests sent to the templated uri path <br><b>/company-objectives/{coId}/company-key-results/{id}</b>.
+ * <p>
+ * The path contains variables {@code coId} and {@code id}:
+ * <ul>
+ * <li>{@code coId} is mandatory and refers to the id of the company objective resource from which company key result resources are being requested.</li>
+ * <li>{@code id} relates to the id of the requested company key result.</li>
+ * </ul><p>
+ * Client requests that will be processed are:
+ * <ul>
+ * <li>{@link #findOne(long, long) GET} for single resources</li>
+ * <li>{@link #findAll(long) GET} for collection resources</li>
+ * <li>{@link #update(CompanyKeyResult, long, long) PATCH}</li>
+ * <li>{@link #replace(CompanyKeyResult, long, long) PUT}</li>
+ * <li>{@link #create(CompanyKeyResult, long) POST}</li>
+ * <li>{@link #delete(long, long) DELETE}</li>
+ * </ul>
+ */
 @RestController
 @RequestMapping("/company-objectives/{coId}/company-key-results")
 public class CompanyKeyResultController {
 
+    /**
+     * Repository from which to retrieve entities of type {@link com.epro.ws2122.domain.CompanyObjective CompanyObjective}.
+     */
     private final CompanyKeyResultRepository companyKeyResultRepository;
+    /**
+     * Repository from which to retrieve entities of type {@link com.epro.ws2122.domain.CompanyKeyResult CompanyKeyResult}.
+     */
     private final CompanyObjectiveRepository companyObjectiveRepository;
 
     public CompanyKeyResultController(CompanyKeyResultRepository companyKeyResultRepository, CompanyObjectiveRepository companyObjectiveRepository) {
@@ -29,6 +53,20 @@ public class CompanyKeyResultController {
         this.companyObjectiveRepository = companyObjectiveRepository;
     }
 
+    /**
+     * Returns a company key result, depending on whether the uri path leads to an obtainable resource, along with an HTTP status code.
+     * <p>
+     * The data of a company key result resource that is being returned is defined in the DTO class {@link CompanyKeyResultModel}.
+     * <p>
+     * Returned HTTP status codes:
+     * <ul>
+     *     <li>{@code 200} if the resource can be obtained.
+     *     <li>{@code 404} if the uri path doesn't lead to an existing resource.
+     * </ul>
+     * @param coId id of the company objective.
+     * @param id id of the company key result.
+     * @return a company key result resource or null, and an HTTP status code.
+     */
     /*
     ToDo:
       - add missing collection resource BUKR and/or BUO
@@ -57,8 +95,22 @@ public class CompanyKeyResultController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * Returns multiple company key results, depending on whether the uri path leads to obtainable resources, along with an HTTP status code.
+     * <p>
+     * The properties of each of the returned company key result resources (if any) are defined in the DTO {@link CompanyKeyResultModel}
+     * <p>
+     * Returned HTTP status codes:
+     * <ul>
+     *     <li>{@code 200} if the collection resource can be obtained.
+     *     <li>{@code 404} if {@code coId} doesn't lead to an existing resource.
+     * </ul>
+     * @param coId id of the company objective
+     * @return company key result collection resource or an empty list, and an HTTP status code.
+     */
     /*
     ToDo:
+      - right now all ckrs are being returned instead of ckr by coId
       - missing collection resource BUKR and/or BUO
      */
     @GetMapping
