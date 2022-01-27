@@ -22,7 +22,7 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -84,9 +84,9 @@ public class CompanyKeyResultControllerTest {
                 Arrays.asList(companyKeyResult_0, companyKeyResult_1, companyKeyResult_2, companyKeyResult_3));
     }
 
-    @WithMockUser(roles = {"CO OKR Admin", "BUO OKR Admin"})
+    @WithMockUser(roles = {"CO OKR Admin", "BUO OKR Admin", "Read Only User"})
     @Test
-    public void should_return_single_ckr_as_admin() throws Exception {
+    public void should_return_single_ckr_as_authenticated() throws Exception {
         this.mockMvc.perform(get("/company-objectives/0/company-key-results/0").accept(MediaTypes.HAL_FORMS_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -129,9 +129,9 @@ public class CompanyKeyResultControllerTest {
                 .andExpect(jsonPath("$._templates.delete.properties", hasSize(0)));
     }
 
-    @WithMockUser(roles = {"CO OKR Admin", "BUO OKR Admin"})
+    @WithMockUser(roles = {"CO OKR Admin", "BUO OKR Admin", "Read Only User"})
     @Test
-    public void should_return_all_ckr_as_admin() throws Exception {
+    public void should_return_all_ckr_as_authenticated() throws Exception {
         this.mockMvc.perform(get("/company-objectives/0/company-key-results"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -197,5 +197,16 @@ public class CompanyKeyResultControllerTest {
                 .andExpect(jsonPath("$._templates.default.properties[2].type", is("number")))
                 .andExpect(jsonPath("$._templates.default.properties[3].name", is("name")))
                 .andExpect(jsonPath("$._templates.default.properties[3].type", is("text")));
+    }
+
+    @WithMockUser(roles = {"Read Only User"})
+    @Test
+    public void should_return_forbidden_as_read_only_user() throws Exception {
+        this.mockMvc.perform(put("/company-objectives/0/company-key-results/0").accept(MediaTypes.HAL_FORMS_JSON))
+                .andDo(print())
+                .andExpect(status().isForbidden());
+        this.mockMvc.perform(patch("/company-objectives/0/company-key-results/0").accept(MediaTypes.HAL_FORMS_JSON))
+                .andDo(print())
+                .andExpect(status().isForbidden());
     }
 }
