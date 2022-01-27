@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -83,8 +84,9 @@ public class CompanyKeyResultControllerTest {
                 Arrays.asList(companyKeyResult_0, companyKeyResult_1, companyKeyResult_2, companyKeyResult_3));
     }
 
+    @WithMockUser(roles = {"CO OKR Admin", "BUO OKR Admin"})
     @Test
-    public void should_return_single_ckr() throws Exception {
+    public void should_return_single_ckr_as_admin() throws Exception {
         this.mockMvc.perform(get("/company-objectives/0/company-key-results/0").accept(MediaTypes.HAL_FORMS_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -127,8 +129,9 @@ public class CompanyKeyResultControllerTest {
                 .andExpect(jsonPath("$._templates.delete.properties", hasSize(0)));
     }
 
+    @WithMockUser(roles = {"CO OKR Admin", "BUO OKR Admin"})
     @Test
-    public void should_return_all_ckr() throws Exception {
+    public void should_return_all_ckr_as_admin() throws Exception {
         this.mockMvc.perform(get("/company-objectives/0/company-key-results"))
                 .andDo(print())
                 .andExpect(status().isOk())
