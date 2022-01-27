@@ -1,21 +1,19 @@
 package com.epro.ws2122.domain;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+@Data
 @SuperBuilder
 @NoArgsConstructor
 @Entity
 public class BusinessUnitKeyResult extends KeyResult {
 
-    @Getter
-    @Setter
     @OneToOne
     private CompanyKeyResult companyKeyResult;
 
