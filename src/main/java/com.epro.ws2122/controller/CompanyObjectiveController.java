@@ -71,7 +71,7 @@ public class CompanyObjectiveController {
             var companyObjective = companyObjectiveOptional.get();
             var companyObjectiveResource = new CompanyObjectiveModel(companyObjective);
 
-            var companyKeyResultSubresourceModelList = companyObjective.getCompanyKeyResults();
+            var companyKeyResultSubresourceList = companyObjective.getCompanyKeyResults();
 
             var halModelBuilder = HalModelBuilder.halModelOf(companyObjectiveResource)
                     .link(linkTo(methodOn(CompanyObjectiveController.class).findOne(id)).withSelfRel()
@@ -79,7 +79,7 @@ public class CompanyObjectiveController {
                             .andAffordance(afford(methodOn(CompanyObjectiveController.class).update(null, id)))
                             .andAffordance(afford(methodOn(CompanyObjectiveController.class).delete(id))));
 
-            for (var subresource : companyKeyResultSubresourceModelList) {
+            for (var subresource : companyKeyResultSubresourceList) {
                 var companyKeyResults = new CompanyKeyResultSubresourceModel(id, subresource);
                 halModelBuilder.embed(companyKeyResults);
             }
@@ -104,20 +104,20 @@ public class CompanyObjectiveController {
     public ResponseEntity<CollectionModel<CompanyObjectiveModel>> findAll() {
         var companyObjectiveModels = StreamSupport
                 .stream(repository.findAll().spliterator(), false)
-                .map(companyObjective -> new CompanyObjectiveModel(companyObjective).add(
-                        linkTo((methodOn(CompanyObjectiveController.class)
+                .map(companyObjective -> new CompanyObjectiveModel(companyObjective)
+                        .add(linkTo((methodOn(CompanyObjectiveController.class)
                                 .findOne(companyObjective.getId()))).withSelfRel()
                                 .andAffordance(afford(methodOn(CompanyObjectiveController.class).replace(null, companyObjective.getId())))
                                 .andAffordance(afford(methodOn(CompanyObjectiveController.class).update(null, companyObjective.getId())))
                                 .andAffordance(afford(methodOn(CompanyObjectiveController.class).delete(companyObjective.getId())))))
                 .collect(Collectors.toList());
 
-        var companyObjectiveResources = CollectionModel.of(
+        var companyObjectiveResource = CollectionModel.of(
                 companyObjectiveModels,
                 linkTo(methodOn(CompanyObjectiveController.class).findAll()).withSelfRel()
                         .andAffordance(afford(methodOn(CompanyObjectiveController.class).create(null))));
 
-        return new ResponseEntity<>(companyObjectiveResources, HttpStatus.OK);
+        return new ResponseEntity<>(companyObjectiveResource, HttpStatus.OK);
     }
 
     /*
