@@ -9,6 +9,16 @@ import org.springframework.hateoas.server.core.Relation;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ * DTO for class {@link com.epro.ws2122.domain.CompanyKeyResult CompanyKeyResult} that is embedded as a related resource
+ * in the response body of HTTP GET requests.
+ * <p>
+ * The properties of {@link CompanyKeyResultSubresourceModel} are a subset of the properties of
+ * {@link com.epro.ws2122.domain.CompanyKeyResult CompanyKeyResult}. As a sub resource this class
+ * contains even less properties than {@link CompanyKeyResultModel}.
+ * <p>
+ * Contrary to {@link CompanyKeyResultModel} a self link is already added through its {@link #CompanyKeyResultSubresourceModel constructor}.
+ */
 @Getter
 @Relation(collectionRelation = "companyKeyResults", value = "companyKeyResult")
 public class CompanyKeyResultSubresourceModel extends RepresentationModel<CompanyKeyResultSubresourceModel> {
