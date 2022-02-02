@@ -125,7 +125,7 @@ public class CompanyKeyResultController {
                                 .andAffordance(afford(methodOn(CompanyKeyResultController.class).delete(coId, companyKeyResult.getId())))))
                 .collect(Collectors.toList());
 
-        var companyKeyResultResources = CollectionModel.of(
+        var companyKeyResultResource = CollectionModel.of(
                 companyKeyResultModels,
                 linkTo(methodOn(CompanyKeyResultController.class).findAll(coId)).withSelfRel()
                         .andAffordance(afford(methodOn(CompanyKeyResultController.class).create(null, coId))),
@@ -133,7 +133,7 @@ public class CompanyKeyResultController {
                 linkTo(methodOn(CompanyKeyResultController.class).findAll(coId)).withRel("companyKeyResults"),
                 linkTo(methodOn(DashboardController.class).dashboard()).withRel("dashboard"));
 
-        return new ResponseEntity<>(companyKeyResultResources, HttpStatus.OK);
+        return new ResponseEntity<>(companyKeyResultResource, HttpStatus.OK);
     }
 
     /*

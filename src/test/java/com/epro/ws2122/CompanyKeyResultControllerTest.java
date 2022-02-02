@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = {CompanyKeyResultController.class, CompanyObjectiveRepository.class})
+@WebMvcTest(controllers = {CompanyKeyResultController.class})
 public class CompanyKeyResultControllerTest {
 
     @Autowired
