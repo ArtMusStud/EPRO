@@ -98,7 +98,7 @@ public class CompanyKeyResultController {
     /**
      * Returns multiple company key results, depending on whether the uri path leads to obtainable resources, along with an HTTP status code.
      * <p>
-     * The properties of each of the returned company key result resources (if any) are defined in the DTO {@link CompanyKeyResultModel}
+     * The properties of each of the returned company key result resources (if any) are defined in the DTO {@link CompanyKeyResultModel}.
      * <p>
      * Returned HTTP status codes:
      * <ul>
