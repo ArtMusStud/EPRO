@@ -1,7 +1,6 @@
 package com.epro.ws2122.controller;
 
 import com.epro.ws2122.dto.CompanyObjective;
-import com.epro.ws2122.model.CompanyKeyResultModel;
 import com.epro.ws2122.model.CompanyKeyResultSubresourceModel;
 import com.epro.ws2122.model.CompanyObjectiveModel;
 import com.epro.ws2122.repository.CompanyObjectiveRepository;
