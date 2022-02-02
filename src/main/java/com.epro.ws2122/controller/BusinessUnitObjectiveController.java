@@ -59,7 +59,10 @@ public class BusinessUnitObjectiveController {
                                 .findOne(businessUnitObjective.getId())).withSelfRel()))
                 .collect(Collectors.toList());
 
-        var businessUnitObjectiveResource = CollectionModel.of(businessUnitObjectiveModels);
+        var businessUnitObjectiveResource = CollectionModel.of(
+                businessUnitObjectiveModels,
+                linkTo(methodOn(BusinessUnitObjectiveController.class).findAll()).withSelfRel());
+
         return new ResponseEntity<>(businessUnitObjectiveResource, HttpStatus.OK);
     }
 }

@@ -18,6 +18,8 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -76,7 +78,15 @@ public class BusinessUnitObjectiveControllerTest {
         this.mockMvc.perform(get("/business-unit-objectives/0").accept(MediaTypes.HAL_FORMS_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_FORMS_JSON.toString()));
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_FORMS_JSON.toString()))
+
+                .andExpect(jsonPath("$.name", is("Business Unit Objective 0")))
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/business-unit-objectives/0")))
+
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0].name", is("Business Unit Key Result 0")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._links.self.href", is("http://localhost/business-unit-objectives/0/business-unit-key-results/0")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[1].name", is("Business Unit Key Result 1")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[1]._links.self.href", is("http://localhost/business-unit-objectives/0/business-unit-key-results/1")));
     }
 
     @Test
@@ -84,6 +94,15 @@ public class BusinessUnitObjectiveControllerTest {
         this.mockMvc.perform(get("/business-unit-objectives").accept(MediaTypes.HAL_FORMS_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_FORMS_JSON.toString()));
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_FORMS_JSON.toString()))
+
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/business-unit-objectives")))
+                .andExpect(jsonPath("$._embedded.businessUnitObjectives", hasSize(2)))
+
+                .andExpect(jsonPath("$._embedded.businessUnitObjectives[0].name", is("Business Unit Objective 0")))
+                .andExpect(jsonPath("$._embedded.businessUnitObjectives[0]._links.self.href", is("http://localhost/business-unit-objectives/0")))
+
+                .andExpect(jsonPath("$._embedded.businessUnitObjectives[1].name", is("Business Unit Objective 1")))
+                .andExpect(jsonPath("$._embedded.businessUnitObjectives[1]._links.self.href", is("http://localhost/business-unit-objectives/1")));
     }
 }
