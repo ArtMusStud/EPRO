@@ -33,6 +33,7 @@ public class CompanyKeyResultControllerTest {
 
     @MockBean
     private CompanyKeyResultRepository mockCompanyKeyResultRepository;
+
     @MockBean
     private CompanyObjectiveRepository mockCompanyObjectiveRepository;
 

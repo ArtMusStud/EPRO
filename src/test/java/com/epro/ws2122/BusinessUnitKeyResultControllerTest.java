@@ -32,10 +32,10 @@ public class BusinessUnitKeyResultControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    BusinessUnitObjectiveRepository businessUnitObjectiveRepository;
+    BusinessUnitObjectiveRepository mockBusinessUnitObjectiveRepository;
 
     @MockBean
-    BusinessUnitKeyResultRepository businessUnitKeyResultRepository;
+    BusinessUnitKeyResultRepository mockBusinessUnitKeyResultRepository;
 
     @BeforeEach
     public void initializeData() {
@@ -66,9 +66,9 @@ public class BusinessUnitKeyResultControllerTest {
                 .businessUnitKeyResults(Arrays.asList(businessUnitKeyResult_0, businessUnitKeyResult_1))
                 .build();
 
-        Mockito.when(businessUnitKeyResultRepository.findById(0L)).thenReturn(Optional.of(businessUnitKeyResult_0));
-        Mockito.when(businessUnitObjectiveRepository.findById(0L)).thenReturn(Optional.ofNullable(businessUnitObjective_0));
-        Mockito.when(businessUnitKeyResultRepository.findAll()).thenReturn(
+        Mockito.when(mockBusinessUnitKeyResultRepository.findById(0L)).thenReturn(Optional.of(businessUnitKeyResult_0));
+        Mockito.when(mockBusinessUnitObjectiveRepository.findById(0L)).thenReturn(Optional.ofNullable(businessUnitObjective_0));
+        Mockito.when(mockBusinessUnitKeyResultRepository.findAll()).thenReturn(
                 Arrays.asList(businessUnitKeyResult_0, businessUnitKeyResult_1, businessUnitKeyResult_2, businessUnitKeyResult_3));
     }
 
@@ -82,7 +82,7 @@ public class BusinessUnitKeyResultControllerTest {
     }
 
     @Test
-    public void should_return_all_business_unit_objectives() throws Exception {
+    public void should_return_all_bukr() throws Exception {
         this.mockMvc.perform(get("/business-unit-objectives/0/business-unit-key-results")
                         .accept(MediaTypes.HAL_FORMS_JSON))
                 .andDo(print())

@@ -2,6 +2,7 @@ package com.epro.ws2122.controller;
 
 import com.epro.ws2122.model.BusinessUnitKeyResultModel;
 import com.epro.ws2122.model.BusinessUnitObjectiveModel;
+import com.epro.ws2122.model.CompanyObjectiveSubresourceModel;
 import com.epro.ws2122.repository.BusinessUnitKeyResultRepository;
 import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
 import org.springframework.hateoas.CollectionModel;
@@ -43,7 +44,10 @@ public class BusinessUnitKeyResultController {
 
             var businessUnitKeyResultResource = new BusinessUnitKeyResultModel(businessUnitKeyResult);
 
-            return new ResponseEntity<>(businessUnitKeyResultResource, HttpStatus.OK);
+            var halModelBuilder = HalModelBuilder.halModelOf(businessUnitKeyResultResource)
+                    .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findOne(buoId, id)).withSelfRel());
+
+            return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
