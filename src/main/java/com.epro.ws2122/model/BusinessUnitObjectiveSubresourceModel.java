@@ -13,7 +13,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Getter
-@Relation(collectionRelation = "businessUnitKeyResults", value = "businessUnitKeyResult")
+@Relation(collectionRelation = "businessUnitObjectives", value = "businessUnitObjective")
 public class BusinessUnitObjectiveSubresourceModel extends RepresentationModel<BusinessUnitObjectiveSubresourceModel> {
 
     private final String name;

@@ -2,10 +2,15 @@ package com.epro.ws2122;
 
 import com.epro.ws2122.controller.BusinessUnitKeyResultController;
 import com.epro.ws2122.controller.BusinessUnitObjectiveController;
+import com.epro.ws2122.controller.CompanyKeyResultController;
 import com.epro.ws2122.domain.BusinessUnitKeyResult;
 import com.epro.ws2122.domain.BusinessUnitObjective;
+import com.epro.ws2122.domain.CompanyKeyResult;
+import com.epro.ws2122.domain.CompanyObjective;
 import com.epro.ws2122.repository.BusinessUnitKeyResultRepository;
 import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
+import com.epro.ws2122.repository.CompanyKeyResultRepository;
+import com.epro.ws2122.repository.CompanyObjectiveRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -25,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = {BusinessUnitKeyResultController.class, BusinessUnitObjectiveController.class})
+@WebMvcTest(controllers = {BusinessUnitKeyResultController.class, BusinessUnitObjectiveController.class, CompanyKeyResultController.class})
 public class BusinessUnitKeyResultControllerTest {
 
     @Autowired
@@ -37,11 +42,33 @@ public class BusinessUnitKeyResultControllerTest {
     @MockBean
     BusinessUnitKeyResultRepository mockBusinessUnitKeyResultRepository;
 
+    @MockBean
+    CompanyObjectiveRepository mockCompanyObjectiveRepository;
+
+    @MockBean
+    CompanyKeyResultRepository mockCompanyKeyResultRepository;
+
     @BeforeEach
     public void initializeData() {
+        var companyObjective_0 = CompanyObjective.builder()
+                .id(0L)
+                .name("Company Objective 0")
+                .startDate(LocalDate.of(1970, 1, 19))
+                .build();
+
+        var companyKeyResult_0 = CompanyKeyResult.builder()
+                .id(0L)
+                .name("Company Key Result 0")
+                .current(7)
+                .goal(10)
+                .confidence(0.99)
+                .companyObjective(companyObjective_0)
+                .build();
+
         var businessUnitKeyResult_0 = BusinessUnitKeyResult.builder()
                 .id(0L)
                 .name("Business Unit Key Result 0")
+                .companyKeyResult(companyKeyResult_0)
                 .build();
 
         var businessUnitKeyResult_1 = BusinessUnitKeyResult.builder()
@@ -65,6 +92,7 @@ public class BusinessUnitKeyResultControllerTest {
                 .startDate(LocalDate.of(1970, 1, 19))
                 .businessUnitKeyResults(Arrays.asList(businessUnitKeyResult_0, businessUnitKeyResult_1))
                 .build();
+
 
         Mockito.when(mockBusinessUnitKeyResultRepository.findById(0L)).thenReturn(Optional.of(businessUnitKeyResult_0));
         Mockito.when(mockBusinessUnitObjectiveRepository.findById(0L)).thenReturn(Optional.ofNullable(businessUnitObjective_0));
