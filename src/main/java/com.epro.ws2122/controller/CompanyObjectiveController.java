@@ -70,18 +70,15 @@ public class CompanyObjectiveController {
         if (companyObjectiveOptional.isPresent()) {
             var companyObjective = companyObjectiveOptional.get();
             var companyObjectiveResource = new CompanyObjectiveModel(companyObjective);
-
-            var companyKeyResultSubresourceList = companyObjective.getCompanyKeyResults();
-
             var halModelBuilder = HalModelBuilder.halModelOf(companyObjectiveResource)
                     .link(linkTo(methodOn(CompanyObjectiveController.class).findOne(id)).withSelfRel()
                             .andAffordance(afford(methodOn(CompanyObjectiveController.class).replace(null, id)))
                             .andAffordance(afford(methodOn(CompanyObjectiveController.class).update(null, id)))
                             .andAffordance(afford(methodOn(CompanyObjectiveController.class).delete(id))));
 
-            for (var subresource : companyKeyResultSubresourceList) {
-                var companyKeyResults = new CompanyKeyResultSubresourceModel(id, subresource);
-                halModelBuilder.embed(companyKeyResults);
+            for (var subresource : companyObjective.getCompanyKeyResults()) {
+                var companyKeyResult = new CompanyKeyResultSubresourceModel(id, subresource);
+                halModelBuilder.embed(companyKeyResult);
             }
 
             return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.OK);

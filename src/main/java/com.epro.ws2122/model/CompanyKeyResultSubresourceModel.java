@@ -22,6 +22,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Getter
 @Relation(collectionRelation = "companyKeyResults", value = "companyKeyResult")
 public class CompanyKeyResultSubresourceModel extends RepresentationModel<CompanyKeyResultSubresourceModel> {
+
     private final String name;
     private final double overall;
 

@@ -9,6 +9,7 @@ import org.springframework.hateoas.server.core.Relation;
 @Getter
 @Relation(collectionRelation = "businessUnitKeyResults", value = "businessUnitKeyResult")
 public class BusinessUnitKeyResultModel extends RepresentationModel<BusinessUnitKeyResultModel> {
+
     private final String name;
 
     public BusinessUnitKeyResultModel(BusinessUnitKeyResult businessUnitKeyResult) {
