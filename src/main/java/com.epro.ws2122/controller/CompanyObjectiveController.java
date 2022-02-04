@@ -74,7 +74,8 @@ public class CompanyObjectiveController {
                     .link(linkTo(methodOn(CompanyObjectiveController.class).findOne(id)).withSelfRel()
                             .andAffordance(afford(methodOn(CompanyObjectiveController.class).replace(null, id)))
                             .andAffordance(afford(methodOn(CompanyObjectiveController.class).update(null, id)))
-                            .andAffordance(afford(methodOn(CompanyObjectiveController.class).delete(id))));
+                            .andAffordance(afford(methodOn(CompanyObjectiveController.class).delete(id))))
+                    .link(linkTo(methodOn(CompanyObjectiveController.class).findAll()).withRel("companyObjectives"));
 
             for (var subresource : co.getCompanyKeyResults()) {
                 var ckr = new CompanyKeyResultSubresourceModel(id, subresource);

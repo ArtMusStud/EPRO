@@ -87,8 +87,7 @@ public class CompanyKeyResultController {
                             .andAffordance(afford(methodOn(CompanyKeyResultController.class).replace(null, coId, id)))
                             .andAffordance(afford(methodOn(CompanyKeyResultController.class).update(null, coId, id)))
                             .andAffordance(afford(methodOn(CompanyKeyResultController.class).delete(coId, id))))
-                    .link(linkTo(methodOn(CompanyKeyResultController.class).findAll(coId)).withRel("companyKeyResults"))
-                    .link(linkTo(methodOn(DashboardController.class).dashboard()).withRel("dashboard"));
+                    .link(linkTo(methodOn(CompanyKeyResultController.class).findAll(coId)).withRel("companyKeyResults"));
 
             return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.OK);
         }
@@ -129,9 +128,7 @@ public class CompanyKeyResultController {
                 ckrModels,
                 linkTo(methodOn(CompanyKeyResultController.class).findAll(coId)).withSelfRel()
                         .andAffordance(afford(methodOn(CompanyKeyResultController.class).create(null, coId))),
-                linkTo(methodOn(CompanyObjectiveController.class).findOne(coId)).withRel("companyObjective"),
-                linkTo(methodOn(CompanyKeyResultController.class).findAll(coId)).withRel("companyKeyResults"),
-                linkTo(methodOn(DashboardController.class).dashboard()).withRel("dashboard"));
+                linkTo(methodOn(CompanyObjectiveController.class).findOne(coId)).withRel("companyObjective"));
 
         return new ResponseEntity<>(ckrResource, HttpStatus.OK);
     }
