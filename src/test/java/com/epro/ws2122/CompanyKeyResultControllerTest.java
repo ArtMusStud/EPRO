@@ -75,12 +75,12 @@ public class CompanyKeyResultControllerTest {
                 .id(0L)
                 .name("Company Objective 0")
                 .startDate(LocalDate.of(1970, 1, 19))
-                .companyKeyResults(Arrays.asList(companyKeyResult_0, companyKeyResult_1))
+                .companyKeyResults(Arrays.asList(companyKeyResult_0, companyKeyResult_1, companyKeyResult_2, companyKeyResult_3))
                 .build();
 
         Mockito.when(mockCompanyKeyResultRepository.findById(0L)).thenReturn(Optional.of(companyKeyResult_0));
         Mockito.when(mockCompanyObjectiveRepository.findById(0L)).thenReturn(Optional.ofNullable(companyObjective_0));
-        Mockito.when(mockCompanyKeyResultRepository.findAll()).thenReturn(
+        Mockito.when(mockCompanyKeyResultRepository.findAllByCompanyObjective(companyObjective_0)).thenReturn(
                 Arrays.asList(companyKeyResult_0, companyKeyResult_1, companyKeyResult_2, companyKeyResult_3));
     }
 

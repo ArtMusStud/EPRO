@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
@@ -109,28 +108,34 @@ public class CompanyKeyResultController {
      */
     /*
     ToDo:
-      - right now all ckrs are being returned instead of ckr by coId
       - missing collection resource BUKR and/or BUO
      */
     @GetMapping
     public ResponseEntity<CollectionModel<CompanyKeyResultModel>> findAll(@PathVariable long coId) {
-        var ckrModels = StreamSupport
-                .stream(ckrRepository.findAll().spliterator(), false)
-                .map(ckr -> new CompanyKeyResultModel(ckr).add(
-                        linkTo((methodOn(CompanyKeyResultController.class)
-                                .findOne(coId, ckr.getId()))).withSelfRel()
-                                .andAffordance(afford(methodOn(CompanyKeyResultController.class).replace(null, coId, ckr.getId())))
-                                .andAffordance(afford(methodOn(CompanyKeyResultController.class).update(null, coId, ckr.getId())))
-                                .andAffordance(afford(methodOn(CompanyKeyResultController.class).delete(coId, ckr.getId())))))
-                .collect(Collectors.toList());
+        var coOptional = coRepository.findById(coId);
+        if (coOptional.isPresent()) {
+            var co = coOptional.get();
+            var ckrModels = ckrRepository
+                    .findAllByCompanyObjective(co)
+                    .stream()
+                    .map(ckr -> new CompanyKeyResultModel(ckr).add(
+                            linkTo((methodOn(CompanyKeyResultController.class)
+                                    .findOne(coId, ckr.getId()))).withSelfRel()
+                                    .andAffordance(afford(methodOn(CompanyKeyResultController.class).replace(null, coId, ckr.getId())))
+                                    .andAffordance(afford(methodOn(CompanyKeyResultController.class).update(null, coId, ckr.getId())))
+                                    .andAffordance(afford(methodOn(CompanyKeyResultController.class).delete(coId, ckr.getId())))))
+                    .collect(Collectors.toList());
 
-        var ckrResource = CollectionModel.of(
-                ckrModels,
-                linkTo(methodOn(CompanyKeyResultController.class).findAll(coId)).withSelfRel()
-                        .andAffordance(afford(methodOn(CompanyKeyResultController.class).create(null, coId))),
-                linkTo(methodOn(CompanyObjectiveController.class).findOne(coId)).withRel("companyObjective"));
+            var ckrResource = CollectionModel.of(
+                    ckrModels,
+                    linkTo(methodOn(CompanyKeyResultController.class).findAll(coId)).withSelfRel()
+                            .andAffordance(afford(methodOn(CompanyKeyResultController.class).create(null, coId))),
+                    linkTo(methodOn(CompanyObjectiveController.class).findOne(coId)).withRel("companyObjective"));
 
-        return new ResponseEntity<>(ckrResource, HttpStatus.OK);
+            return new ResponseEntity<>(ckrResource, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
     }
 
     /*
