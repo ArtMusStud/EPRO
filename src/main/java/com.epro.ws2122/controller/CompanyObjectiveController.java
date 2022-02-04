@@ -19,14 +19,14 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 /**
  * A {@link RestController} for processing http client requests sent to the templated uri path <br><b>/company-objectives/{id}</b>.
  * <p>
- * The path contains variable {@code id}:
+ * The path contains the variable {@code id}:
  * <ul>
  * <li>{@code id} relates to the id of the requested company objective.</li>
  * </ul><p>
  * Client requests that will be processed are:
  * <ul>
- * <li>{@link #findOne(long) GET} for single resources</li>
- * <li>{@link #findAll() GET} for collection resources</li>
+ * <li>{@link #findOne(long) GET} for a single resource</li>
+ * <li>{@link #findAll() GET} for a collection resource</li>
  * <li>{@link #update(CompanyObjective, long) PATCH}</li>
  * <li>{@link #replace(CompanyObjective, long) PUT}</li>
  * <li>{@link #create(CompanyObjective) POST}</li>
@@ -49,9 +49,9 @@ public class CompanyObjectiveController {
     /**
      * Returns a company objective, depending on whether the uri path leads to an obtainable resource, along with an HTTP status code.
      * <p>
-     * The data of a company objective resource that is being returned is defined in the DTO class {@link CompanyObjectiveModel}.
+     * The data of a returned company objective resource is defined in the DTO class {@link CompanyObjectiveModel}.
      * <p>
-     * Returned HTTP status codes:
+     * HTTP status codes returned:
      * <ul>
      *     <li>{@code 200} if the resource can be obtained.
      *     <li>{@code 404} if the uri path doesn't lead to an existing resource.
@@ -87,11 +87,11 @@ public class CompanyObjectiveController {
     }
 
     /**
-     * Returns multiple company objectives, depending on whether the uri path leads to obtainable resources, along with an HTTP status code.
+     * Returns a collection resource of multiple company objectives, depending on whether the uri path leads to obtainable resources, along with an HTTP status code.
      * <p>
-     * The properties of each of the returned company objective resources (if any) are defined in the DTO {@link CompanyObjectiveModel}.
+     * The properties of each of the returned company objective resources are defined in the DTO {@link CompanyObjectiveModel}.
      * <p>
-     * Returned HTTP status codes:
+     * HTTP status codes returned:
      * <ul>
      *     <li>{@code 200} if the collection resource can be obtained.
      * </ul>

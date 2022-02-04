@@ -19,15 +19,15 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 /**
  * A {@link RestController} for processing http client requests sent to the templated uri path <br><b>/company-objectives/{coId}/company-key-results/{id}</b>.
  * <p>
- * The path contains variables {@code coId} and {@code id}:
+ * The path contains the variables {@code coId} and {@code id}:
  * <ul>
  * <li>{@code coId} is mandatory and refers to the id of the company objective resource from which company key result resources are being requested.</li>
  * <li>{@code id} relates to the id of the requested company key result.</li>
  * </ul><p>
  * Client requests that will be processed are:
  * <ul>
- * <li>{@link #findOne(long, long) GET} for single resources</li>
- * <li>{@link #findAll(long) GET} for collection resources</li>
+ * <li>{@link #findOne(long, long) GET} for a single resource</li>
+ * <li>{@link #findAll(long) GET} for a collection resource</li>
  * <li>{@link #update(CompanyKeyResult, long, long) PATCH}</li>
  * <li>{@link #replace(CompanyKeyResult, long, long) PUT}</li>
  * <li>{@link #create(CompanyKeyResult, long) POST}</li>
@@ -55,9 +55,9 @@ public class CompanyKeyResultController {
     /**
      * Returns a company key result, depending on whether the uri path leads to an obtainable resource, along with an HTTP status code.
      * <p>
-     * The data of a company key result resource that is being returned is defined in the DTO class {@link CompanyKeyResultModel}.
+     * The data of a returned company key result resource is defined in the DTO class {@link CompanyKeyResultModel}.
      * <p>
-     * Returned HTTP status codes:
+     * HTTP status codes returned:
      * <ul>
      *     <li>{@code 200} if the resource can be obtained.
      *     <li>{@code 404} if the uri path doesn't lead to an existing resource.
@@ -94,11 +94,11 @@ public class CompanyKeyResultController {
     }
 
     /**
-     * Returns multiple company key results, depending on whether the uri path leads to obtainable resources, along with an HTTP status code.
+     * Returns a collection resource of multiple company key results, depending on whether the uri path leads to obtainable resources, along with an HTTP status code.
      * <p>
-     * The properties of each of the returned company key result resources (if any) are defined in the DTO {@link CompanyKeyResultModel}.
+     * The properties of each of the returned company key result resources are defined in the DTO {@link CompanyKeyResultModel}.
      * <p>
-     * Returned HTTP status codes:
+     * HTTP status codes returned:
      * <ul>
      *     <li>{@code 200} if the collection resource can be obtained.
      *     <li>{@code 404} if {@code coId} doesn't lead to an existing resource.
