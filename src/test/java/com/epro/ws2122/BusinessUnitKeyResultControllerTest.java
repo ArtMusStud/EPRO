@@ -25,10 +25,12 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @WebMvcTest(controllers = {BusinessUnitKeyResultController.class, BusinessUnitObjectiveController.class, CompanyKeyResultController.class})
 public class BusinessUnitKeyResultControllerTest {
@@ -106,7 +108,41 @@ public class BusinessUnitKeyResultControllerTest {
                         .accept(MediaTypes.HAL_FORMS_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_FORMS_JSON.toString()));
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_FORMS_JSON.toString()))
+                .andExpect(jsonPath("$.name", is("Business Unit Key Result 0")))
+
+                .andExpect(jsonPath("$._embedded.businessUnitObjective.name", is("Business Unit Objective 0")))
+                .andExpect(jsonPath("$._embedded.businessUnitObjective._links.self.href", is("http://localhost/business-unit-objectives/0")))
+                .andExpect(jsonPath("$._embedded.companyKeyResult.name", is("Company Key Result 0")))
+                .andExpect(jsonPath("$._embedded.companyKeyResult.overall", is(0.7)))
+                .andExpect(jsonPath("$._embedded.companyKeyResult._links.self.href", is("http://localhost/company-objectives/0/company-key-results/0")))
+
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/business-unit-objectives/0/business-unit-key-results/0")))
+
+                .andExpect(jsonPath("$._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._templates.default.properties", hasSize(4)))
+                .andExpect(jsonPath("$._templates.default.properties[0].name", is("confidence")))
+                .andExpect(jsonPath("$._templates.default.properties[0].type", is("number")))
+                .andExpect(jsonPath("$._templates.default.properties[1].name", is("current")))
+                .andExpect(jsonPath("$._templates.default.properties[1].type", is("number")))
+                .andExpect(jsonPath("$._templates.default.properties[2].name", is("goal")))
+                .andExpect(jsonPath("$._templates.default.properties[2].type", is("number")))
+                .andExpect(jsonPath("$._templates.default.properties[3].name", is("name")))
+                .andExpect(jsonPath("$._templates.default.properties[3].type", is("text")))
+
+                .andExpect(jsonPath("$._templates.update.method", is("PATCH")))
+                .andExpect(jsonPath("$._templates.update.properties", hasSize(4)))
+                .andExpect(jsonPath("$._templates.update.properties[0].name", is("confidence")))
+                .andExpect(jsonPath("$._templates.update.properties[0].type", is("number")))
+                .andExpect(jsonPath("$._templates.update.properties[1].name", is("current")))
+                .andExpect(jsonPath("$._templates.update.properties[1].type", is("number")))
+                .andExpect(jsonPath("$._templates.update.properties[2].name", is("goal")))
+                .andExpect(jsonPath("$._templates.update.properties[2].type", is("number")))
+                .andExpect(jsonPath("$._templates.update.properties[3].name", is("name")))
+                .andExpect(jsonPath("$._templates.update.properties[3].type", is("text")))
+
+                .andExpect(jsonPath("$._templates.delete.method", is("DELETE")))
+                .andExpect(jsonPath("$._templates.delete.properties", hasSize(0)));
     }
 
     @Test
@@ -115,7 +151,60 @@ public class BusinessUnitKeyResultControllerTest {
                         .accept(MediaTypes.HAL_FORMS_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_FORMS_JSON.toString()));
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_FORMS_JSON.toString()))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults", hasSize(4)))
+
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0].name", is("Business Unit Key Result 0")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._links.self.href", is("http://localhost/business-unit-objectives/0/business-unit-key-results/0")))
+
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.default.properties", hasSize(4)))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.default.properties[0].name", is("confidence")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.default.properties[0].type", is("number")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.default.properties[1].name", is("current")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.default.properties[1].type", is("number")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.default.properties[2].name", is("goal")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.default.properties[2].type", is("number")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.default.properties[3].name", is("name")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.default.properties[3].type", is("text")))
+
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.update.method", is("PATCH")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.update.properties", hasSize(4)))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.update.properties[0].name", is("confidence")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.update.properties[0].type", is("number")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.update.properties[1].name", is("current")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.update.properties[1].type", is("number")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.update.properties[2].name", is("goal")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.update.properties[2].type", is("number")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.update.properties[3].name", is("name")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.update.properties[3].type", is("text")))
+
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.delete.method", is("DELETE")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._templates.delete.properties", hasSize(0)))
+
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[1].name", is("Business Unit Key Result 1")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[1]._links.self.href", is("http://localhost/business-unit-objectives/0/business-unit-key-results/1")))
+
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[1]._templates.default.method", is("PUT")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[1]._templates.default.properties", hasSize(4)))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[1]._templates.update.method", is("PATCH")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[1]._templates.update.properties", hasSize(4)))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[1]._templates.delete.method", is("DELETE")))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults[1]._templates.delete.properties", hasSize(0)))
+
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/business-unit-objectives/0/business-unit-key-results")))
+
+                .andExpect(jsonPath("$._templates.default.method", is("POST")))
+                .andExpect(jsonPath("$._templates.default.properties", hasSize(4)))
+                .andExpect(jsonPath("$._templates.default.properties[0].name", is("confidence")))
+                .andExpect(jsonPath("$._templates.default.properties[0].type", is("number")))
+                .andExpect(jsonPath("$._templates.default.properties[1].name", is("current")))
+                .andExpect(jsonPath("$._templates.default.properties[1].type", is("number")))
+                .andExpect(jsonPath("$._templates.default.properties[2].name", is("goal")))
+                .andExpect(jsonPath("$._templates.default.properties[2].type", is("number")))
+                .andExpect(jsonPath("$._templates.default.properties[3].name", is("name")))
+                .andExpect(jsonPath("$._templates.default.properties[3].type", is("text")));
+
     }
 }
 

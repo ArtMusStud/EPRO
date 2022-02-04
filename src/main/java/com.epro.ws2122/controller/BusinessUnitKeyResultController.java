@@ -1,7 +1,6 @@
 package com.epro.ws2122.controller;
 
 import com.epro.ws2122.dto.BusinessUnitKeyResult;
-import com.epro.ws2122.dto.CompanyKeyResult;
 import com.epro.ws2122.model.BusinessUnitKeyResultModel;
 import com.epro.ws2122.model.BusinessUnitObjectiveSubresourceModel;
 import com.epro.ws2122.model.CompanyKeyResultSubresourceModel;
@@ -17,8 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController
 @RequestMapping("/business-unit-objectives/{buoId}/business-unit-key-results")
@@ -45,7 +43,10 @@ public class BusinessUnitKeyResultController {
             var halModelBuilder = HalModelBuilder.halModelOf(bukrResource)
                     .embed(new BusinessUnitObjectiveSubresourceModel(buo))
                     .embed(new CompanyKeyResultSubresourceModel(assignedCompanyKeyResult.getCompanyObjective().getId(), assignedCompanyKeyResult))
-                    .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findOne(buoId, id)).withSelfRel());
+                    .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findOne(buoId, id)).withSelfRel()
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).replace(null, buoId, id)))
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).update(null, buoId, id)))
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).delete(buoId, id))));
 
             return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.OK);
         }
@@ -62,10 +63,18 @@ public class BusinessUnitKeyResultController {
                 .stream(bukrRepository.findAll().spliterator(), false)
                 .map(bukr -> new BusinessUnitKeyResultModel(bukr)
                         .add(linkTo(methodOn(BusinessUnitKeyResultController.class)
-                                .findOne(buoId, bukr.getId())).withSelfRel()))
+                                .findOne(buoId, bukr.getId())).withSelfRel()
+                                .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).replace(null, buoId, bukr.getId())))
+                                .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).update(null, buoId, bukr.getId())))
+                                .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).delete(buoId, bukr.getId())))))
                 .collect(Collectors.toList());
 
-        var buoResource = CollectionModel.of(buoModels);
+        var buoResource = CollectionModel.of(
+                buoModels,
+                linkTo(methodOn(BusinessUnitKeyResultController.class).findAll(buoId)).withSelfRel()
+                        .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).create(null, buoId))));
+
+
         return new ResponseEntity<>(buoResource, HttpStatus.OK);
     }
     /*
