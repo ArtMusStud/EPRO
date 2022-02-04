@@ -34,7 +34,10 @@ public class BusinessUnitObjectiveController {
             var buo = buoOptional.get();
             var buoResource = new BusinessUnitObjectiveModel(buo);
             var halModelBuilder = HalModelBuilder.halModelOf(buoResource)
-                    .link(linkTo(methodOn(BusinessUnitObjectiveController.class).findOne(id)).withSelfRel());
+                    .link(linkTo(methodOn(BusinessUnitObjectiveController.class).findOne(id)).withSelfRel()
+                            .andAffordance(afford(methodOn(BusinessUnitObjectiveController.class).replace(null, id)))
+                            .andAffordance(afford(methodOn(BusinessUnitObjectiveController.class).update(null, id)))
+                            .andAffordance(afford(methodOn(BusinessUnitObjectiveController.class).delete(id))));
 
             for (var subresource : buo.getBusinessUnitKeyResults()) {
                 var bukr = new BusinessUnitKeyResultSubresourceModel(id, subresource);
@@ -52,12 +55,16 @@ public class BusinessUnitObjectiveController {
                 .stream(repository.findAll().spliterator(), false)
                 .map(buo -> new BusinessUnitObjectiveModel(buo)
                         .add(linkTo(methodOn(BusinessUnitObjectiveController.class)
-                                .findOne(buo.getId())).withSelfRel()))
+                                .findOne(buo.getId())).withSelfRel()
+                                .andAffordance(afford(methodOn(BusinessUnitObjectiveController.class).replace(null, buo.getId())))
+                                .andAffordance(afford(methodOn(BusinessUnitObjectiveController.class).update(null, buo.getId())))
+                                .andAffordance(afford(methodOn(BusinessUnitObjectiveController.class).delete(buo.getId())))))
                 .collect(Collectors.toList());
 
         var buoResource = CollectionModel.of(
                 buoModels,
-                linkTo(methodOn(BusinessUnitObjectiveController.class).findAll()).withSelfRel());
+                linkTo(methodOn(BusinessUnitObjectiveController.class).findAll()).withSelfRel()
+                        .andAffordance(afford(methodOn(BusinessUnitObjectiveController.class).create(null))));
 
         return new ResponseEntity<>(buoResource, HttpStatus.OK);
     }
