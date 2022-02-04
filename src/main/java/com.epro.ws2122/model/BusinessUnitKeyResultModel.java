@@ -12,7 +12,7 @@ public class BusinessUnitKeyResultModel extends RepresentationModel<BusinessUnit
 
     private final String name;
 
-    public BusinessUnitKeyResultModel(BusinessUnitKeyResult businessUnitKeyResult) {
-        this.name = businessUnitKeyResult.getName();
+    public BusinessUnitKeyResultModel(BusinessUnitKeyResult bukr) {
+        this.name = bukr.getName();
     }
 }

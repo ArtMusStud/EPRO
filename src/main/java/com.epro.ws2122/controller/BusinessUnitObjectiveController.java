@@ -33,16 +33,16 @@ public class BusinessUnitObjectiveController {
 
     @GetMapping("/{id}")
     public ResponseEntity<RepresentationModel<BusinessUnitObjectiveModel>> findOne(@PathVariable("id") long id) {
-        var businessUnitObjectiveOptional = repository.findById(id);
-        if (businessUnitObjectiveOptional.isPresent()) {
-            var businessUnitObjective = businessUnitObjectiveOptional.get();
-            var businessUnitObjectiveResource = new BusinessUnitObjectiveModel(businessUnitObjective);
-            var halModelBuilder = HalModelBuilder.halModelOf(businessUnitObjectiveResource)
+        var buoOptional = repository.findById(id);
+        if (buoOptional.isPresent()) {
+            var buo = buoOptional.get();
+            var buoResource = new BusinessUnitObjectiveModel(buo);
+            var halModelBuilder = HalModelBuilder.halModelOf(buoResource)
                     .link(linkTo(methodOn(BusinessUnitObjectiveController.class).findOne(id)).withSelfRel());
 
-            for (var subresource : businessUnitObjective.getBusinessUnitKeyResults()) {
-                var businessUnitKeyResult = new BusinessUnitKeyResultSubresourceModel(id, subresource);
-                halModelBuilder.embed(businessUnitKeyResult);
+            for (var subresource : buo.getBusinessUnitKeyResults()) {
+                var bukr = new BusinessUnitKeyResultSubresourceModel(id, subresource);
+                halModelBuilder.embed(bukr);
             }
 
             return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.OK);
@@ -52,17 +52,17 @@ public class BusinessUnitObjectiveController {
 
     @GetMapping
     public ResponseEntity<CollectionModel<BusinessUnitObjectiveModel>>findAll() {
-        var businessUnitObjectiveModels = StreamSupport
+        var buoModels = StreamSupport
                 .stream(repository.findAll().spliterator(), false)
-                .map(businessUnitObjective -> new BusinessUnitObjectiveModel(businessUnitObjective)
+                .map(buo -> new BusinessUnitObjectiveModel(buo)
                         .add(linkTo(methodOn(BusinessUnitObjectiveController.class)
-                                .findOne(businessUnitObjective.getId())).withSelfRel()))
+                                .findOne(buo.getId())).withSelfRel()))
                 .collect(Collectors.toList());
 
-        var businessUnitObjectiveResource = CollectionModel.of(
-                businessUnitObjectiveModels,
+        var buoResource = CollectionModel.of(
+                buoModels,
                 linkTo(methodOn(BusinessUnitObjectiveController.class).findAll()).withSelfRel());
 
-        return new ResponseEntity<>(businessUnitObjectiveResource, HttpStatus.OK);
+        return new ResponseEntity<>(buoResource, HttpStatus.OK);
     }
 }

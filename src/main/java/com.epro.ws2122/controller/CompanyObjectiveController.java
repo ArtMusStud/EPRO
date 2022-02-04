@@ -66,19 +66,19 @@ public class CompanyObjectiveController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<RepresentationModel<CompanyObjectiveModel>> findOne(@PathVariable("id") long id) {
-        var companyObjectiveOptional = repository.findById(id);
-        if (companyObjectiveOptional.isPresent()) {
-            var companyObjective = companyObjectiveOptional.get();
-            var companyObjectiveResource = new CompanyObjectiveModel(companyObjective);
-            var halModelBuilder = HalModelBuilder.halModelOf(companyObjectiveResource)
+        var coOptional = repository.findById(id);
+        if (coOptional.isPresent()) {
+            var co = coOptional.get();
+            var coResource = new CompanyObjectiveModel(co);
+            var halModelBuilder = HalModelBuilder.halModelOf(coResource)
                     .link(linkTo(methodOn(CompanyObjectiveController.class).findOne(id)).withSelfRel()
                             .andAffordance(afford(methodOn(CompanyObjectiveController.class).replace(null, id)))
                             .andAffordance(afford(methodOn(CompanyObjectiveController.class).update(null, id)))
                             .andAffordance(afford(methodOn(CompanyObjectiveController.class).delete(id))));
 
-            for (var subresource : companyObjective.getCompanyKeyResults()) {
-                var companyKeyResult = new CompanyKeyResultSubresourceModel(id, subresource);
-                halModelBuilder.embed(companyKeyResult);
+            for (var subresource : co.getCompanyKeyResults()) {
+                var ckr = new CompanyKeyResultSubresourceModel(id, subresource);
+                halModelBuilder.embed(ckr);
             }
 
             return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.OK);
@@ -99,22 +99,22 @@ public class CompanyObjectiveController {
      */
     @GetMapping
     public ResponseEntity<CollectionModel<CompanyObjectiveModel>> findAll() {
-        var companyObjectiveModels = StreamSupport
+        var coModels = StreamSupport
                 .stream(repository.findAll().spliterator(), false)
-                .map(companyObjective -> new CompanyObjectiveModel(companyObjective)
+                .map(co -> new CompanyObjectiveModel(co)
                         .add(linkTo((methodOn(CompanyObjectiveController.class)
-                                .findOne(companyObjective.getId()))).withSelfRel()
-                                .andAffordance(afford(methodOn(CompanyObjectiveController.class).replace(null, companyObjective.getId())))
-                                .andAffordance(afford(methodOn(CompanyObjectiveController.class).update(null, companyObjective.getId())))
-                                .andAffordance(afford(methodOn(CompanyObjectiveController.class).delete(companyObjective.getId())))))
+                                .findOne(co.getId()))).withSelfRel()
+                                .andAffordance(afford(methodOn(CompanyObjectiveController.class).replace(null, co.getId())))
+                                .andAffordance(afford(methodOn(CompanyObjectiveController.class).update(null, co.getId())))
+                                .andAffordance(afford(methodOn(CompanyObjectiveController.class).delete(co.getId())))))
                 .collect(Collectors.toList());
 
-        var companyObjectiveResource = CollectionModel.of(
-                companyObjectiveModels,
+        var coResource = CollectionModel.of(
+                coModels,
                 linkTo(methodOn(CompanyObjectiveController.class).findAll()).withSelfRel()
                         .andAffordance(afford(methodOn(CompanyObjectiveController.class).create(null))));
 
-        return new ResponseEntity<>(companyObjectiveResource, HttpStatus.OK);
+        return new ResponseEntity<>(coResource, HttpStatus.OK);
     }
 
     /*
@@ -131,7 +131,7 @@ public class CompanyObjectiveController {
         - implement method
     */
     @PostMapping()
-    public ResponseEntity<?> create(@RequestBody CompanyObjective companyObjectiveDTO) {
+    public ResponseEntity<?> create(@RequestBody CompanyObjective coDTO) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP POST not implemented yet");
     }
 
@@ -140,7 +140,7 @@ public class CompanyObjectiveController {
         - implement method
     */
     @PutMapping("/{id}")
-    public ResponseEntity<?> replace(@RequestBody CompanyObjective companyObjectiveDTO, @PathVariable long id) {
+    public ResponseEntity<?> replace(@RequestBody CompanyObjective coDTO, @PathVariable long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
     }
 
@@ -149,7 +149,7 @@ public class CompanyObjectiveController {
         - implement method
     */
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody CompanyObjective companyObjectiveDTO, @PathVariable long id) {
+    public ResponseEntity<?> update(@RequestBody CompanyObjective coDTO, @PathVariable long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
     }
 }

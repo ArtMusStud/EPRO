@@ -25,26 +25,26 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/business-unit-objectives/{buoId}/business-unit-key-results")
 public class BusinessUnitKeyResultController {
 
-    private final BusinessUnitKeyResultRepository businessUnitKeyResultRepository;
-    private final BusinessUnitObjectiveRepository businessUnitObjectiveRepository;
+    private final BusinessUnitKeyResultRepository bukrRepository;
+    private final BusinessUnitObjectiveRepository buoRepository;
 
-    public BusinessUnitKeyResultController(BusinessUnitKeyResultRepository businessUnitKeyResultRepository, BusinessUnitObjectiveRepository businessUnitObjectiveRepository) {
-        this.businessUnitKeyResultRepository = businessUnitKeyResultRepository;
-        this.businessUnitObjectiveRepository = businessUnitObjectiveRepository;
+    public BusinessUnitKeyResultController(BusinessUnitKeyResultRepository bukrRepository, BusinessUnitObjectiveRepository buoRepository) {
+        this.bukrRepository = bukrRepository;
+        this.buoRepository = buoRepository;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<RepresentationModel<BusinessUnitKeyResultModel>> findOne(
             @PathVariable long buoId, @PathVariable("id") long id) {
-        var businessUnitObjectiveOptional = businessUnitObjectiveRepository.findById(buoId);
-        var businessUnitKeyResultOptional = businessUnitKeyResultRepository.findById(id);
-        if (businessUnitObjectiveOptional.isPresent() && businessUnitKeyResultOptional.isPresent()) {
-            var businessUnitObjective = businessUnitObjectiveOptional.get();
-            var businessUnitKeyResult = businessUnitKeyResultOptional.get();
-            var businessUnitKeyResultResource = new BusinessUnitKeyResultModel(businessUnitKeyResult);
-            var assignedCompanyKeyResult = businessUnitKeyResult.getCompanyKeyResult();
-            var halModelBuilder = HalModelBuilder.halModelOf(businessUnitKeyResultResource)
-                    .embed(new BusinessUnitObjectiveSubresourceModel(businessUnitObjective))
+        var buoOptional = buoRepository.findById(buoId);
+        var bukrOptional = bukrRepository.findById(id);
+        if (buoOptional.isPresent() && bukrOptional.isPresent()) {
+            var buo = buoOptional.get();
+            var bukr = bukrOptional.get();
+            var bukrResource = new BusinessUnitKeyResultModel(bukr);
+            var assignedCompanyKeyResult = bukr.getCompanyKeyResult();
+            var halModelBuilder = HalModelBuilder.halModelOf(bukrResource)
+                    .embed(new BusinessUnitObjectiveSubresourceModel(buo))
                     .embed(new CompanyKeyResultSubresourceModel(assignedCompanyKeyResult.getCompanyObjective().getId(), assignedCompanyKeyResult))
                     .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findOne(buoId, id)).withSelfRel());
 
@@ -59,14 +59,14 @@ public class BusinessUnitKeyResultController {
      */
     @GetMapping
     public ResponseEntity<CollectionModel<BusinessUnitKeyResultModel>>findAll(@PathVariable long buoId) {
-        var businessUnitObjectiveModels = StreamSupport
-                .stream(businessUnitKeyResultRepository.findAll().spliterator(), false)
-                .map(businessUnitKeyResult -> new BusinessUnitKeyResultModel(businessUnitKeyResult)
+        var buoModels = StreamSupport
+                .stream(bukrRepository.findAll().spliterator(), false)
+                .map(bukr -> new BusinessUnitKeyResultModel(bukr)
                         .add(linkTo(methodOn(BusinessUnitKeyResultController.class)
-                                .findOne(buoId, businessUnitKeyResult.getId())).withSelfRel()))
+                                .findOne(buoId, bukr.getId())).withSelfRel()))
                 .collect(Collectors.toList());
 
-        var businessUnitObjectiveResource = CollectionModel.of(businessUnitObjectiveModels);
-        return new ResponseEntity<>(businessUnitObjectiveResource, HttpStatus.OK);
+        var buoResource = CollectionModel.of(buoModels);
+        return new ResponseEntity<>(buoResource, HttpStatus.OK);
     }
 }

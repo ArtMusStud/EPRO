@@ -42,15 +42,15 @@ public class CompanyKeyResultController {
     /**
      * Repository from which to retrieve entities of type {@link com.epro.ws2122.domain.CompanyObjective CompanyObjective}.
      */
-    private final CompanyKeyResultRepository companyKeyResultRepository;
+    private final CompanyKeyResultRepository ckrRepository;
     /**
      * Repository from which to retrieve entities of type {@link com.epro.ws2122.domain.CompanyKeyResult CompanyKeyResult}.
      */
-    private final CompanyObjectiveRepository companyObjectiveRepository;
+    private final CompanyObjectiveRepository coRepository;
 
-    public CompanyKeyResultController(CompanyKeyResultRepository companyKeyResultRepository, CompanyObjectiveRepository companyObjectiveRepository) {
-        this.companyKeyResultRepository = companyKeyResultRepository;
-        this.companyObjectiveRepository = companyObjectiveRepository;
+    public CompanyKeyResultController(CompanyKeyResultRepository ckrRepository, CompanyObjectiveRepository coRepository) {
+        this.ckrRepository = ckrRepository;
+        this.coRepository = coRepository;
     }
 
     /**
@@ -74,15 +74,15 @@ public class CompanyKeyResultController {
     @GetMapping("/{id}")
     public ResponseEntity<RepresentationModel<CompanyKeyResultModel>> findOne(
             @PathVariable long coId, @PathVariable("id") long id) {
-        var companyObjectiveOptional = companyObjectiveRepository.findById(coId);
-        var companyKeyResultOptional = companyKeyResultRepository.findById(id);
-        if (companyKeyResultOptional.isPresent() && companyObjectiveOptional.isPresent()) {
-            var companyKeyResult = companyKeyResultOptional.get();
-            var companyObjective = companyObjectiveOptional.get();
-            var companyKeyResultResource = new CompanyKeyResultModel(companyKeyResult);
+        var coOptional = coRepository.findById(coId);
+        var ckrOptional = ckrRepository.findById(id);
+        if (ckrOptional.isPresent() && coOptional.isPresent()) {
+            var ckr = ckrOptional.get();
+            var co = coOptional.get();
+            var ckrResource = new CompanyKeyResultModel(ckr);
 
-            var halModelBuilder = HalModelBuilder.halModelOf(companyKeyResultResource)
-                    .embed(new CompanyObjectiveSubresourceModel(companyObjective))
+            var halModelBuilder = HalModelBuilder.halModelOf(ckrResource)
+                    .embed(new CompanyObjectiveSubresourceModel(co))
                     .link(linkTo(methodOn(CompanyKeyResultController.class).findOne(coId, id)).withSelfRel()
                             .andAffordance(afford(methodOn(CompanyKeyResultController.class).replace(null, coId, id)))
                             .andAffordance(afford(methodOn(CompanyKeyResultController.class).update(null, coId, id)))
@@ -115,25 +115,25 @@ public class CompanyKeyResultController {
      */
     @GetMapping
     public ResponseEntity<CollectionModel<CompanyKeyResultModel>> findAll(@PathVariable long coId) {
-        var companyKeyResultModels = StreamSupport
-                .stream(companyKeyResultRepository.findAll().spliterator(), false)
-                .map(companyKeyResult -> new CompanyKeyResultModel(companyKeyResult).add(
+        var ckrModels = StreamSupport
+                .stream(ckrRepository.findAll().spliterator(), false)
+                .map(ckr -> new CompanyKeyResultModel(ckr).add(
                         linkTo((methodOn(CompanyKeyResultController.class)
-                                .findOne(coId, companyKeyResult.getId()))).withSelfRel()
-                                .andAffordance(afford(methodOn(CompanyKeyResultController.class).replace(null, coId, companyKeyResult.getId())))
-                                .andAffordance(afford(methodOn(CompanyKeyResultController.class).update(null, coId, companyKeyResult.getId())))
-                                .andAffordance(afford(methodOn(CompanyKeyResultController.class).delete(coId, companyKeyResult.getId())))))
+                                .findOne(coId, ckr.getId()))).withSelfRel()
+                                .andAffordance(afford(methodOn(CompanyKeyResultController.class).replace(null, coId, ckr.getId())))
+                                .andAffordance(afford(methodOn(CompanyKeyResultController.class).update(null, coId, ckr.getId())))
+                                .andAffordance(afford(methodOn(CompanyKeyResultController.class).delete(coId, ckr.getId())))))
                 .collect(Collectors.toList());
 
-        var companyKeyResultResource = CollectionModel.of(
-                companyKeyResultModels,
+        var ckrResource = CollectionModel.of(
+                ckrModels,
                 linkTo(methodOn(CompanyKeyResultController.class).findAll(coId)).withSelfRel()
                         .andAffordance(afford(methodOn(CompanyKeyResultController.class).create(null, coId))),
                 linkTo(methodOn(CompanyObjectiveController.class).findOne(coId)).withRel("companyObjective"),
                 linkTo(methodOn(CompanyKeyResultController.class).findAll(coId)).withRel("companyKeyResults"),
                 linkTo(methodOn(DashboardController.class).dashboard()).withRel("dashboard"));
 
-        return new ResponseEntity<>(companyKeyResultResource, HttpStatus.OK);
+        return new ResponseEntity<>(ckrResource, HttpStatus.OK);
     }
 
     /*
@@ -150,7 +150,7 @@ public class CompanyKeyResultController {
         - implement method
     */
     @PostMapping()
-    public ResponseEntity<?> create(@RequestBody CompanyKeyResult companyKeyResultDTO, @PathVariable long coId) {
+    public ResponseEntity<?> create(@RequestBody CompanyKeyResult ckrDTO, @PathVariable long coId) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP POST not implemented yet");
     }
 
@@ -159,7 +159,7 @@ public class CompanyKeyResultController {
         - implement method
     */
     @PutMapping("/{id}")
-    public ResponseEntity<?> replace(@RequestBody CompanyKeyResult companyKeyResultDTO, @PathVariable long coId, @PathVariable("id") long id) {
+    public ResponseEntity<?> replace(@RequestBody CompanyKeyResult ckrDTO, @PathVariable long coId, @PathVariable("id") long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
     }
 
@@ -168,7 +168,7 @@ public class CompanyKeyResultController {
         - implement method
     */
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody CompanyKeyResult companyKeyResultDTO, @PathVariable long coId, @PathVariable("id") long id) {
+    public ResponseEntity<?> update(@RequestBody CompanyKeyResult ckrDTO, @PathVariable long coId, @PathVariable("id") long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
     }
 }

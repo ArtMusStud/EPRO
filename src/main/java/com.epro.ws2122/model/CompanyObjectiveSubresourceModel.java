@@ -29,9 +29,9 @@ public class CompanyObjectiveSubresourceModel extends RepresentationModel<Compan
     private final String name;
     //private final double overall;
 
-    public CompanyObjectiveSubresourceModel(CompanyObjective companyObjective) {
-        this.name = companyObjective.getName();
+    public CompanyObjectiveSubresourceModel(CompanyObjective co) {
+        this.name = co.getName();
         this.add(linkTo((methodOn(CompanyObjectiveController.class)
-            .findOne(companyObjective.getId()))).withSelfRel());
+            .findOne(co.getId()))).withSelfRel());
     }
 }

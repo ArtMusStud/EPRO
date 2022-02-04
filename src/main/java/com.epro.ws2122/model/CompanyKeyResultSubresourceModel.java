@@ -26,11 +26,11 @@ public class CompanyKeyResultSubresourceModel extends RepresentationModel<Compan
     private final String name;
     private final double overall;
 
-    public CompanyKeyResultSubresourceModel(long companyObjectiveID, CompanyKeyResult companyKeyResult) {
-        name = companyKeyResult.getName();
-        overall = companyKeyResult.getCurrent() / companyKeyResult.getGoal();
+    public CompanyKeyResultSubresourceModel(long coID, CompanyKeyResult ckr) {
+        name = ckr.getName();
+        overall = ckr.getCurrent() / ckr.getGoal();
         this.add(linkTo((methodOn(CompanyKeyResultController.class)
-                .findOne(companyObjectiveID, companyKeyResult.getId()))).withSelfRel());
+                .findOne(coID, ckr.getId()))).withSelfRel());
     }
 }
 

@@ -11,7 +11,7 @@ public class BusinessUnitObjectiveModel extends RepresentationModel<BusinessUnit
 
     private final String name;
 
-    public BusinessUnitObjectiveModel(BusinessUnitObjective businessUnitObjective) {
-        this.name = businessUnitObjective.getName();
+    public BusinessUnitObjectiveModel(BusinessUnitObjective buo) {
+        this.name = buo.getName();
     }
 }

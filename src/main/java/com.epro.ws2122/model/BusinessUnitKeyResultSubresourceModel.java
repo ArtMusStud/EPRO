@@ -15,9 +15,9 @@ public class BusinessUnitKeyResultSubresourceModel extends RepresentationModel<B
 
     private final String name;
 
-    public BusinessUnitKeyResultSubresourceModel(long businessUnitObjectiveID, BusinessUnitKeyResult businessUnitKeyResult) {
-        this.name = businessUnitKeyResult.getName();
+    public BusinessUnitKeyResultSubresourceModel(long buoID, BusinessUnitKeyResult bukr) {
+        this.name = bukr.getName();
         this.add(linkTo((methodOn(BusinessUnitKeyResultController.class)
-                .findOne(businessUnitObjectiveID, businessUnitKeyResult.getId()))).withSelfRel());
+                .findOne(buoID, bukr.getId()))).withSelfRel());
     }
 }

@@ -24,10 +24,10 @@ public class CompanyKeyResultModel extends RepresentationModel<CompanyKeyResultM
     private final double goal;
     private final double confidence;
 
-    public CompanyKeyResultModel(CompanyKeyResult companyObjectiveKeyResult) {
-        name = companyObjectiveKeyResult.getName();
-        current = companyObjectiveKeyResult.getCurrent();
-        goal = companyObjectiveKeyResult.getGoal();
-        confidence = companyObjectiveKeyResult.getConfidence();
+    public CompanyKeyResultModel(CompanyKeyResult ckr) {
+        name = ckr.getName();
+        current = ckr.getCurrent();
+        goal = ckr.getGoal();
+        confidence = ckr.getConfidence();
     }
 }

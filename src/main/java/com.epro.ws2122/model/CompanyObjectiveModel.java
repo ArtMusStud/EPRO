@@ -25,9 +25,9 @@ public class CompanyObjectiveModel extends RepresentationModel<CompanyObjectiveM
     private final LocalDate startDate;
 //    private double overall;
 
-    public CompanyObjectiveModel(CompanyObjective companyObjective) {
-        this.name = companyObjective.getName();
-        this.startDate = companyObjective.getStartDate();
-//        this.overall = companyObjective.getOverall();
+    public CompanyObjectiveModel(CompanyObjective co) {
+        this.name = co.getName();
+        this.startDate = co.getStartDate();
+//        this.overall = co.getOverall();
     }
 }

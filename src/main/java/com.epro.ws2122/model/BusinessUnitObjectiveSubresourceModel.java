@@ -18,9 +18,9 @@ public class BusinessUnitObjectiveSubresourceModel extends RepresentationModel<B
 
     private final String name;
 
-    public BusinessUnitObjectiveSubresourceModel(BusinessUnitObjective businessUnitObjective) {
-        this.name = businessUnitObjective.getName();
+    public BusinessUnitObjectiveSubresourceModel(BusinessUnitObjective buo) {
+        this.name = buo.getName();
         this.add(linkTo((methodOn(BusinessUnitObjectiveController.class)
-                .findOne(businessUnitObjective.getId()))).withSelfRel());
+                .findOne(buo.getId()))).withSelfRel());
     }
 }
