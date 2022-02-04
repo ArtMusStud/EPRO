@@ -46,7 +46,8 @@ public class BusinessUnitKeyResultController {
                     .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findOne(buoId, id)).withSelfRel()
                             .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).replace(null, buoId, id)))
                             .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).update(null, buoId, id)))
-                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).delete(buoId, id))));
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).delete(buoId, id))))
+                    .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findAll(buoId)).withRel("businessUnitKeyResults"));
 
             return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.OK);
         }
@@ -72,7 +73,8 @@ public class BusinessUnitKeyResultController {
         var buoResource = CollectionModel.of(
                 buoModels,
                 linkTo(methodOn(BusinessUnitKeyResultController.class).findAll(buoId)).withSelfRel()
-                        .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).create(null, buoId))));
+                        .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).create(null, buoId))),
+                linkTo(methodOn(BusinessUnitObjectiveController.class).findOne(buoId)).withRel("businessUnitObjective"));
 
 
         return new ResponseEntity<>(buoResource, HttpStatus.OK);
