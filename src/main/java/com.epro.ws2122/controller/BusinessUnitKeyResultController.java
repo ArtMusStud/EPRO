@@ -1,5 +1,7 @@
 package com.epro.ws2122.controller;
 
+import com.epro.ws2122.dto.BusinessUnitKeyResult;
+import com.epro.ws2122.dto.CompanyKeyResult;
 import com.epro.ws2122.model.BusinessUnitKeyResultModel;
 import com.epro.ws2122.model.BusinessUnitObjectiveSubresourceModel;
 import com.epro.ws2122.model.CompanyKeyResultSubresourceModel;
@@ -10,10 +12,7 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -68,5 +67,40 @@ public class BusinessUnitKeyResultController {
 
         var buoResource = CollectionModel.of(buoModels);
         return new ResponseEntity<>(buoResource, HttpStatus.OK);
+    }
+    /*
+     Todo:
+         - implement method
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable long buoId, @PathVariable("id") long id) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP DELETE not implemented yet");
+    }
+
+    /*
+    Todo:
+        - implement method
+    */
+    @PostMapping()
+    public ResponseEntity<?> create(@RequestBody BusinessUnitKeyResult buoDTO, @PathVariable long buoId) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP POST not implemented yet");
+    }
+
+    /*
+    Todo:
+        - implement method
+    */
+    @PutMapping("/{id}")
+    public ResponseEntity<?> replace(@RequestBody BusinessUnitKeyResult buoDTO, @PathVariable long buoId, @PathVariable("id") long id) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
+    }
+
+    /*
+    Todo:
+        - implement method
+    */
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> update(@RequestBody BusinessUnitKeyResult buoDTO, @PathVariable long buoId, @PathVariable("id") long id) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
     }
 }
