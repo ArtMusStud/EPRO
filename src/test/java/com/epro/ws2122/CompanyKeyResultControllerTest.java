@@ -100,7 +100,6 @@ public class CompanyKeyResultControllerTest {
 
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/0/company-key-results/0")))
                 .andExpect(jsonPath("$._links.companyKeyResults.href", is("http://localhost/company-objectives/0/company-key-results")))
-                .andExpect(jsonPath("$._links.dashboard.href", is("http://localhost/dashboard")))
 
                 .andExpect(jsonPath("$._templates.default.method", is("PUT")))
                 .andExpect(jsonPath("$._templates.default.properties", hasSize(4)))
@@ -182,8 +181,6 @@ public class CompanyKeyResultControllerTest {
 
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/company-objectives/0/company-key-results")))
                 .andExpect(jsonPath("$._links.companyObjective.href", is("http://localhost/company-objectives/0")))
-                .andExpect(jsonPath("$._links.companyKeyResults.href", is("http://localhost/company-objectives/0/company-key-results")))
-                .andExpect(jsonPath("$._links.dashboard.href", is("http://localhost/dashboard")))
 
                 .andExpect(jsonPath("$._templates.default.method", is("POST")))
                 .andExpect(jsonPath("$._templates.default.properties", hasSize(4)))
