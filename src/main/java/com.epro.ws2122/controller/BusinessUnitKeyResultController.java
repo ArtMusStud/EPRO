@@ -54,31 +54,33 @@ public class BusinessUnitKeyResultController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    /*
-    ToDo:
-            - right now all bukrs are being returned instead of bukr by buoId
-     */
     @GetMapping
     public ResponseEntity<CollectionModel<BusinessUnitKeyResultModel>>findAll(@PathVariable long buoId) {
-        var buoModels = StreamSupport
-                .stream(bukrRepository.findAll().spliterator(), false)
-                .map(bukr -> new BusinessUnitKeyResultModel(bukr)
-                        .add(linkTo(methodOn(BusinessUnitKeyResultController.class)
-                                .findOne(buoId, bukr.getId())).withSelfRel()
-                                .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).replace(null, buoId, bukr.getId())))
-                                .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).update(null, buoId, bukr.getId())))
-                                .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).delete(buoId, bukr.getId())))))
-                .collect(Collectors.toList());
+        var buoOptional = buoRepository.findById(buoId);
+        if (buoOptional.isPresent()) {
+            var buo = buoOptional.get();
+            var buoModels = bukrRepository
+                    .findAllByBusinessUnitObjective(buo)
+                    .stream()
+                    .map(bukr -> new BusinessUnitKeyResultModel(bukr)
+                            .add(linkTo(methodOn(BusinessUnitKeyResultController.class)
+                                    .findOne(buoId, bukr.getId())).withSelfRel()
+                                    .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).replace(null, buoId, bukr.getId())))
+                                    .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).update(null, buoId, bukr.getId())))
+                                    .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).delete(buoId, bukr.getId())))))
+                    .collect(Collectors.toList());
 
-        var buoResource = CollectionModel.of(
-                buoModels,
-                linkTo(methodOn(BusinessUnitKeyResultController.class).findAll(buoId)).withSelfRel()
-                        .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).create(null, buoId))),
-                linkTo(methodOn(BusinessUnitObjectiveController.class).findOne(buoId)).withRel("businessUnitObjective"));
+            var buoResource = CollectionModel.of(
+                    buoModels,
+                    linkTo(methodOn(BusinessUnitKeyResultController.class).findAll(buoId)).withSelfRel()
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).create(null, buoId))),
+                    linkTo(methodOn(BusinessUnitObjectiveController.class).findOne(buoId)).withRel("businessUnitObjective"));
 
-
-        return new ResponseEntity<>(buoResource, HttpStatus.OK);
+            return new ResponseEntity<>(buoResource, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
+
     /*
      Todo:
          - implement method

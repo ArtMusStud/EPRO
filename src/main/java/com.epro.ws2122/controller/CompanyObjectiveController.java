@@ -62,7 +62,6 @@ public class CompanyObjectiveController {
     /*
         ToDo:
             - add link to complete aggregation at level of requested CO
-            - add link to dashboard
      */
     @GetMapping("/{id}")
     public ResponseEntity<RepresentationModel<CompanyObjectiveModel>> findOne(@PathVariable("id") long id) {

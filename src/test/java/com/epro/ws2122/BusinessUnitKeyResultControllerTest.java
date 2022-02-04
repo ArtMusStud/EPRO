@@ -98,8 +98,8 @@ public class BusinessUnitKeyResultControllerTest {
 
         Mockito.when(mockBusinessUnitKeyResultRepository.findById(0L)).thenReturn(Optional.of(businessUnitKeyResult_0));
         Mockito.when(mockBusinessUnitObjectiveRepository.findById(0L)).thenReturn(Optional.ofNullable(businessUnitObjective_0));
-        Mockito.when(mockBusinessUnitKeyResultRepository.findAll()).thenReturn(
-                Arrays.asList(businessUnitKeyResult_0, businessUnitKeyResult_1, businessUnitKeyResult_2, businessUnitKeyResult_3));
+        Mockito.when(mockBusinessUnitKeyResultRepository.findAllByBusinessUnitObjective(businessUnitObjective_0)).thenReturn(
+                Arrays.asList(businessUnitKeyResult_0, businessUnitKeyResult_1));
     }
 
     @Test
@@ -152,7 +152,7 @@ public class BusinessUnitKeyResultControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_FORMS_JSON.toString()))
-                .andExpect(jsonPath("$._embedded.businessUnitKeyResults", hasSize(4)))
+                .andExpect(jsonPath("$._embedded.businessUnitKeyResults", hasSize(2)))
 
                 .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0].name", is("Business Unit Key Result 0")))
                 .andExpect(jsonPath("$._embedded.businessUnitKeyResults[0]._links.self.href", is("http://localhost/business-unit-objectives/0/business-unit-key-results/0")))
