@@ -10,7 +10,7 @@ public class BuoDTO {
     private String name;
     private LocalDate startDate;
 
-    BusinessUnitObjective toBuEntity() {
+    public BusinessUnitObjective toBuEntity() {
         var entity = new BusinessUnitObjective();
         entity.setName(name);
         entity.setStartDate(startDate);

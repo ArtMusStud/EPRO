@@ -4,6 +4,7 @@ import com.epro.ws2122.domain.CompanyObjective;
 import com.epro.ws2122.dto.CkrDTO;
 import com.epro.ws2122.repository.CompanyObjectiveRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -44,8 +46,9 @@ public class CompanyKeyResultIT {
         repository.save(co);
     }
 
-    @WithMockUser(roles = {"CO OKR Admin"})
+    @WithMockUser(roles = {"BUO OKR Admin"})
     @Test
+    @Transactional
     public void should_create_new_ckr() throws Exception {
         var ckrDTO = new CkrDTO();
         ckrDTO.setName("CompanyKeyResult 99");

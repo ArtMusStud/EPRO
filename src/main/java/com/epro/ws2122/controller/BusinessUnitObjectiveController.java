@@ -122,13 +122,17 @@ public class BusinessUnitObjectiveController {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP DELETE not implemented yet");
     }
 
-    /*
-    Todo:
-        - implement method
-    */
     @PostMapping()
     public ResponseEntity<?> create(@RequestBody BuoDTO buoDTO) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP POST not implemented yet");
+        var savedBuo = repository.save(buoDTO.toBuEntity());
+        var buoResource = new BusinessUnitObjectiveModel(savedBuo);
+        var halModelBuilder = HalModelBuilder.halModelOf(buoResource)
+                .link(linkTo(methodOn(BusinessUnitObjectiveController.class).findOne(savedBuo.getId())).withSelfRel()
+                        .andAffordance(afford(methodOn(BusinessUnitObjectiveController.class).replace(null, savedBuo.getId())))
+                        .andAffordance(afford(methodOn(BusinessUnitObjectiveController.class).update(null, savedBuo.getId())))
+                        .andAffordance(afford(methodOn(BusinessUnitObjectiveController.class).delete(savedBuo.getId()))));
+
+        return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.CREATED);
     }
 
     /*
