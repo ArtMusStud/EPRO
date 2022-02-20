@@ -1,10 +1,8 @@
 package com.epro.ws2122.controller;
 
-import com.epro.ws2122.dto.BusinessUnitObjective;
-import com.epro.ws2122.dto.CompanyObjective;
+import com.epro.ws2122.dto.BuoDTO;
 import com.epro.ws2122.model.BusinessUnitKeyResultSubresourceModel;
 import com.epro.ws2122.model.BusinessUnitObjectiveModel;
-import com.epro.ws2122.model.CompanyKeyResultModel;
 import com.epro.ws2122.model.CompanyObjectiveModel;
 import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
 import org.springframework.hateoas.CollectionModel;
@@ -30,9 +28,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  * <ul>
  * <li>{@link #findOne(long) GET} for a single resource</li>
  * <li>{@link #findAll() GET} for a collection resource</li>
- * <li>{@link #update(BusinessUnitObjective, long) PATCH}</li>
- * <li>{@link #replace(BusinessUnitObjective, long) PUT}</li>
- * <li>{@link #create(BusinessUnitObjective) POST}</li>
+ * <li>{@link #update(BuoDTO, long) PATCH}</li>
+ * <li>{@link #replace(BuoDTO, long) PUT}</li>
+ * <li>{@link #create(BuoDTO) POST}</li>
  * <li>{@link #delete(long) DELETE}</li>
  * </ul>
  */
@@ -87,7 +85,7 @@ public class BusinessUnitObjectiveController {
     /**
      * Returns a collection resource of multiple business unit objectives, depending on whether the uri path leads to obtainable resources, along with an HTTP status code.
      * <p>
-     * The properties of each of the returned business unit objective resources are defined in the DTO {@link BusinessUnitObjective}.
+     * The properties of each of the returned business unit objective resources are defined in the DTO {@link BuoDTO}.
      * <p>
      * HTTP status codes returned:
      * <ul>
@@ -129,7 +127,7 @@ public class BusinessUnitObjectiveController {
         - implement method
     */
     @PostMapping()
-    public ResponseEntity<?> create(@RequestBody BusinessUnitObjective buoDTO) {
+    public ResponseEntity<?> create(@RequestBody BuoDTO buoDTO) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP POST not implemented yet");
     }
 
@@ -138,7 +136,7 @@ public class BusinessUnitObjectiveController {
         - implement method
     */
     @PutMapping("/{id}")
-    public ResponseEntity<?> replace(@RequestBody BusinessUnitObjective buoDTO, @PathVariable long id) {
+    public ResponseEntity<?> replace(@RequestBody BuoDTO buoDTO, @PathVariable long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
     }
 
@@ -147,7 +145,7 @@ public class BusinessUnitObjectiveController {
         - implement method
     */
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody BusinessUnitObjective buoDTO, @PathVariable long id) {
+    public ResponseEntity<?> update(@RequestBody BuoDTO buoDTO, @PathVariable long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
     }
 }

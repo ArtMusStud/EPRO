@@ -1,6 +1,6 @@
 package com.epro.ws2122.controller;
 
-import com.epro.ws2122.dto.CompanyKeyResult;
+import com.epro.ws2122.dto.CkrDTO;
 import com.epro.ws2122.model.CompanyKeyResultModel;
 import com.epro.ws2122.model.CompanyObjectiveSubresourceModel;
 import com.epro.ws2122.repository.CompanyKeyResultRepository;
@@ -28,9 +28,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  * <ul>
  * <li>{@link #findOne(long, long) GET} for a single resource</li>
  * <li>{@link #findAll(long) GET} for a collection resource</li>
- * <li>{@link #update(CompanyKeyResult, long, long) PATCH}</li>
- * <li>{@link #replace(CompanyKeyResult, long, long) PUT}</li>
- * <li>{@link #create(CompanyKeyResult, long) POST}</li>
+ * <li>{@link #update(CkrDTO, long, long) PATCH}</li>
+ * <li>{@link #replace(CkrDTO, long, long) PUT}</li>
+ * <li>{@link #create(CkrDTO, long) POST}</li>
  * <li>{@link #delete(long, long) DELETE}</li>
  * </ul>
  */
@@ -147,13 +147,24 @@ public class CompanyKeyResultController {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP DELETE not implemented yet");
     }
 
-    /*
-    Todo:
-        - implement method
-    */
-    @PostMapping()
-    public ResponseEntity<?> create(@RequestBody CompanyKeyResult ckrDTO, @PathVariable long coId) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP POST not implemented yet");
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody CkrDTO ckrDTO, @PathVariable long coId) {
+        var coOptional = coRepository.findById(coId);
+        if (coOptional.isPresent()) {
+            var savedCkr = ckrRepository.save(ckrDTO.toCkrEntity());
+            var co = coOptional.get();
+            var ckrResource = new CompanyKeyResultModel(savedCkr);
+            var halModelBuilder = HalModelBuilder.halModelOf(ckrResource)
+                    .embed(new CompanyObjectiveSubresourceModel(co))
+                    .link(linkTo(methodOn(CompanyKeyResultController.class).findOne(coId, savedCkr.getId())).withSelfRel()
+                            .andAffordance(afford(methodOn(CompanyKeyResultController.class).replace(null, coId, savedCkr.getId())))
+                            .andAffordance(afford(methodOn(CompanyKeyResultController.class).update(null, coId, savedCkr.getId())))
+                            .andAffordance(afford(methodOn(CompanyKeyResultController.class).delete(coId, savedCkr.getId()))))
+                    .link(linkTo(methodOn(CompanyKeyResultController.class).findAll(coId)).withRel("companyKeyResults"));
+
+            return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     /*
@@ -161,7 +172,7 @@ public class CompanyKeyResultController {
         - implement method
     */
     @PutMapping("/{id}")
-    public ResponseEntity<?> replace(@RequestBody CompanyKeyResult ckrDTO, @PathVariable long coId, @PathVariable("id") long id) {
+    public ResponseEntity<?> replace(@RequestBody CkrDTO ckrDTO, @PathVariable long coId, @PathVariable("id") long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
     }
 
@@ -170,7 +181,7 @@ public class CompanyKeyResultController {
         - implement method
     */
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody CompanyKeyResult ckrDTO, @PathVariable long coId, @PathVariable("id") long id) {
+    public ResponseEntity<?> update(@RequestBody CkrDTO ckrDTO, @PathVariable long coId, @PathVariable("id") long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
     }
 }

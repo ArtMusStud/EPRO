@@ -1,10 +1,8 @@
 package com.epro.ws2122.controller;
 
-import com.epro.ws2122.dto.BusinessUnitKeyResult;
-import com.epro.ws2122.dto.CompanyKeyResult;
+import com.epro.ws2122.dto.BukrDTO;
 import com.epro.ws2122.model.BusinessUnitKeyResultModel;
 import com.epro.ws2122.model.BusinessUnitObjectiveSubresourceModel;
-import com.epro.ws2122.model.CompanyKeyResultModel;
 import com.epro.ws2122.model.CompanyKeyResultSubresourceModel;
 import com.epro.ws2122.repository.BusinessUnitKeyResultRepository;
 import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
@@ -31,9 +29,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  * <ul>
  * <li>{@link #findOne(long, long) GET} for a single resource</li>
  * <li>{@link #findAll(long) GET} for a collection resource</li>
- * <li>{@link #update(BusinessUnitKeyResult, long, long) PATCH}</li>
- * <li>{@link #replace(BusinessUnitKeyResult, long, long) PUT}</li>
- * <li>{@link #create(BusinessUnitKeyResult, long) POST}</li>
+ * <li>{@link #update(BukrDTO, long, long) PATCH}</li>
+ * <li>{@link #replace(BukrDTO, long, long) PUT}</li>
+ * <li>{@link #create(BukrDTO, long) POST}</li>
  * <li>{@link #delete(long, long) DELETE}</li>
  * </ul>
  */
@@ -58,7 +56,7 @@ public class BusinessUnitKeyResultController {
     /**
      * Returns a business unit key result, depending on whether the uri path leads to an obtainable resource, along with an HTTP status code.
      * <p>
-     * The data of a returned business unit key result resource is defined in the DTO class {@link BusinessUnitKeyResult}.
+     * The data of a returned business unit key result resource is defined in the DTO class {@link BukrDTO}.
      * <p>
      * HTTP status codes returned:
      * <ul>
@@ -96,7 +94,7 @@ public class BusinessUnitKeyResultController {
     /**
      * Returns a collection resource of multiple business unit key results, depending on whether the uri path leads to obtainable resources, along with an HTTP status code.
      * <p>
-     * The properties of each of the returned business unit key result resources are defined in the DTO {@link BusinessUnitKeyResult}.
+     * The properties of each of the returned business unit key result resources are defined in the DTO {@link BukrDTO}.
      * <p>
      * HTTP status codes returned:
      * <ul>
@@ -147,7 +145,7 @@ public class BusinessUnitKeyResultController {
         - implement method
     */
     @PostMapping()
-    public ResponseEntity<?> create(@RequestBody BusinessUnitKeyResult buoDTO, @PathVariable long buoId) {
+    public ResponseEntity<?> create(@RequestBody BukrDTO buoDTO, @PathVariable long buoId) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP POST not implemented yet");
     }
 
@@ -156,7 +154,7 @@ public class BusinessUnitKeyResultController {
         - implement method
     */
     @PutMapping("/{id}")
-    public ResponseEntity<?> replace(@RequestBody BusinessUnitKeyResult buoDTO, @PathVariable long buoId, @PathVariable("id") long id) {
+    public ResponseEntity<?> replace(@RequestBody BukrDTO buoDTO, @PathVariable long buoId, @PathVariable("id") long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
     }
 
@@ -165,7 +163,7 @@ public class BusinessUnitKeyResultController {
         - implement method
     */
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody BusinessUnitKeyResult buoDTO, @PathVariable long buoId, @PathVariable("id") long id) {
+    public ResponseEntity<?> update(@RequestBody BukrDTO buoDTO, @PathVariable long buoId, @PathVariable("id") long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
     }
 }

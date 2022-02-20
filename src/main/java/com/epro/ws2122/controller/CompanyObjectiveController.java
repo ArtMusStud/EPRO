@@ -1,6 +1,6 @@
 package com.epro.ws2122.controller;
 
-import com.epro.ws2122.dto.CompanyObjective;
+import com.epro.ws2122.dto.CoDTO;
 import com.epro.ws2122.model.CompanyKeyResultSubresourceModel;
 import com.epro.ws2122.model.CompanyObjectiveModel;
 import com.epro.ws2122.repository.CompanyObjectiveRepository;
@@ -27,9 +27,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  * <ul>
  * <li>{@link #findOne(long) GET} for a single resource</li>
  * <li>{@link #findAll() GET} for a collection resource</li>
- * <li>{@link #update(CompanyObjective, long) PATCH}</li>
- * <li>{@link #replace(CompanyObjective, long) PUT}</li>
- * <li>{@link #create(CompanyObjective) POST}</li>
+ * <li>{@link #update(CoDTO, long) PATCH}</li>
+ * <li>{@link #replace(CoDTO, long) PUT}</li>
+ * <li>{@link #create(CoDTO) POST}</li>
  * <li>{@link #delete(long) DELETE}</li>
  * </ul>
  */
@@ -131,7 +131,7 @@ public class CompanyObjectiveController {
         - implement method
     */
     @PostMapping()
-    public ResponseEntity<?> create(@RequestBody CompanyObjective coDTO) {
+    public ResponseEntity<?> create(@RequestBody CoDTO coDTO) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP POST not implemented yet");
     }
 
@@ -140,7 +140,7 @@ public class CompanyObjectiveController {
         - implement method
     */
     @PutMapping("/{id}")
-    public ResponseEntity<?> replace(@RequestBody CompanyObjective coDTO, @PathVariable long id) {
+    public ResponseEntity<?> replace(@RequestBody CoDTO coDTO, @PathVariable long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
     }
 
@@ -149,7 +149,7 @@ public class CompanyObjectiveController {
         - implement method
     */
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody CompanyObjective coDTO, @PathVariable long id) {
+    public ResponseEntity<?> update(@RequestBody CoDTO coDTO, @PathVariable long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
     }
 }
