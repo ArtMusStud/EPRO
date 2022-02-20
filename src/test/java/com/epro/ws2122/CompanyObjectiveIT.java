@@ -52,4 +52,36 @@ public class CompanyObjectiveIT {
                 .andDo(print())
                 .andExpect(status().isCreated());
     }
+
+    @WithMockUser(roles = {"CO OKR Admin"})
+    @Test
+    public void should_create_multiple_co() throws Exception {
+        OBJECT_MAPPER.registerModule(new JavaTimeModule());
+
+        var fstCoDTO = new CoDTO();
+        fstCoDTO.setName("Company Objective 0");
+        fstCoDTO.setStartDate(LocalDate.of(2021, 2, 19));
+
+        var fstPostValue = OBJECT_MAPPER.writeValueAsString(fstCoDTO);
+
+        var secCoDTO = new CoDTO();
+        secCoDTO.setName("Company Objective 0");
+        secCoDTO.setStartDate(LocalDate.of(2021, 2, 19));
+
+        var secPostValue = OBJECT_MAPPER.writeValueAsString(secCoDTO);
+
+        this.mockMvc.perform(
+                        post("/company-objectives")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf())
+                                .content(fstPostValue))
+                .andExpect(status().isCreated());
+
+        this.mockMvc.perform(
+                        post("/company-objectives")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf())
+                                .content(secPostValue))
+                .andExpect(status().isCreated());
+    }
 }

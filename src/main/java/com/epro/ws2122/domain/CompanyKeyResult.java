@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -19,5 +20,5 @@ public class CompanyKeyResult extends KeyResult {
     private CompanyObjective companyObjective;
 
     @OneToMany
-    private List<BusinessUnitKeyResult> businessUnitKeyResults;
+    private List<BusinessUnitKeyResult> businessUnitKeyResults = new ArrayList<>();
 }

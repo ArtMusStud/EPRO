@@ -48,6 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PATCH, "/business-unit-objectives/{buoId}/business-unit-key-results/**").hasRole(BUO_OKR_ADMIN)
                 .antMatchers(HttpMethod.PUT, "/business-unit-objectives/{buoId}/business-unit-key-results/**").hasRole(BUO_OKR_ADMIN)
                 .antMatchers(HttpMethod.POST, "/business-unit-objectives/{buoId}/business-unit-key-results").hasRole(BUO_OKR_ADMIN)
+                .antMatchers(HttpMethod.POST, "/business-unit-objectives/{buoId}/business-unit-key-results/{id}/link-with-company-key-result").hasRole(BUO_OKR_ADMIN)
                 .antMatchers(HttpMethod.DELETE, "/business-unit-objectives/{buoId}/business-unit-key-results/**").hasRole(BUO_OKR_ADMIN);
     }
 }
