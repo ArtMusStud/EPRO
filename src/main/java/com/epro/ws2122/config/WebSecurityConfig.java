@@ -10,9 +10,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     
-    private String READ_ONLY_USER = "Read Only User";
-    private String CO_OKR_ADMIN = "CO OKR Admin";
-    private String BUO_OKR_ADMIN = "BUO OKR Admin";
+    private final String READ_ONLY_USER = "Read Only User";
+    private final String CO_OKR_ADMIN = "CO OKR Admin";
+    private final String BUO_OKR_ADMIN = "BUO OKR Admin";
     
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -25,7 +25,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/company-objectives/**").hasAnyRole(CO_OKR_ADMIN, BUO_OKR_ADMIN, READ_ONLY_USER)
                 .antMatchers(HttpMethod.GET, "/company-objectives").hasAnyRole(CO_OKR_ADMIN, BUO_OKR_ADMIN, READ_ONLY_USER)
                 .antMatchers(HttpMethod.PATCH, "/company-objectives/**").hasRole(CO_OKR_ADMIN)
-                .antMatchers(HttpMethod.POST, "/company-objectives/**").hasRole(CO_OKR_ADMIN)
+                .antMatchers(HttpMethod.POST, "/company-objectives").hasRole(CO_OKR_ADMIN)
                 .antMatchers(HttpMethod.PUT, "/company-objectives/**").hasRole(CO_OKR_ADMIN)
                 .antMatchers(HttpMethod.DELETE, "/company-objectives/**").hasRole(CO_OKR_ADMIN)
 

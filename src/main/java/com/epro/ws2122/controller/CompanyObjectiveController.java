@@ -1,8 +1,10 @@
 package com.epro.ws2122.controller;
 
 import com.epro.ws2122.dto.CoDTO;
+import com.epro.ws2122.model.CompanyKeyResultModel;
 import com.epro.ws2122.model.CompanyKeyResultSubresourceModel;
 import com.epro.ws2122.model.CompanyObjectiveModel;
+import com.epro.ws2122.model.CompanyObjectiveSubresourceModel;
 import com.epro.ws2122.repository.CompanyObjectiveRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
@@ -132,7 +134,16 @@ public class CompanyObjectiveController {
     */
     @PostMapping()
     public ResponseEntity<?> create(@RequestBody CoDTO coDTO) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP POST not implemented yet");
+        var savedCo = repository.save(coDTO.toCoEntity());
+        var coResource = new CompanyObjectiveModel(savedCo);
+        var halModelBuilder = HalModelBuilder.halModelOf(coResource)
+                .link(linkTo(methodOn(CompanyObjectiveController.class).findOne(savedCo.getId())).withSelfRel()
+                        .andAffordance(afford(methodOn(CompanyObjectiveController.class).replace(null, savedCo.getId())))
+                        .andAffordance(afford(methodOn(CompanyObjectiveController.class).update(null, savedCo.getId())))
+                        .andAffordance(afford(methodOn(CompanyObjectiveController.class).delete(savedCo.getId()))))
+                .link(linkTo(methodOn(CompanyObjectiveController.class).findAll()).withRel("companyObjectives"));
+
+        return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.CREATED);
     }
 
     /*
