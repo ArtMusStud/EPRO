@@ -128,10 +128,6 @@ public class CompanyObjectiveController {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP DELETE not implemented yet");
     }
 
-    /*
-    Todo:
-        - implement method
-    */
     @PostMapping()
     public ResponseEntity<?> create(@RequestBody CoDTO coDTO) {
         var savedCo = repository.save(coDTO.toCoEntity());

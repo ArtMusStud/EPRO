@@ -1,8 +1,8 @@
 package com.epro.ws2122;
 
-import com.epro.ws2122.domain.CompanyObjective;
-import com.epro.ws2122.dto.CkrDTO;
-import com.epro.ws2122.repository.CompanyObjectiveRepository;
+import com.epro.ws2122.domain.BusinessUnitObjective;
+import com.epro.ws2122.dto.BukrDTO;
+import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,41 +22,40 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class CompanyKeyResultIT {
-
+public class BusinessUnitKeyResultIT {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    CompanyObjectiveRepository repository;
+    BusinessUnitObjectiveRepository repository;
 
     @BeforeEach
     public void initializeData() {
-        var co = CompanyObjective.builder()
+        var buo = BusinessUnitObjective.builder()
                 .id(0L)
-                .name("Company Objective 0")
+                .name("Business Unit Objective 0")
                 .startDate(LocalDate.of(1970, 1, 19))
-                .companyKeyResults(null)
+                .businessUnitKeyResults(null)
                 .build();
 
-        repository.save(co);
+        repository.save(buo);
     }
 
     @WithMockUser(roles = {"CO OKR Admin"})
     @Test
-    public void should_create_new_ckr() throws Exception {
-        var ckrDTO = new CkrDTO();
-        ckrDTO.setName("CompanyKeyResult 99");
-        ckrDTO.setConfidence(50);
-        ckrDTO.setCurrent(2);
-        ckrDTO.setGoal(8);
+    public void should_create_new_bukr() throws Exception {
+        var bukrDTO = new BukrDTO();
+        bukrDTO.setName("Business Unit Key Result 30");
+        bukrDTO.setConfidence(3.9);
+        bukrDTO.setCurrent(10);
+        bukrDTO.setGoal(100);
 
-        var postValue = OBJECT_MAPPER.writeValueAsString(ckrDTO);
+        var postValue = OBJECT_MAPPER.writeValueAsString(bukrDTO);
 
         this.mockMvc.perform(
-                        post("/company-objectives/0/company-key-results")
+                        post("/business-unit-objectives/0/business-unit-key-results")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .with(csrf())
                                 .content(postValue))

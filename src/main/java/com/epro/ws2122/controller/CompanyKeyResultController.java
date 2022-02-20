@@ -151,8 +151,8 @@ public class CompanyKeyResultController {
     public ResponseEntity<?> create(@RequestBody CkrDTO ckrDTO, @PathVariable long coId) {
         var coOptional = coRepository.findById(coId);
         if (coOptional.isPresent()) {
-            var savedCkr = ckrRepository.save(ckrDTO.toCkrEntity());
             var co = coOptional.get();
+            var savedCkr = ckrRepository.save(ckrDTO.toCkrEntity());
             var ckrResource = new CompanyKeyResultModel(savedCkr);
             var halModelBuilder = HalModelBuilder.halModelOf(ckrResource)
                     .embed(new CompanyObjectiveSubresourceModel(co))

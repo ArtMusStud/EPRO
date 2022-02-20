@@ -140,13 +140,24 @@ public class BusinessUnitKeyResultController {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP DELETE not implemented yet");
     }
 
-    /*
-    Todo:
-        - implement method
-    */
     @PostMapping()
-    public ResponseEntity<?> create(@RequestBody BukrDTO buoDTO, @PathVariable long buoId) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP POST not implemented yet");
+    public ResponseEntity<?> create(@RequestBody BukrDTO bukrDTO, @PathVariable long buoId) {
+        var buoOptional = buoRepository.findById(buoId);
+        if (buoOptional.isPresent()) {
+            var buo = buoOptional.get();
+            var savedBukr = bukrRepository.save(bukrDTO.toBukrEntity());
+            var bukrResource = new BusinessUnitKeyResultModel(savedBukr);
+            var halModelBuilder = HalModelBuilder.halModelOf(bukrResource)
+                    .embed(new BusinessUnitObjectiveSubresourceModel(buo))
+                    .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findOne(buoId, savedBukr.getId())).withSelfRel()
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).replace(null, buoId, savedBukr.getId())))
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).update(null, buoId, savedBukr.getId())))
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).delete(buoId, savedBukr.getId()))))
+                    .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findAll(buoId)).withRel("businessUnitKeyResults"));
+
+            return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     /*

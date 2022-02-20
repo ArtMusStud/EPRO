@@ -11,8 +11,14 @@ import org.springframework.hateoas.server.core.Relation;
 public class BusinessUnitKeyResultModel extends RepresentationModel<BusinessUnitKeyResultModel> {
 
     private final String name;
+    private final double current;
+    private final double goal;
+    private final double confidence;
 
     public BusinessUnitKeyResultModel(BusinessUnitKeyResult bukr) {
         this.name = bukr.getName();
+        this.current = bukr.getCurrent();
+        this.goal = bukr.getGoal();
+        this.confidence = bukr.getConfidence();
     }
 }

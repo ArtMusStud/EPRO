@@ -11,12 +11,12 @@ public class CkrDTO {
     private double confidence;
 
     public CompanyKeyResult toCkrEntity() {
-        CompanyKeyResult ckr = new CompanyKeyResult();
-        ckr.setName(name);
-        ckr.setCurrent(current);
-        ckr.setGoal(goal);
-        ckr.setConfidence(confidence);
+        var entity = new CompanyKeyResult();
+        entity.setName(name);
+        entity.setCurrent(current);
+        entity.setGoal(goal);
+        entity.setConfidence(confidence);
 
-        return ckr;
+        return entity;
     }
 }
