@@ -1,6 +1,5 @@
 package com.epro.ws2122;
 
-import com.epro.ws2122.config.WebSecurityConfig;
 import com.epro.ws2122.controller.CompanyObjectiveController;
 import com.epro.ws2122.domain.CompanyKeyResult;
 import com.epro.ws2122.domain.CompanyObjective;
@@ -14,7 +13,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -90,9 +88,9 @@ public class CompanyObjectiveControllerTest {
         Mockito.when(mockRepository.findAll()).thenReturn(Arrays.asList(companyObjective_0, companyObjective_1));
     }
 
-    @WithMockUser(roles = {"CO OKR Admin", "BUO OKR Admin"})
+    @WithMockUser(roles = {"CO OKR Admin", "BUO OKR Admin", "Read Only User"})
     @Test
-    public void should_return_single_company_objective_as_admin() throws Exception {
+    public void should_return_single_company_objective() throws Exception {
         this.mockMvc.perform(get("/company-objectives/0").accept(MediaTypes.HAL_FORMS_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -129,9 +127,9 @@ public class CompanyObjectiveControllerTest {
                 .andExpect(jsonPath("$._templates.delete.properties", hasSize(0)));
     }
 
-    @WithMockUser(roles = {"CO OKR Admin", "BUO OKR Admin"})
+    @WithMockUser(roles = {"CO OKR Admin", "BUO OKR Admin", "Read Only User"})
     @Test
-    public void should_return_all_company_objectives_as_admin() throws Exception {
+    public void should_return_all_company_objectives() throws Exception {
         this.mockMvc.perform(get("/company-objectives"))
                 .andDo(print())
                 .andExpect(status().isOk())

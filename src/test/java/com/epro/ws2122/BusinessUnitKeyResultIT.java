@@ -2,7 +2,6 @@ package com.epro.ws2122;
 
 import com.epro.ws2122.domain.BusinessUnitObjective;
 import com.epro.ws2122.dto.BukrDTO;
-import com.epro.ws2122.repository.BusinessUnitKeyResultRepository;
 import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +17,6 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,7 +44,7 @@ public class BusinessUnitKeyResultIT {
         repository.save(buo);
     }
 
-    @WithMockUser(roles = {"BU OKR Admin"})
+    @WithMockUser(roles = {"BUO OKR Admin"})
     @Test
     @Transactional
     public void should_create_new_bukr() throws Exception {

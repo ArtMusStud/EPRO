@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -74,6 +75,7 @@ public class BusinessUnitObjectiveControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"CO OKR Admin", "BUO OKR Admin", "Read Only User"})
     public void should_return_single_business_unit_objective() throws Exception {
         this.mockMvc.perform(get("/business-unit-objectives/0").accept(MediaTypes.HAL_FORMS_JSON))
                 .andDo(print())
@@ -108,6 +110,7 @@ public class BusinessUnitObjectiveControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"CO OKR Admin", "BUO OKR Admin", "Read Only User"})
     public void should_return_all_business_unit_objectives() throws Exception {
         this.mockMvc.perform(get("/business-unit-objectives").accept(MediaTypes.HAL_FORMS_JSON))
                 .andDo(print())

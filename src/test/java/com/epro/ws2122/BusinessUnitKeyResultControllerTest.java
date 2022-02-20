@@ -19,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -30,7 +31,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @WebMvcTest(controllers = {BusinessUnitKeyResultController.class, BusinessUnitObjectiveController.class, CompanyKeyResultController.class})
 public class BusinessUnitKeyResultControllerTest {
@@ -103,6 +103,7 @@ public class BusinessUnitKeyResultControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"CO OKR Admin", "BUO OKR Admin", "Read Only User"})
     public void should_return_single_bukr() throws Exception {
         this.mockMvc.perform(get("/business-unit-objectives/0/business-unit-key-results/0")
                         .accept(MediaTypes.HAL_FORMS_JSON))
@@ -146,6 +147,7 @@ public class BusinessUnitKeyResultControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = {"CO OKR Admin", "BUO OKR Admin", "Read Only User"})
     public void should_return_all_bukr() throws Exception {
         this.mockMvc.perform(get("/business-unit-objectives/0/business-unit-key-results")
                         .accept(MediaTypes.HAL_FORMS_JSON))

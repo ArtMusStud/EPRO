@@ -4,7 +4,6 @@ import com.epro.ws2122.domain.CompanyObjective;
 import com.epro.ws2122.dto.CkrDTO;
 import com.epro.ws2122.repository.CompanyObjectiveRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +45,7 @@ public class CompanyKeyResultIT {
         repository.save(co);
     }
 
-    @WithMockUser(roles = {"BUO OKR Admin"})
+    @WithMockUser(roles = {"CO OKR Admin"})
     @Test
     @Transactional
     public void should_create_new_ckr() throws Exception {

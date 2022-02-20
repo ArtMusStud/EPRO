@@ -1,8 +1,6 @@
 package com.epro.ws2122;
 
 import com.epro.ws2122.dto.BuoDTO;
-import com.epro.ws2122.dto.CoDTO;
-import com.epro.ws2122.repository.BusinessUnitKeyResultRepository;
 import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -33,10 +31,7 @@ public class BusinessUnitObjectiveIT {
     @Autowired
     BusinessUnitObjectiveRepository repository;
 
-    @Autowired
-    BusinessUnitKeyResultRepository bukrRepositor;
-
-    @WithMockUser(roles = {"BU OKR Admin"})
+    @WithMockUser(roles = {"BUO OKR Admin"})
     @Test
     public void should_create_new_buo() throws Exception {
         OBJECT_MAPPER.registerModule(new JavaTimeModule());
