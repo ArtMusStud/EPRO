@@ -18,6 +18,6 @@ public class CompanyKeyResult extends KeyResult {
     @ManyToOne
     private CompanyObjective companyObjective;
 
-    @OneToMany
+    @OneToMany(mappedBy = "companyKeyResult")
     private List<BusinessUnitKeyResult> businessUnitKeyResults;
 }
