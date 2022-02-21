@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CompanyKeyResultRepository extends CrudRepository<CompanyKeyResult, Long> {
+public interface CompanyKeyResultRepository extends CrudRepository<CompanyKeyResult, Long>, CustomKeyResultRepository {
 
     List<CompanyKeyResult> findAllByCompanyObjective(CompanyObjective co);
 }
