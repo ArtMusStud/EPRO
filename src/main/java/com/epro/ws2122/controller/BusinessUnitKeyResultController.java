@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityManager;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -195,15 +196,13 @@ public class BusinessUnitKeyResultController {
             var buo = buoOptional.get();
             var bukr = bukrOptional.get();
             var ckr = ckrOptional.get();
+            var bukrResource = new BusinessUnitKeyResultModel(bukr);
 
             ckr.getBusinessUnitKeyResults().add(bukr);
 
-            var bukrResource = new BusinessUnitKeyResultModel(bukr);
-            var assignedCompanyKeyResult = bukr.getCompanyKeyResult();
-            System.out.println("asssigned? " + assignedCompanyKeyResult.getName());
             var halModelBuilder = HalModelBuilder.halModelOf(bukrResource)
                     .embed(new BusinessUnitObjectiveSubresourceModel(buo))
-                  //  .embed(new CompanyKeyResultSubresourceModel(assignedCompanyKeyResult.getCompanyObjective().getId(), assignedCompanyKeyResult))
+                    .embed(new CompanyKeyResultSubresourceModel(ckr.getId(), ckr))
                     .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findOne(buoId, id)).withSelfRel()
                             .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).replace(null, buoId, id)))
                             .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).update(null, buoId, id)))
