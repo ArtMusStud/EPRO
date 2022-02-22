@@ -9,20 +9,26 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class CompanyKeyResultIT {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -36,7 +42,6 @@ public class CompanyKeyResultIT {
     @BeforeEach
     public void initializeData() {
         var co = CompanyObjective.builder()
-                .id(0L)
                 .name("Company Objective 0")
                 .startDate(LocalDate.of(1970, 1, 19))
                 .companyKeyResults(null)
@@ -58,7 +63,7 @@ public class CompanyKeyResultIT {
         var postValue = OBJECT_MAPPER.writeValueAsString(ckrDTO);
 
         this.mockMvc.perform(
-                        post("/company-objectives/0/company-key-results")
+                        post("/company-objectives/1/company-key-results")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .with(csrf())
                                 .content(postValue))

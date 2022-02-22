@@ -7,6 +7,7 @@ import com.epro.ws2122.dto.CoDTO;
 import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.transaction.Transactional;
@@ -28,6 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class BusinessUnitKeyResultIT {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -40,7 +45,6 @@ public class BusinessUnitKeyResultIT {
     @BeforeEach
     public void initializeData() {
         var buo = BusinessUnitObjective.builder()
-                .id(0L)
                 .name("Business Unit Objective 0")
                 .startDate(LocalDate.of(1970, 1, 23))
                 .businessUnitKeyResults(null)
@@ -62,7 +66,7 @@ public class BusinessUnitKeyResultIT {
         var postValue = OBJECT_MAPPER.writeValueAsString(bukrDTO);
 
         this.mockMvc.perform(
-                        post("/business-unit-objectives/0/business-unit-key-results")
+                        post("/business-unit-objectives/1/business-unit-key-results")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .with(csrf())
                                 .content(postValue))

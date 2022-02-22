@@ -88,12 +88,14 @@ public class BusinessUnitKeyResultController {
             var assignedCompanyKeyResult = bukr.getCompanyKeyResult();
             var halModelBuilder = HalModelBuilder.halModelOf(bukrResource)
                     .embed(new BusinessUnitObjectiveSubresourceModel(buo))
-                    .embed(new CompanyKeyResultSubresourceModel(assignedCompanyKeyResult.getCompanyObjective().getId(), assignedCompanyKeyResult))
                     .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findOne(buoId, id)).withSelfRel()
                             .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).replace(null, buoId, id)))
                             .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).update(null, buoId, id)))
                             .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).delete(buoId, id))))
                     .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findAll(buoId)).withRel("businessUnitKeyResults"));
+            if (assignedCompanyKeyResult != null) {
+                halModelBuilder.embed(new CompanyKeyResultSubresourceModel(assignedCompanyKeyResult.getCompanyObjective().getId(), assignedCompanyKeyResult));
+            }
 
             return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.OK);
         }
