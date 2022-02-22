@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -24,4 +25,7 @@ public abstract class KeyResult {
     private double current;
     private double goal;
     private double confidence;
+
+    @OneToMany(mappedBy = "keyResult")
+    private List<KeyResultHistory> history;
 }
