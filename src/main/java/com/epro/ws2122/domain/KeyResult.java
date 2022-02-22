@@ -5,10 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+import javax.persistence.*;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -20,6 +17,7 @@ public abstract class KeyResult {
 
     @Id
     @EqualsAndHashCode.Include
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private long id;
 
     private String name;

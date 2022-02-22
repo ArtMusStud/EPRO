@@ -6,13 +6,16 @@ import com.epro.ws2122.model.BusinessUnitObjectiveSubresourceModel;
 import com.epro.ws2122.model.CompanyKeyResultSubresourceModel;
 import com.epro.ws2122.repository.BusinessUnitKeyResultRepository;
 import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
+import com.epro.ws2122.repository.CompanyKeyResultRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
@@ -48,9 +51,14 @@ public class BusinessUnitKeyResultController {
      */
     private final BusinessUnitObjectiveRepository buoRepository;
 
-    public BusinessUnitKeyResultController(BusinessUnitKeyResultRepository bukrRepository, BusinessUnitObjectiveRepository buoRepository) {
+    private final CompanyKeyResultRepository ckrRepository;
+
+    public BusinessUnitKeyResultController(BusinessUnitKeyResultRepository bukrRepository,
+                                           BusinessUnitObjectiveRepository buoRepository,
+                                           CompanyKeyResultRepository ckrRepository) {
         this.bukrRepository = bukrRepository;
         this.buoRepository = buoRepository;
+        this.ckrRepository = ckrRepository;
     }
 
     /**
@@ -176,5 +184,33 @@ public class BusinessUnitKeyResultController {
     @PatchMapping("/{id}")
     public ResponseEntity<?> update(@RequestBody BukrDTO buoDTO, @PathVariable long buoId, @PathVariable("id") long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
+    }
+
+    @PostMapping("/{id}/link")
+    public ResponseEntity<?> link(@RequestBody Map<String, Long> ckrById, @PathVariable long id, @PathVariable long buoId) {
+        var buoOptional = buoRepository.findById(buoId);
+        var bukrOptional = bukrRepository.findById(id);
+        var ckrOptional = ckrRepository.findById(ckrById.get("id"));
+        if (buoOptional.isPresent() && bukrOptional.isPresent() && ckrOptional.isPresent()) {
+            var buo = buoOptional.get();
+            var bukr = bukrOptional.get();
+            var ckr = ckrOptional.get();
+
+            ckr.getBusinessUnitKeyResults().add(bukr);
+
+            var bukrResource = new BusinessUnitKeyResultModel(bukr);
+            var assignedCompanyKeyResult = bukr.getCompanyKeyResult();
+            System.out.println("asssigned? " + assignedCompanyKeyResult.getName());
+            var halModelBuilder = HalModelBuilder.halModelOf(bukrResource)
+                    .embed(new BusinessUnitObjectiveSubresourceModel(buo))
+                  //  .embed(new CompanyKeyResultSubresourceModel(assignedCompanyKeyResult.getCompanyObjective().getId(), assignedCompanyKeyResult))
+                    .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findOne(buoId, id)).withSelfRel()
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).replace(null, buoId, id)))
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).update(null, buoId, id)))
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).delete(buoId, id))))
+                    .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findAll(buoId)).withRel("businessUnitKeyResults"));
+            return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

@@ -5,10 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Data
@@ -21,6 +18,7 @@ public abstract class Objective {
 
     @Id
     @EqualsAndHashCode.Include
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private long id;
 
     private String name;
