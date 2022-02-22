@@ -14,6 +14,6 @@ import java.util.List;
 @Entity
 public class CompanyObjective extends Objective {
 
-    @OneToMany
+    @OneToMany(mappedBy = "companyObjective")
     private List<CompanyKeyResult> companyKeyResults;
 }

@@ -6,7 +6,6 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 @Data
 @SuperBuilder
@@ -14,7 +13,7 @@ import javax.persistence.OneToOne;
 @Entity
 public class BusinessUnitKeyResult extends KeyResult {
 
-    @OneToOne
+    @ManyToOne
     private CompanyKeyResult companyKeyResult;
 
     @ManyToOne
