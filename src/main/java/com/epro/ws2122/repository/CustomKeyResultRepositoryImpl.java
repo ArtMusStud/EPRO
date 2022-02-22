@@ -43,11 +43,13 @@ public class CustomKeyResultRepositoryImpl implements CustomKeyResultRepository 
         krHistory.setOldCurrent(keyResult.getCurrent());
         krHistory.setOldConfidence(keyResult.getConfidence());
         krHistory.setComment(comment);
-        em.persist(krHistory);
 
         // update KeyResult
+        keyResult.getHistory().add(krHistory);
         keyResult.setCurrent(newCurrent);
         keyResult.setConfidence(newConfidence);
+
+        em.persist(krHistory);
         return em.merge(keyResult);
     }
 }
