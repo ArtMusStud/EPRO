@@ -26,6 +26,6 @@ public abstract class KeyResult {
     private double goal;
     private double confidence;
 
-    @OneToMany(mappedBy = "keyResult")
+    @OneToMany(mappedBy = "keyResult", cascade = CascadeType.ALL)
     private List<KeyResultHistory> history;
 }
