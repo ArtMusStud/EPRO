@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.time.Instant;
 
 public class CustomKeyResultRepositoryImpl implements CustomKeyResultRepository {
 
@@ -43,6 +44,7 @@ public class CustomKeyResultRepositoryImpl implements CustomKeyResultRepository 
         krHistory.setOldCurrent(keyResult.getCurrent());
         krHistory.setOldConfidence(keyResult.getConfidence());
         krHistory.setComment(comment);
+        krHistory.setTimestamp(Instant.now());
 
         // update KeyResult
         keyResult.getHistory().add(krHistory);

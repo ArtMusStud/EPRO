@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.Instant;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -25,4 +26,5 @@ public class KeyResultHistory {
     private double oldConfidence;
 
     private String comment;
+    private Instant timestamp;
 }
