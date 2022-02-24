@@ -31,6 +31,7 @@ public class CustomKeyResultRepositoryImpl implements CustomKeyResultRepository 
     @Override
     @Transactional
     public KeyResult updateCurrentAndConfidence(long keyResultId, double newCurrent, double newConfidence, String comment) {
+        if (comment == null) throw new IllegalArgumentException("comment cannot be null");
         // fetch KeyResult from db
         var keyResult = em.find(KeyResult.class, keyResultId);
 
