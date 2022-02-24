@@ -1,6 +1,7 @@
 package com.epro.ws2122.repository;
 
 import com.epro.ws2122.domain.KeyResult;
+import com.epro.ws2122.dto.KrUpdateDTO;
 
 /**
  * Custom repository for updating {@code KeyResult} information.
@@ -34,4 +35,14 @@ public interface CustomKeyResultRepository {
      * @return updated {@code KeyResult}
      */
     public KeyResult updateCurrentAndConfidence(long keyResultId, double newCurrent, double newConfidence, String comment);
+
+    /**
+     * Update the current value and confidence level of a {@code KeyResult} through a {@code KrUpdateDTO}.
+     * {@code null} values shouldn't be updated. If both new current and new confidence are {@code null}, the update
+     * should be discarded completely.
+     * @param keyResultId id of the {@code KeyResult}
+     * @param keyResultUpdate DTO containing updated data and comment
+     * @return updated {@code KeyResult}
+     */
+    public KeyResult updateWithDto(long keyResultId, KrUpdateDTO keyResultUpdate);
 }
