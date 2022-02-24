@@ -2,6 +2,7 @@ package com.epro.ws2122.repository;
 
 import com.epro.ws2122.domain.KeyResult;
 import com.epro.ws2122.domain.KeyResultHistory;
+import com.epro.ws2122.dto.KrUpdateDTO;
 import lombok.Setter;
 
 import javax.persistence.EntityManager;
@@ -53,5 +54,21 @@ public class CustomKeyResultRepositoryImpl implements CustomKeyResultRepository 
 
         em.persist(krHistory);
         return em.merge(keyResult);
+    }
+
+    @Override
+    public KeyResult updateWithDto(long keyResultId, KrUpdateDTO keyResultUpdate) {
+        Double current = keyResultUpdate.getNewCurrent();
+        Double confidence = keyResultUpdate.getNewConfidence();
+        String comment = keyResultUpdate.getComment();
+
+        if (current == null && confidence == null)
+            throw new IllegalArgumentException("new current and new confidence cannot both be null");
+        if (current == null)
+            return updateConfidence(keyResultId, confidence, comment);
+        else if (confidence == null)
+            return updateCurrent(keyResultId, current, comment);
+        else
+            return updateCurrentAndConfidence(keyResultId, current, confidence, comment);
     }
 }
