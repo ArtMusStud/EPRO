@@ -1,5 +1,6 @@
 package com.epro.ws2122.controller;
 
+import com.epro.ws2122.domain.CompanyKeyResult;
 import com.epro.ws2122.dto.CkrDTO;
 import com.epro.ws2122.dto.KrUpdateDTO;
 import com.epro.ws2122.model.CompanyKeyResultModel;
@@ -202,6 +203,7 @@ public class CompanyKeyResultController {
     public ResponseEntity<?> updateWithComment(@RequestBody JsonPatch patch, @PathVariable String coId, @PathVariable long id)
             throws JsonPatchException, JsonProcessingException {
         KrUpdateDTO update = patcher.applyPatch(new KrUpdateDTO(), patch);
-        return ResponseEntity.status(200).body(ckrRepository.updateWithDto(id, update));
+        return ResponseEntity.status(200)
+                .body(new CompanyKeyResultModel((CompanyKeyResult) ckrRepository.updateWithDto(id, update)));
     }
 }

@@ -1,5 +1,6 @@
 package com.epro.ws2122.controller;
 
+import com.epro.ws2122.domain.BusinessUnitKeyResult;
 import com.epro.ws2122.dto.BukrDTO;
 import com.epro.ws2122.dto.KrUpdateDTO;
 import com.epro.ws2122.model.BusinessUnitKeyResultModel;
@@ -229,6 +230,7 @@ public class BusinessUnitKeyResultController {
     public ResponseEntity<?> updateWithComment(@RequestBody JsonPatch patch, @PathVariable String buoId, @PathVariable long id)
             throws JsonPatchException, JsonProcessingException {
         KrUpdateDTO update = patcher.applyPatch(new KrUpdateDTO(), patch);
-        return ResponseEntity.status(200).body(ckrRepository.updateWithDto(id, update));
+        return ResponseEntity.status(200)
+                .body(new BusinessUnitKeyResultModel((BusinessUnitKeyResult) bukrRepository.updateWithDto(id, update)));
     }
 }
