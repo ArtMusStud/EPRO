@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class KrUpdateDTO {
-    private Double newCurrent;
-    private Double newConfidence;
+    private Double current;
+    private Double confidence;
     private String comment;
 }

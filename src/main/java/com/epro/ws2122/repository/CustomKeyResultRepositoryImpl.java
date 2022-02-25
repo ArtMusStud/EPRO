@@ -59,8 +59,8 @@ public class CustomKeyResultRepositoryImpl implements CustomKeyResultRepository 
 
     @Override
     public KeyResult updateWithDto(long keyResultId, KrUpdateDTO keyResultUpdate) {
-        Double current = keyResultUpdate.getNewCurrent();
-        Double confidence = keyResultUpdate.getNewConfidence();
+        Double current = keyResultUpdate.getCurrent();
+        Double confidence = keyResultUpdate.getConfidence();
         String comment = keyResultUpdate.getComment();
 
         if (current == null && confidence == null)
