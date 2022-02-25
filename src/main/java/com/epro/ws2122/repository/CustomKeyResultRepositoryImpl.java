@@ -17,12 +17,14 @@ public class CustomKeyResultRepositoryImpl implements CustomKeyResultRepository 
     private EntityManager em;
 
     @Override
+    @Transactional
     public KeyResult updateCurrent(long keyResultId, double newCurrent, String comment) {
         var keyResult = em.find(KeyResult.class, keyResultId);
         return updateCurrentAndConfidence(keyResultId, newCurrent, keyResult.getConfidence(), comment);
     }
 
     @Override
+    @Transactional
     public KeyResult updateConfidence(long keyResultId, double newConfidence, String comment) {
         var keyResult = em.find(KeyResult.class, keyResultId);
         return updateCurrentAndConfidence(keyResultId, keyResult.getCurrent(), newConfidence, comment);
@@ -58,6 +60,7 @@ public class CustomKeyResultRepositoryImpl implements CustomKeyResultRepository 
     }
 
     @Override
+    @Transactional
     public KeyResult updateWithDto(long keyResultId, KrUpdateDTO keyResultUpdate) {
         Double current = keyResultUpdate.getCurrent();
         Double confidence = keyResultUpdate.getConfidence();
