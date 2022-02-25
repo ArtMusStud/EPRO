@@ -1,10 +1,15 @@
 package com.epro.ws2122.controller;
 
 import com.epro.ws2122.dto.CkrDTO;
+import com.epro.ws2122.dto.KrUpdateDTO;
 import com.epro.ws2122.model.CompanyKeyResultModel;
 import com.epro.ws2122.model.CompanyObjectiveSubresourceModel;
 import com.epro.ws2122.repository.CompanyKeyResultRepository;
 import com.epro.ws2122.repository.CompanyObjectiveRepository;
+import com.epro.ws2122.util.JsonPatcher;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
@@ -47,9 +52,17 @@ public class CompanyKeyResultController {
      */
     private final CompanyObjectiveRepository coRepository;
 
-    public CompanyKeyResultController(CompanyKeyResultRepository ckrRepository, CompanyObjectiveRepository coRepository) {
+    /**
+     * Patcher for current and confidence updates with comment, that should log into history
+     */
+    private final JsonPatcher<KrUpdateDTO> patcher;
+
+    public CompanyKeyResultController(CompanyKeyResultRepository ckrRepository,
+                                      CompanyObjectiveRepository coRepository,
+                                      JsonPatcher<KrUpdateDTO> patcher) {
         this.ckrRepository = ckrRepository;
         this.coRepository = coRepository;
+        this.patcher = patcher;
     }
 
     /**
@@ -183,5 +196,12 @@ public class CompanyKeyResultController {
     @PatchMapping("/{id}")
     public ResponseEntity<?> update(@RequestBody CkrDTO ckrDTO, @PathVariable long coId, @PathVariable("id") long id) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
+    }
+
+    @PatchMapping(value = "{id}/update", consumes = "application/json-patch+json")
+    public ResponseEntity<?> updateWithComment(@RequestBody JsonPatch patch, @PathVariable String coId, @PathVariable long id)
+            throws JsonPatchException, JsonProcessingException {
+        KrUpdateDTO update = patcher.applyPatch(new KrUpdateDTO(), patch);
+        return ResponseEntity.status(200).body(ckrRepository.updateWithDto(id, update));
     }
 }
