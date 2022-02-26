@@ -24,5 +24,5 @@ public abstract class Objective {
     private String name;
     private LocalDate startDate;
 
-    //TODO overall
+    public abstract double getOverall();
 }

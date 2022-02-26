@@ -16,4 +16,9 @@ public class CompanyObjective extends Objective {
 
     @OneToMany(mappedBy = "companyObjective")
     private List<CompanyKeyResult> companyKeyResults;
+
+    @Override
+    public double getOverall() {
+        return 0;
+    }
 }
