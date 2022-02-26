@@ -1,5 +1,6 @@
 package com.epro.ws2122.domain;
 
+import com.epro.ws2122.util.OkrUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -19,6 +20,6 @@ public class BusinessUnitObjective extends Objective {
 
     @Override
     public double getOverall() {
-        return 0;
+        return OkrUtils.calculateOverall(businessUnitKeyResults);
     }
 }
