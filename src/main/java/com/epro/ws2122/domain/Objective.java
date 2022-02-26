@@ -16,6 +16,8 @@ import java.time.LocalDate;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Objective {
 
+    private static final long DURATION_IN_DAYS = 90;
+
     @Id
     @EqualsAndHashCode.Include
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -23,6 +25,21 @@ public abstract class Objective {
 
     private String name;
     private LocalDate startDate;
+
+    public LocalDate getEndDate() {
+        return startDate.plusDays(DURATION_IN_DAYS);
+    }
+
+    public boolean isActive() {
+        var today = LocalDate.now();
+        return today.isAfter(startDate) &&
+                today.isBefore(getEndDate());
+    }
+
+    public boolean isDone() {
+        var today = LocalDate.now();
+        return today.isAfter(getEndDate());
+    }
 
     public abstract double getOverall();
 }
