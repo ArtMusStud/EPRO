@@ -2,10 +2,7 @@ package com.epro.ws2122.domain.userRoles;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -13,7 +10,7 @@ import javax.persistence.Table;
 public class User {
 
     @Id
-    // todo generated value
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String username;
