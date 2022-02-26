@@ -16,7 +16,7 @@ public class OkrUtils {
      */
     public static double calculateOverall(List<? extends KeyResult> keyResults) {
         return keyResults.stream()
-                .mapToDouble( kr -> kr.getCurrent()/ kr.getGoal())
+                .mapToDouble(KeyResult::getOverall)
                 .average().getAsDouble();
     }
 }

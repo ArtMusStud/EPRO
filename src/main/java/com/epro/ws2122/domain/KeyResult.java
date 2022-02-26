@@ -28,4 +28,8 @@ public abstract class KeyResult {
 
     @OneToMany(mappedBy = "keyResult", cascade = CascadeType.ALL)
     private List<KeyResultHistory> history;
+
+    public double getOverall() {
+        return current/goal;
+    }
 }
