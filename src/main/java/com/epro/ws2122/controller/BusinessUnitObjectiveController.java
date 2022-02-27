@@ -5,7 +5,12 @@ import com.epro.ws2122.model.BusinessUnitKeyResultSubresourceModel;
 import com.epro.ws2122.model.BusinessUnitObjectiveModel;
 import com.epro.ws2122.model.CompanyObjectiveModel;
 import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
+import com.epro.ws2122.util.JsonPatcher;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
@@ -29,7 +34,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  * <ul>
  * <li>{@link #findOne(long) GET} for a single resource</li>
  * <li>{@link #findAll() GET} for a collection resource</li>
- * <li>{@link #update(BuoDTO, long) PATCH}</li>
+ * <li>{@link #update(JsonPatch, long) PATCH}</li>
  * <li>{@link #replace(BuoDTO, long) PUT}</li>
  * <li>{@link #create(BuoDTO) POST}</li>
  * <li>{@link #delete(long) DELETE}</li>
@@ -44,6 +49,9 @@ public class BusinessUnitObjectiveController {
      * Repository from which to retrieve entities of type {@link com.epro.ws2122.domain.BusinessUnitObjective BusinessUnitObjective}.
      */
     private final BusinessUnitObjectiveRepository repository;
+
+    private final JsonPatcher<BuoDTO> patcher;
+    private final ModelMapper modelMapper;
 
     /**
      * Returns a business unit objective, depending on whether the uri path leads to an obtainable resource, along with an HTTP status code.
@@ -148,10 +156,20 @@ public class BusinessUnitObjectiveController {
 
     /*
     Todo:
-        - implement method
+        - hateoas
     */
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody BuoDTO buoDTO, @PathVariable long id) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
+    public ResponseEntity<?> update(@RequestBody JsonPatch patch, @PathVariable long id) {
+        var buoOpt = repository.findById(id);
+        if (buoOpt.isEmpty()) return ResponseEntity.notFound().build();
+        var buoDto = modelMapper.map(buoOpt.get(), BuoDTO.class);
+        try {
+            buoDto = patcher.applyPatch(buoDto, patch);
+        } catch (JsonPatchException | JsonProcessingException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+        var buo = repository.save(buoDto.toBuEntity(id));
+        return ResponseEntity.ok(new BusinessUnitObjectiveModel(buo));
     }
 }
