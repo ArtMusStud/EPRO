@@ -137,11 +137,13 @@ public class BusinessUnitObjectiveController {
 
     /*
     Todo:
-        - implement method
+        - hateoas
     */
     @PutMapping("/{id}")
     public ResponseEntity<?> replace(@RequestBody BuoDTO buoDTO, @PathVariable long id) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
+        if (!repository.existsById(id)) return ResponseEntity.notFound().build();
+        var buo = repository.save(buoDTO.toBuEntity(id));
+        return ResponseEntity.ok(new BusinessUnitObjectiveModel(buo));
     }
 
     /*
