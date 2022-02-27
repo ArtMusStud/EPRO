@@ -213,7 +213,7 @@ public class CompanyKeyResultController {
                 e.printStackTrace();
                 return ResponseEntity.badRequest().build();
             }
-            var ckr = ckrRepository.save(ckrDTO.toCkrEntity());
+            var ckr = ckrRepository.save(ckrDTO.toReplacedCkrEntity(id));
             return ResponseEntity.ok(new CompanyKeyResultModel(ckr));
         }
         return ResponseEntity.notFound().build();

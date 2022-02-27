@@ -212,7 +212,7 @@ public class BusinessUnitKeyResultController {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
-        var bukr = bukrRepository.save(bukrDto.toBukrEntity());
+        var bukr = bukrRepository.save(bukrDto.toReplacedBukrEntity(id));
         return ResponseEntity.ok(new BusinessUnitKeyResultModel(bukr));
     }
 
