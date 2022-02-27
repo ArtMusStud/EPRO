@@ -192,7 +192,7 @@ public class CompanyKeyResultController {
     @PutMapping("/{id}")
     public ResponseEntity<?> replace(@RequestBody CkrDTO ckrDTO, @PathVariable long coId, @PathVariable("id") long id) {
         if (ckrRepository.existsById(id)) {
-            var replacedCkr = ckrRepository.save(ckrDTO.toReplacedCkrEntity(id));
+            var replacedCkr = ckrRepository.save(ckrDTO.toCkrEntity(id));
             return ResponseEntity.ok(new CompanyKeyResultModel(replacedCkr));
         }
         return ResponseEntity.notFound().build();
@@ -213,7 +213,7 @@ public class CompanyKeyResultController {
                 e.printStackTrace();
                 return ResponseEntity.badRequest().build();
             }
-            var ckr = ckrRepository.save(ckrDTO.toReplacedCkrEntity(id));
+            var ckr = ckrRepository.save(ckrDTO.toCkrEntity(id));
             return ResponseEntity.ok(new CompanyKeyResultModel(ckr));
         }
         return ResponseEntity.notFound().build();

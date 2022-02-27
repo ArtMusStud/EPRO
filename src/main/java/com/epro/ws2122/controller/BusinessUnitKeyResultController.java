@@ -191,7 +191,7 @@ public class BusinessUnitKeyResultController {
     @PutMapping("/{id}")
     public ResponseEntity<?> replace(@RequestBody BukrDTO buoDTO, @PathVariable long buoId, @PathVariable("id") long id) {
         if (bukrRepository.existsById(id)) {
-            var replacedBukr = bukrRepository.save(buoDTO.toReplacedBukrEntity(id));
+            var replacedBukr = bukrRepository.save(buoDTO.toBukrEntity(id));
             return ResponseEntity.ok(new BusinessUnitKeyResultModel(replacedBukr));
         }
         return ResponseEntity.notFound().build();
@@ -212,7 +212,7 @@ public class BusinessUnitKeyResultController {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
-        var bukr = bukrRepository.save(bukrDto.toReplacedBukrEntity(id));
+        var bukr = bukrRepository.save(bukrDto.toBukrEntity(id));
         return ResponseEntity.ok(new BusinessUnitKeyResultModel(bukr));
     }
 

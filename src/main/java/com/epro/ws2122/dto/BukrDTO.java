@@ -20,7 +20,7 @@ public class BukrDTO {
         return entity;
     }
 
-    public BusinessUnitKeyResult toReplacedBukrEntity(long id) {
+    public BusinessUnitKeyResult toBukrEntity(long id) {
         var entity = toBukrEntity();
         entity.setId(id);
         return entity;
