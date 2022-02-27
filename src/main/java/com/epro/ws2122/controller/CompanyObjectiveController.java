@@ -6,7 +6,12 @@ import com.epro.ws2122.model.CompanyKeyResultSubresourceModel;
 import com.epro.ws2122.model.CompanyObjectiveModel;
 import com.epro.ws2122.model.CompanyObjectiveSubresourceModel;
 import com.epro.ws2122.repository.CompanyObjectiveRepository;
+import com.epro.ws2122.util.JsonPatcher;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
@@ -30,7 +35,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  * <ul>
  * <li>{@link #findOne(long) GET} for a single resource</li>
  * <li>{@link #findAll() GET} for a collection resource</li>
- * <li>{@link #update(CoDTO, long) PATCH}</li>
+ * <li>{@link #update(JsonPatch, long) PATCH}</li>
  * <li>{@link #replace(CoDTO, long) PUT}</li>
  * <li>{@link #create(CoDTO) POST}</li>
  * <li>{@link #delete(long) DELETE}</li>
@@ -45,6 +50,9 @@ public class CompanyObjectiveController {
      * Repository from which to retrieve entities of type {@link com.epro.ws2122.domain.CompanyObjective CompanyObjective}.
      */
     private final CompanyObjectiveRepository repository;
+
+    private final JsonPatcher<CoDTO> patcher;
+    private final ModelMapper modelMapper;
 
     /**
      * Returns a company objective, depending on whether the uri path leads to an obtainable resource, along with an HTTP status code.
@@ -154,10 +162,20 @@ public class CompanyObjectiveController {
 
     /*
     Todo:
-        - implement method
+        - hateoas
     */
-    @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody CoDTO coDTO, @PathVariable long id) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
+    @PatchMapping(value = "/{id}", consumes = JsonPatcher.MEDIATYPE)
+    public ResponseEntity<?> update(@RequestBody JsonPatch patch, @PathVariable long id) {
+        var coOpt = repository.findById(id);
+        if (coOpt.isEmpty()) return ResponseEntity.notFound().build();
+        var coDto = modelMapper.map(coOpt.get(), CoDTO.class);
+        try {
+            coDto = patcher.applyPatch(coDto, patch);
+        } catch (JsonPatchException | JsonProcessingException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+        var co = repository.save(coDto.toCoEntity(id));
+        return ResponseEntity.ok(new CompanyObjectiveModel(co));
     }
 }
