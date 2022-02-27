@@ -118,12 +118,13 @@ public class CompanyObjectiveController {
     }
 
     /*
-        Todo:
-            - implement method
+        Todo: hateoas?
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable long id) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP DELETE not implemented yet");
+        if (!repository.existsById(id)) return ResponseEntity.notFound().build();
+        repository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping()
