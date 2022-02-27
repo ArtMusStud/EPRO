@@ -183,11 +183,15 @@ public class CompanyKeyResultController {
 
     /*
     Todo:
-        - implement method
+        - hateoas
     */
     @PutMapping("/{id}")
     public ResponseEntity<?> replace(@RequestBody CkrDTO ckrDTO, @PathVariable long coId, @PathVariable("id") long id) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
+        if (ckrRepository.existsById(id)) {
+            var replacedCkr = ckrRepository.save(ckrDTO.toReplacedCkrEntity(id));
+            return ResponseEntity.ok(new CompanyKeyResultModel(replacedCkr));
+        }
+        return ResponseEntity.notFound().build();
     }
 
     /*

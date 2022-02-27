@@ -184,11 +184,15 @@ public class BusinessUnitKeyResultController {
 
     /*
     Todo:
-        - implement method
+        - hateoas
     */
     @PutMapping("/{id}")
     public ResponseEntity<?> replace(@RequestBody BukrDTO buoDTO, @PathVariable long buoId, @PathVariable("id") long id) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
+        if (bukrRepository.existsById(id)) {
+            var replacedBukr = bukrRepository.save(buoDTO.toReplacedBukrEntity(id));
+            return ResponseEntity.ok(new BusinessUnitKeyResultModel(replacedBukr));
+        }
+        return ResponseEntity.notFound().build();
     }
 
     /*

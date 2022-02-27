@@ -19,4 +19,10 @@ public class BukrDTO {
 
         return entity;
     }
+
+    public BusinessUnitKeyResult toReplacedBukrEntity(long id) {
+        var entity = toBukrEntity();
+        entity.setId(id);
+        return entity;
+    }
 }
