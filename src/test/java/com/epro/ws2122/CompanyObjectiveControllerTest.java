@@ -3,10 +3,13 @@ package com.epro.ws2122;
 import com.epro.ws2122.controller.CompanyObjectiveController;
 import com.epro.ws2122.domain.CompanyKeyResult;
 import com.epro.ws2122.domain.CompanyObjective;
+import com.epro.ws2122.dto.CoDTO;
 import com.epro.ws2122.repository.CompanyObjectiveRepository;
+import com.epro.ws2122.util.JsonPatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -36,6 +39,12 @@ public class CompanyObjectiveControllerTest {
 
     @MockBean
     CompanyObjectiveRepository mockRepository;
+
+    @MockBean
+    JsonPatcher<CoDTO> mockPatcher;
+
+    @MockBean
+    ModelMapper mockMapper;
 
     @BeforeEach
     public void initializeData() {

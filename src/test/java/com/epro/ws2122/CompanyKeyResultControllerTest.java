@@ -3,6 +3,7 @@ package com.epro.ws2122;
 import com.epro.ws2122.controller.CompanyKeyResultController;
 import com.epro.ws2122.domain.CompanyKeyResult;
 import com.epro.ws2122.domain.CompanyObjective;
+import com.epro.ws2122.dto.CkrDTO;
 import com.epro.ws2122.dto.KrUpdateDTO;
 import com.epro.ws2122.repository.CompanyKeyResultRepository;
 import com.epro.ws2122.repository.CompanyObjectiveRepository;
@@ -10,6 +11,7 @@ import com.epro.ws2122.util.JsonPatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -43,7 +45,13 @@ public class CompanyKeyResultControllerTest {
     private CompanyObjectiveRepository mockCompanyObjectiveRepository;
 
     @MockBean
-    JsonPatcher<KrUpdateDTO> mockPatcher;
+    JsonPatcher<CkrDTO> mockPatcher;
+
+    @MockBean
+    JsonPatcher<KrUpdateDTO> mockUpdatePatcher;
+
+    @MockBean
+    ModelMapper mockMapper;
 
     @BeforeEach
     public void initializeData() {
