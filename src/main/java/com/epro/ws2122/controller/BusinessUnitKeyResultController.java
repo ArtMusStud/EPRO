@@ -147,11 +147,13 @@ public class BusinessUnitKeyResultController {
 
     /*
      Todo:
-         - implement method
+         - hateoas?
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable long buoId, @PathVariable("id") long id) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP DELETE not implemented yet");
+        if (!bukrRepository.existsById(id)) return ResponseEntity.notFound().build();
+        bukrRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping()
