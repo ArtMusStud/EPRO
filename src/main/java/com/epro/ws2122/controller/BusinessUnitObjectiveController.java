@@ -5,6 +5,7 @@ import com.epro.ws2122.model.BusinessUnitKeyResultSubresourceModel;
 import com.epro.ws2122.model.BusinessUnitObjectiveModel;
 import com.epro.ws2122.model.CompanyObjectiveModel;
 import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
@@ -36,16 +37,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  */
 @RestController
 @RequestMapping("/business-unit-objectives")
+@RequiredArgsConstructor
 public class BusinessUnitObjectiveController {
 
     /**
      * Repository from which to retrieve entities of type {@link com.epro.ws2122.domain.BusinessUnitObjective BusinessUnitObjective}.
      */
     private final BusinessUnitObjectiveRepository repository;
-
-    public BusinessUnitObjectiveController(BusinessUnitObjectiveRepository repository) {
-        this.repository = repository;
-    }
 
     /**
      * Returns a business unit objective, depending on whether the uri path leads to an obtainable resource, along with an HTTP status code.

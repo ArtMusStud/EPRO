@@ -6,6 +6,7 @@ import com.epro.ws2122.model.CompanyKeyResultSubresourceModel;
 import com.epro.ws2122.model.CompanyObjectiveModel;
 import com.epro.ws2122.model.CompanyObjectiveSubresourceModel;
 import com.epro.ws2122.repository.CompanyObjectiveRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
@@ -37,16 +38,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  */
 @RestController
 @RequestMapping("/company-objectives")
+@RequiredArgsConstructor
 public class CompanyObjectiveController {
 
     /**
      * Repository from which to retrieve entities of type {@link com.epro.ws2122.domain.CompanyObjective CompanyObjective}.
      */
     private final CompanyObjectiveRepository repository;
-
-    public CompanyObjectiveController(CompanyObjectiveRepository repository) {
-        this.repository = repository;
-    }
 
     /**
      * Returns a company objective, depending on whether the uri path leads to an obtainable resource, along with an HTTP status code.

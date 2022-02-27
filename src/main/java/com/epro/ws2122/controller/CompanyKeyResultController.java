@@ -11,6 +11,7 @@ import com.epro.ws2122.util.JsonPatcher;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
@@ -42,6 +43,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  */
 @RestController
 @RequestMapping("/company-objectives/{coId}/company-key-results")
+@RequiredArgsConstructor
 public class CompanyKeyResultController {
 
     /**
@@ -57,14 +59,6 @@ public class CompanyKeyResultController {
      * Patcher for current and confidence updates with comment, that should log into history
      */
     private final JsonPatcher<KrUpdateDTO> patcher;
-
-    public CompanyKeyResultController(CompanyKeyResultRepository ckrRepository,
-                                      CompanyObjectiveRepository coRepository,
-                                      JsonPatcher<KrUpdateDTO> patcher) {
-        this.ckrRepository = ckrRepository;
-        this.coRepository = coRepository;
-        this.patcher = patcher;
-    }
 
     /**
      * Returns a company key result, depending on whether the uri path leads to an obtainable resource, along with an HTTP status code.

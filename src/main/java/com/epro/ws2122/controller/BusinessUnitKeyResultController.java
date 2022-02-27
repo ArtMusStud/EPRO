@@ -13,6 +13,7 @@ import com.epro.ws2122.util.JsonPatcher;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
@@ -45,6 +46,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  */
 @RestController
 @RequestMapping("/business-unit-objectives/{buoId}/business-unit-key-results")
+@RequiredArgsConstructor
 public class BusinessUnitKeyResultController {
 
     /**
@@ -62,16 +64,6 @@ public class BusinessUnitKeyResultController {
      * Patcher for current and confidence updates with comment, that should log into history
      */
     private final JsonPatcher<KrUpdateDTO> patcher;
-
-    public BusinessUnitKeyResultController(BusinessUnitKeyResultRepository bukrRepository,
-                                           BusinessUnitObjectiveRepository buoRepository,
-                                           CompanyKeyResultRepository ckrRepository,
-                                           JsonPatcher<KrUpdateDTO> patcher) {
-        this.bukrRepository = bukrRepository;
-        this.buoRepository = buoRepository;
-        this.ckrRepository = ckrRepository;
-        this.patcher = patcher;
-    }
 
     /**
      * Returns a business unit key result, depending on whether the uri path leads to an obtainable resource, along with an HTTP status code.
