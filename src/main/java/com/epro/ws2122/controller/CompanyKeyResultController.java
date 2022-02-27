@@ -203,7 +203,7 @@ public class CompanyKeyResultController {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
     }
 
-    @PatchMapping(value = "{id}/update", consumes = "application/json-patch+json")
+    @PatchMapping(value = "{id}/update", consumes = JsonPatcher.MEDIATYPE)
     public ResponseEntity<?> updateWithComment(@RequestBody JsonPatch patch, @PathVariable String coId, @PathVariable long id)
             throws JsonPatchException, JsonProcessingException {
         KrUpdateDTO update = patcher.applyPatch(new KrUpdateDTO(), patch);
