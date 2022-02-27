@@ -1,21 +1,25 @@
 package com.epro.ws2122.controller;
 
+import com.epro.ws2122.domain.BusinessUnitKeyResult;
 import com.epro.ws2122.dto.BukrDTO;
+import com.epro.ws2122.dto.KrUpdateDTO;
 import com.epro.ws2122.model.BusinessUnitKeyResultModel;
 import com.epro.ws2122.model.BusinessUnitObjectiveSubresourceModel;
 import com.epro.ws2122.model.CompanyKeyResultSubresourceModel;
 import com.epro.ws2122.repository.BusinessUnitKeyResultRepository;
 import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
 import com.epro.ws2122.repository.CompanyKeyResultRepository;
+import com.epro.ws2122.util.JsonPatcher;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityManager;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -54,12 +58,19 @@ public class BusinessUnitKeyResultController {
 
     private final CompanyKeyResultRepository ckrRepository;
 
+    /**
+     * Patcher for current and confidence updates with comment, that should log into history
+     */
+    private final JsonPatcher<KrUpdateDTO> patcher;
+
     public BusinessUnitKeyResultController(BusinessUnitKeyResultRepository bukrRepository,
                                            BusinessUnitObjectiveRepository buoRepository,
-                                           CompanyKeyResultRepository ckrRepository) {
+                                           CompanyKeyResultRepository ckrRepository,
+                                           JsonPatcher<KrUpdateDTO> patcher) {
         this.bukrRepository = bukrRepository;
         this.buoRepository = buoRepository;
         this.ckrRepository = ckrRepository;
+        this.patcher = patcher;
     }
 
     /**
@@ -213,5 +224,13 @@ public class BusinessUnitKeyResultController {
             return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PatchMapping(value = "{id}/update", consumes = "application/json-patch+json")
+    public ResponseEntity<?> updateWithComment(@RequestBody JsonPatch patch, @PathVariable String buoId, @PathVariable long id)
+            throws JsonPatchException, JsonProcessingException {
+        KrUpdateDTO update = patcher.applyPatch(new KrUpdateDTO(), patch);
+        return ResponseEntity.status(200)
+                .body(new BusinessUnitKeyResultModel((BusinessUnitKeyResult) bukrRepository.updateWithDto(id, update)));
     }
 }

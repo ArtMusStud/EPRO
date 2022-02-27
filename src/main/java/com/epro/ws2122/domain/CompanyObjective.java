@@ -1,5 +1,6 @@
 package com.epro.ws2122.domain;
 
+import com.epro.ws2122.util.OkrUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -16,4 +17,9 @@ public class CompanyObjective extends Objective {
 
     @OneToMany(mappedBy = "companyObjective")
     private List<CompanyKeyResult> companyKeyResults;
+
+    @Override
+    public double getOverall() {
+        return OkrUtils.calculateOverall(companyKeyResults);
+    }
 }

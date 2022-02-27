@@ -7,10 +7,12 @@ import com.epro.ws2122.domain.BusinessUnitKeyResult;
 import com.epro.ws2122.domain.BusinessUnitObjective;
 import com.epro.ws2122.domain.CompanyKeyResult;
 import com.epro.ws2122.domain.CompanyObjective;
+import com.epro.ws2122.dto.KrUpdateDTO;
 import com.epro.ws2122.repository.BusinessUnitKeyResultRepository;
 import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
 import com.epro.ws2122.repository.CompanyKeyResultRepository;
 import com.epro.ws2122.repository.CompanyObjectiveRepository;
+import com.epro.ws2122.util.JsonPatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -51,6 +53,9 @@ public class BusinessUnitKeyResultControllerTest {
 
     @MockBean
     CompanyKeyResultRepository mockCompanyKeyResultRepository;
+
+    @MockBean
+    JsonPatcher<KrUpdateDTO> mockPatcher;
 
     @BeforeEach
     public void initializeData() {

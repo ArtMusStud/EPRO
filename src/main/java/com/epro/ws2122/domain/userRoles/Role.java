@@ -3,6 +3,8 @@ package com.epro.ws2122.domain.userRoles;
 import lombok.Data;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Data
@@ -10,7 +12,7 @@ import javax.persistence.Id;
 public class Role {
 
     @Id
-    // todo generated value
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String name;

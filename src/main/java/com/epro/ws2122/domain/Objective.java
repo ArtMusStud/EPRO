@@ -13,16 +13,33 @@ import java.time.LocalDate;
 @SuperBuilder
 @NoArgsConstructor
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Objective {
+
+    private static final long DURATION_IN_DAYS = 90;
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private long id;
 
     private String name;
     private LocalDate startDate;
 
-    //TODO overall
+    public LocalDate getEndDate() {
+        return startDate.plusDays(DURATION_IN_DAYS);
+    }
+
+    public boolean isActive() {
+        var today = LocalDate.now();
+        return today.isAfter(startDate) &&
+                today.isBefore(getEndDate());
+    }
+
+    public boolean isDone() {
+        var today = LocalDate.now();
+        return today.isAfter(getEndDate());
+    }
+
+    public abstract double getOverall();
 }

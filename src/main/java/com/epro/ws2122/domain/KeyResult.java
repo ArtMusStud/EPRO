@@ -13,12 +13,12 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class KeyResult {
 
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String name;
@@ -28,4 +28,8 @@ public abstract class KeyResult {
 
     @OneToMany(mappedBy = "keyResult", cascade = CascadeType.ALL)
     private List<KeyResultHistory> history;
+
+    public double getOverall() {
+        return current/goal;
+    }
 }

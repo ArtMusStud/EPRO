@@ -2,6 +2,7 @@ package com.epro.ws2122.repository;
 
 import com.epro.ws2122.domain.KeyResult;
 import com.epro.ws2122.domain.KeyResultHistory;
+import com.epro.ws2122.dto.KrUpdateDTO;
 import lombok.Setter;
 
 import javax.persistence.EntityManager;
@@ -16,12 +17,14 @@ public class CustomKeyResultRepositoryImpl implements CustomKeyResultRepository 
     private EntityManager em;
 
     @Override
+    @Transactional
     public KeyResult updateCurrent(long keyResultId, double newCurrent, String comment) {
         var keyResult = em.find(KeyResult.class, keyResultId);
         return updateCurrentAndConfidence(keyResultId, newCurrent, keyResult.getConfidence(), comment);
     }
 
     @Override
+    @Transactional
     public KeyResult updateConfidence(long keyResultId, double newConfidence, String comment) {
         var keyResult = em.find(KeyResult.class, keyResultId);
         return updateCurrentAndConfidence(keyResultId, keyResult.getCurrent(), newConfidence, comment);
@@ -30,6 +33,7 @@ public class CustomKeyResultRepositoryImpl implements CustomKeyResultRepository 
     @Override
     @Transactional
     public KeyResult updateCurrentAndConfidence(long keyResultId, double newCurrent, double newConfidence, String comment) {
+        if (comment == null) throw new IllegalArgumentException("comment cannot be null");
         // fetch KeyResult from db
         var keyResult = em.find(KeyResult.class, keyResultId);
 
@@ -53,5 +57,22 @@ public class CustomKeyResultRepositoryImpl implements CustomKeyResultRepository 
 
         em.persist(krHistory);
         return em.merge(keyResult);
+    }
+
+    @Override
+    @Transactional
+    public KeyResult updateWithDto(long keyResultId, KrUpdateDTO keyResultUpdate) {
+        Double current = keyResultUpdate.getCurrent();
+        Double confidence = keyResultUpdate.getConfidence();
+        String comment = keyResultUpdate.getComment();
+
+        if (current == null && confidence == null)
+            throw new IllegalArgumentException("new current and new confidence cannot both be null");
+        if (current == null)
+            return updateConfidence(keyResultId, confidence, comment);
+        else if (confidence == null)
+            return updateCurrent(keyResultId, current, comment);
+        else
+            return updateCurrentAndConfidence(keyResultId, current, confidence, comment);
     }
 }
