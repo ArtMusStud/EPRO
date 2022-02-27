@@ -199,7 +199,7 @@ public class BusinessUnitKeyResultController {
 
     /*
     Todo:
-        - implement method
+        - hateoas
     */
     @PatchMapping(value = "/{id}", consumes = JsonPatcher.MEDIATYPE)
     public ResponseEntity<?> update(@RequestBody JsonPatch patch, @PathVariable long buoId, @PathVariable("id") long id) {
