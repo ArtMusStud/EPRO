@@ -143,11 +143,13 @@ public class CompanyObjectiveController {
 
     /*
     Todo:
-        - implement method
+        - hateoas
     */
     @PutMapping("/{id}")
     public ResponseEntity<?> replace(@RequestBody CoDTO coDTO, @PathVariable long id) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
+        if (!repository.existsById(id)) return ResponseEntity.notFound().build();
+        var co = repository.save(coDTO.toCoEntity(id));
+        return ResponseEntity.ok(new CompanyObjectiveModel(co));
     }
 
     /*

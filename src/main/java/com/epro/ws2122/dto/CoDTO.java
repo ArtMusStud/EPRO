@@ -16,4 +16,10 @@ public class CoDTO {
 
         return entity;
     }
+
+    public CompanyObjective toCoEntity(long id) {
+        var entity = toCoEntity();
+        entity.setId(id);
+        return entity;
+    }
 }
