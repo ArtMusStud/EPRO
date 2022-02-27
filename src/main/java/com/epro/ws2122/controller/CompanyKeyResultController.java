@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
@@ -35,7 +36,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  * <ul>
  * <li>{@link #findOne(long, long) GET} for a single resource</li>
  * <li>{@link #findAll(long) GET} for a collection resource</li>
- * <li>{@link #update(CkrDTO, long, long) PATCH}</li>
+ * <li>{@link #update(JsonPatch, long, long) PATCH}</li>
  * <li>{@link #replace(CkrDTO, long, long) PUT}</li>
  * <li>{@link #create(CkrDTO, long) POST}</li>
  * <li>{@link #delete(long, long) DELETE}</li>
@@ -56,9 +57,16 @@ public class CompanyKeyResultController {
     private final CompanyObjectiveRepository coRepository;
 
     /**
+     * Patcher for regular patch requests
+     */
+    private final JsonPatcher<CkrDTO> patcher;
+
+    /**
      * Patcher for current and confidence updates with comment, that should log into history
      */
-    private final JsonPatcher<KrUpdateDTO> patcher;
+    private final JsonPatcher<KrUpdateDTO> updatePatcher;
+
+    private final ModelMapper modelMapper;
 
     /**
      * Returns a company key result, depending on whether the uri path leads to an obtainable resource, along with an HTTP status code.
@@ -190,17 +198,29 @@ public class CompanyKeyResultController {
 
     /*
     Todo:
-        - implement method
+        - hateoas
     */
-    @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody CkrDTO ckrDTO, @PathVariable long coId, @PathVariable("id") long id) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
+    @PatchMapping(value = "/{id}", consumes = JsonPatcher.MEDIATYPE)
+    public ResponseEntity<?> update(@RequestBody JsonPatch patch, @PathVariable long coId, @PathVariable("id") long id) {
+        var ckrOpt = ckrRepository.findById(id);
+        if (ckrOpt.isPresent()) {
+            var ckrDTO = modelMapper.map(ckrOpt.get(), CkrDTO.class);
+            try {
+                ckrDTO = patcher.applyPatch(ckrDTO, patch);
+            } catch (JsonPatchException | JsonProcessingException e) {
+                e.printStackTrace();
+                return ResponseEntity.badRequest().build();
+            }
+            var ckr = ckrRepository.save(ckrDTO.toCkrEntity());
+            return ResponseEntity.ok(new CompanyKeyResultModel(ckr));
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @PatchMapping(value = "{id}/update", consumes = JsonPatcher.MEDIATYPE)
     public ResponseEntity<?> updateWithComment(@RequestBody JsonPatch patch, @PathVariable String coId, @PathVariable long id)
             throws JsonPatchException, JsonProcessingException {
-        KrUpdateDTO update = patcher.applyPatch(new KrUpdateDTO(), patch);
+        KrUpdateDTO update = updatePatcher.applyPatch(new KrUpdateDTO(), patch);
         return ResponseEntity.status(200)
                 .body(new CompanyKeyResultModel((CompanyKeyResult) ckrRepository.updateWithDto(id, update)));
     }
