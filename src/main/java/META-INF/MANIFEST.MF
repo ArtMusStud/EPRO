@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: com.epro.ws2122.Application
+

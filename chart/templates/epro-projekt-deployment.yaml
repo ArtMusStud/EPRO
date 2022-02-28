@@ -1,0 +1,53 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    jkube.io/scm-url: https://github.com/spring-projects/spring-boot/epro-projekt
+    jkube.io/git-url: https://github.com/ArtMusStud/EPRO.git
+    jkube.io/scm-tag: HEAD
+    jkube.io/git-commit: 3f3f275bd9ec22095375b0848bc4787f32ba45fa
+    jkube.io/git-branch: kube
+  labels:
+    app: epro-projekt
+    provider: jkube
+    version: 1.0-SNAPSHOT
+    group: com.epro.ws2122
+  name: epro-projekt
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: epro-projekt
+      provider: jkube
+      group: com.epro.ws2122
+  template:
+    metadata:
+      annotations:
+        jkube.io/scm-url: https://github.com/spring-projects/spring-boot/epro-projekt
+        jkube.io/git-url: https://github.com/ArtMusStud/EPRO.git
+        jkube.io/scm-tag: HEAD
+        jkube.io/git-commit: 3f3f275bd9ec22095375b0848bc4787f32ba45fa
+        jkube.io/git-branch: kube
+      labels:
+        app: epro-projekt
+        provider: jkube
+        version: 1.0-SNAPSHOT
+        group: com.epro.ws2122
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        image: ws2122/epro-projekt:latest
+        imagePullPolicy: IfNotPresent
+        name: ws2122-epro-projekt
+        securityContext:
+          privileged: false

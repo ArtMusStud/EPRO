@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+name: epro-projekt
+home: https://spring.io/projects/spring-boot/epro-projekt
+sources:
+- https://github.com/spring-projects/spring-boot/epro-projekt
+version: "1.0.0"
+description: "Project for EPRO by Norman Dobrovsky, Artur Mustaf and Nikita Stephan"
+maintainers:
+- name: Pivotal
+  email: info@pivotal.io
