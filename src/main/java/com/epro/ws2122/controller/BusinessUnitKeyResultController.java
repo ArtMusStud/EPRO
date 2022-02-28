@@ -169,14 +169,18 @@ public class BusinessUnitKeyResultController {
         var buoOptional = buoRepository.findById(buoId);
         if (buoOptional.isPresent()) {
             var buo = buoOptional.get();
-            var savedBukr = bukrRepository.save(bukrDTO.toBukrEntity());
-            var bukrResource = new BusinessUnitKeyResultModel(savedBukr);
+            var bukr = bukrDTO.toBukrEntity();
+            bukr.setBusinessUnitObjective(buo);
+            buo.getBusinessUnitKeyResults().add(bukr);
+            bukr = bukrRepository.save(bukr);
+            buo = buoRepository.save(buo);
+            var bukrResource = new BusinessUnitKeyResultModel(bukr);
             var halModelBuilder = HalModelBuilder.halModelOf(bukrResource)
                     .embed(new BusinessUnitObjectiveSubresourceModel(buo))
-                    .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findOne(buoId, savedBukr.getId())).withSelfRel()
-                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).replace(null, buoId, savedBukr.getId())))
-                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).update(null, buoId, savedBukr.getId())))
-                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).delete(buoId, savedBukr.getId()))))
+                    .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findOne(buoId, bukr.getId())).withSelfRel()
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).replace(null, buoId, bukr.getId())))
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).update(null, buoId, bukr.getId())))
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).delete(buoId, bukr.getId()))))
                     .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findAll(buoId)).withRel("businessUnitKeyResults"));
 
             return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.CREATED);

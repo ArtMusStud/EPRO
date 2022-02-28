@@ -170,14 +170,18 @@ public class CompanyKeyResultController {
         var coOptional = coRepository.findById(coId);
         if (coOptional.isPresent()) {
             var co = coOptional.get();
-            var savedCkr = ckrRepository.save(ckrDTO.toCkrEntity());
-            var ckrResource = new CompanyKeyResultModel(savedCkr);
+            var ckr = ckrDTO.toCkrEntity();
+            ckr.setCompanyObjective(co);
+            co.getCompanyKeyResults().add(ckr);
+            ckr = ckrRepository.save(ckr);
+            co = coRepository.save(co);
+            var ckrResource = new CompanyKeyResultModel(ckr);
             var halModelBuilder = HalModelBuilder.halModelOf(ckrResource)
                     .embed(new CompanyObjectiveSubresourceModel(co))
-                    .link(linkTo(methodOn(CompanyKeyResultController.class).findOne(coId, savedCkr.getId())).withSelfRel()
-                            .andAffordance(afford(methodOn(CompanyKeyResultController.class).replace(null, coId, savedCkr.getId())))
-                            .andAffordance(afford(methodOn(CompanyKeyResultController.class).update(null, coId, savedCkr.getId())))
-                            .andAffordance(afford(methodOn(CompanyKeyResultController.class).delete(coId, savedCkr.getId()))))
+                    .link(linkTo(methodOn(CompanyKeyResultController.class).findOne(coId, ckr.getId())).withSelfRel()
+                            .andAffordance(afford(methodOn(CompanyKeyResultController.class).replace(null, coId, ckr.getId())))
+                            .andAffordance(afford(methodOn(CompanyKeyResultController.class).update(null, coId, ckr.getId())))
+                            .andAffordance(afford(methodOn(CompanyKeyResultController.class).delete(coId, ckr.getId()))))
                     .link(linkTo(methodOn(CompanyKeyResultController.class).findAll(coId)).withRel("companyKeyResults"));
 
             return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.CREATED);
