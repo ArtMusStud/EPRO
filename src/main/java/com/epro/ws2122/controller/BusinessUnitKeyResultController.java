@@ -169,14 +169,18 @@ public class BusinessUnitKeyResultController {
         var buoOptional = buoRepository.findById(buoId);
         if (buoOptional.isPresent()) {
             var buo = buoOptional.get();
-            var savedBukr = bukrRepository.save(bukrDTO.toBukrEntity());
-            var bukrResource = new BusinessUnitKeyResultModel(savedBukr);
+            var bukr = bukrDTO.toBukrEntity();
+            bukr.setBusinessUnitObjective(buo);
+            buo.getBusinessUnitKeyResults().add(bukr);
+            bukr = bukrRepository.save(bukr);
+            buo = buoRepository.save(buo);
+            var bukrResource = new BusinessUnitKeyResultModel(bukr);
             var halModelBuilder = HalModelBuilder.halModelOf(bukrResource)
                     .embed(new BusinessUnitObjectiveSubresourceModel(buo))
-                    .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findOne(buoId, savedBukr.getId())).withSelfRel()
-                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).replace(null, buoId, savedBukr.getId())))
-                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).update(null, buoId, savedBukr.getId())))
-                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).delete(buoId, savedBukr.getId()))))
+                    .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findOne(buoId, bukr.getId())).withSelfRel()
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).replace(null, buoId, bukr.getId())))
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).update(null, buoId, bukr.getId())))
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).delete(buoId, bukr.getId()))))
                     .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findAll(buoId)).withRel("businessUnitKeyResults"));
 
             return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.CREATED);
@@ -190,11 +194,11 @@ public class BusinessUnitKeyResultController {
     */
     @PutMapping("/{id}")
     public ResponseEntity<?> replace(@RequestBody BukrDTO buoDTO, @PathVariable long buoId, @PathVariable("id") long id) {
-        if (bukrRepository.existsById(id)) {
-            var replacedBukr = bukrRepository.save(buoDTO.toBukrEntity(id));
-            return ResponseEntity.ok(new BusinessUnitKeyResultModel(replacedBukr));
-        }
-        return ResponseEntity.notFound().build();
+        var bukrOpt = bukrRepository.findById(id);
+        if (bukrOpt.isEmpty()) return ResponseEntity.notFound().build();
+        var bukr = bukrOpt.get();
+        bukr = bukrRepository.save(buoDTO.toBukrEntity(id, bukr.getBusinessUnitObjective()));
+        return ResponseEntity.ok(new BusinessUnitKeyResultModel(bukr));
     }
 
     /*
@@ -204,15 +208,16 @@ public class BusinessUnitKeyResultController {
     @PatchMapping(value = "/{id}", consumes = JsonPatcher.MEDIATYPE)
     public ResponseEntity<?> update(@RequestBody JsonPatch patch, @PathVariable long buoId, @PathVariable("id") long id) {
         var bukrOpt = bukrRepository.findById(id);
-        if (!bukrOpt.isPresent()) return ResponseEntity.notFound().build();
-        var bukrDto = modelMapper.map(bukrOpt.get(), BukrDTO.class);
+        if (bukrOpt.isEmpty()) return ResponseEntity.notFound().build();
+        var bukr = bukrOpt.get();
+        var bukrDto = modelMapper.map(bukr, BukrDTO.class);
         try {
             bukrDto = patcher.applyPatch(bukrDto, patch);
         } catch (JsonPatchException | JsonProcessingException e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
-        var bukr = bukrRepository.save(bukrDto.toBukrEntity(id));
+        bukr = bukrRepository.save(bukrDto.toBukrEntity(id, bukr.getBusinessUnitObjective()));
         return ResponseEntity.ok(new BusinessUnitKeyResultModel(bukr));
     }
 
