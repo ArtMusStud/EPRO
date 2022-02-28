@@ -3,7 +3,7 @@ spring:
     driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://${POSTGRES_SERVICE_HOST}/eproj
     username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASS}
+    password: ${POSTGRES_PASSWORD}
   jpa:
     database: POSTGRESQL
     hibernate:
