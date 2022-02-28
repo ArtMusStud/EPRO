@@ -172,7 +172,7 @@ public class CompanyKeyResultController {
             var co = coOptional.get();
             var ckr = ckrDTO.toCkrEntity();
             ckr.setCompanyObjective(co);
-            co.getCompanyKeyResults().add(ckr);
+       //     co.getCompanyKeyResults().add(ckr);
             ckr = ckrRepository.save(ckr);
             co = coRepository.save(co);
             var ckrResource = new CompanyKeyResultModel(ckr);

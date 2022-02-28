@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -27,7 +28,9 @@ public abstract class KeyResult {
     private double confidence;
 
     @OneToMany(mappedBy = "keyResult", cascade = CascadeType.ALL)
-    private List<KeyResultHistory> history;
+//    @JsonIgnore
+//    @ToString.Exclude
+    private List<KeyResultHistory> history = new ArrayList<>();
 
     public double getOverall() {
         return current/goal;

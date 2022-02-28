@@ -6,9 +6,8 @@ import com.epro.ws2122.dto.KrUpdateDTO;
 import com.epro.ws2122.model.BusinessUnitKeyResultModel;
 import com.epro.ws2122.model.BusinessUnitObjectiveSubresourceModel;
 import com.epro.ws2122.model.CompanyKeyResultSubresourceModel;
-import com.epro.ws2122.repository.BusinessUnitKeyResultRepository;
-import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
-import com.epro.ws2122.repository.CompanyKeyResultRepository;
+import com.epro.ws2122.model.KeyResultHistoryModel;
+import com.epro.ws2122.repository.*;
 import com.epro.ws2122.util.JsonPatcher;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
@@ -16,6 +15,7 @@ import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
 import org.springframework.http.HttpStatus;
@@ -60,6 +60,10 @@ public class BusinessUnitKeyResultController {
     private final BusinessUnitObjectiveRepository buoRepository;
 
     private final CompanyKeyResultRepository ckrRepository;
+
+    private final KeyResultHistoryRepository keyResultHistoryRepository;
+
+    private final CustomKeyResultRepositoryImpl customKeyResultRepository;
 
     /**
      * Patcher for regular patch requests
@@ -127,7 +131,7 @@ public class BusinessUnitKeyResultController {
      * @return business unit key result collection resource or an empty list, and an HTTP status code.
      */
     @GetMapping
-    public ResponseEntity<CollectionModel<BusinessUnitKeyResultModel>>findAll(@PathVariable long buoId) {
+    public ResponseEntity<CollectionModel<BusinessUnitKeyResultModel>> findAll(@PathVariable long buoId) {
         var buoOptional = buoRepository.findById(buoId);
         if (buoOptional.isPresent()) {
             var buo = buoOptional.get();
@@ -153,10 +157,7 @@ public class BusinessUnitKeyResultController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-    /*
-     Todo:
-         - hateoas?
-     */
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable long buoId, @PathVariable("id") long id) {
         if (!bukrRepository.existsById(id)) return ResponseEntity.notFound().build();
@@ -171,7 +172,7 @@ public class BusinessUnitKeyResultController {
             var buo = buoOptional.get();
             var bukr = bukrDTO.toBukrEntity();
             bukr.setBusinessUnitObjective(buo);
-            buo.getBusinessUnitKeyResults().add(bukr);
+//            buo.getBusinessUnitKeyResults().add(bukr);
             bukr = bukrRepository.save(bukr);
             buo = buoRepository.save(buo);
             var bukrResource = new BusinessUnitKeyResultModel(bukr);
@@ -188,10 +189,6 @@ public class BusinessUnitKeyResultController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    /*
-    Todo:
-        - hateoas
-    */
     @PutMapping("/{id}")
     public ResponseEntity<?> replace(@RequestBody BukrDTO buoDTO, @PathVariable long buoId, @PathVariable("id") long id) {
         var bukrOpt = bukrRepository.findById(id);
@@ -201,10 +198,6 @@ public class BusinessUnitKeyResultController {
         return ResponseEntity.ok(new BusinessUnitKeyResultModel(bukr));
     }
 
-    /*
-    Todo:
-        - hateoas
-    */
     @PatchMapping(value = "/{id}", consumes = JsonPatcher.MEDIATYPE)
     public ResponseEntity<?> update(@RequestBody JsonPatch patch, @PathVariable long buoId, @PathVariable("id") long id) {
         var bukrOpt = bukrRepository.findById(id);
@@ -253,5 +246,40 @@ public class BusinessUnitKeyResultController {
         KrUpdateDTO update = updatePatcher.applyPatch(new KrUpdateDTO(), patch);
         return ResponseEntity.status(200)
                 .body(new BusinessUnitKeyResultModel((BusinessUnitKeyResult) bukrRepository.updateWithDto(id, update)));
+    }
+
+    @PostMapping("/{id}/changes")
+    public ResponseEntity<?> updateWithComment(@RequestBody KrUpdateDTO krUpdateDTO, @PathVariable long id, @PathVariable long buoId) {
+        var buoOptional = buoRepository.findById(buoId);
+        var bukrOptional = bukrRepository.findById(id);
+        if (buoOptional.isPresent() && bukrOptional.isPresent()) {
+            customKeyResultRepository.updateCurrentAndConfidence(id, krUpdateDTO.getCurrent(),
+                    krUpdateDTO.getConfidence(), krUpdateDTO.getComment());
+
+            var bukrResource = new BusinessUnitKeyResultModel(bukrOptional.get());
+
+            return new ResponseEntity<>(EntityModel.of(bukrResource), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/{id}/changes")
+    public ResponseEntity<CollectionModel<KeyResultHistoryModel>> getHistory(@PathVariable long id, @PathVariable long buoId) {
+        var buoOptional = buoRepository.findById(buoId);
+        var bukrOptional = bukrRepository.findById(id);
+        if (buoOptional.isPresent() && bukrOptional.isPresent()) {
+            var bukr = bukrOptional.get();
+            var historyModels = keyResultHistoryRepository
+                    .findAllByKeyResultId(bukr.getId())
+                    .stream()
+                    .map(krh -> new KeyResultHistoryModel(krh))
+                    .collect(Collectors.toList());
+            var historyResource = CollectionModel.of(
+                    historyModels,
+                    linkTo(methodOn(BusinessUnitKeyResultController.class).updateWithComment(null, id, buoId)).withRel("changeBusinessUnitKeyResult"),
+                    linkTo(methodOn(BusinessUnitKeyResultController.class).findOne(buoId, id)).withRel("businessUnitKeyResult"));
+            return new ResponseEntity<>(historyResource, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

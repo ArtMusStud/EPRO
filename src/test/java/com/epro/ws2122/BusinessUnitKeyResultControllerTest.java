@@ -11,10 +11,7 @@ import com.epro.ws2122.dto.BukrDTO;
 import com.epro.ws2122.dto.BuoDTO;
 import com.epro.ws2122.dto.CkrDTO;
 import com.epro.ws2122.dto.KrUpdateDTO;
-import com.epro.ws2122.repository.BusinessUnitKeyResultRepository;
-import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
-import com.epro.ws2122.repository.CompanyKeyResultRepository;
-import com.epro.ws2122.repository.CompanyObjectiveRepository;
+import com.epro.ws2122.repository.*;
 import com.epro.ws2122.util.JsonPatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,6 +54,12 @@ public class BusinessUnitKeyResultControllerTest {
 
     @MockBean
     CompanyKeyResultRepository mockCompanyKeyResultRepository;
+
+    @MockBean
+    CustomKeyResultRepositoryImpl mockCustomKeyResultRepository;
+
+    @MockBean
+    KeyResultHistoryRepository mockKeyResultHistoryRepository;
 
     @MockBean
     JsonPatcher<BukrDTO> mockPatcher;
