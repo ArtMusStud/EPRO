@@ -1,6 +1,7 @@
 package com.epro.ws2122.dto;
 
 import com.epro.ws2122.domain.CompanyKeyResult;
+import com.epro.ws2122.domain.CompanyObjective;
 import lombok.Data;
 
 @Data
@@ -20,9 +21,10 @@ public class CkrDTO {
         return entity;
     }
 
-    public CompanyKeyResult toCkrEntity(long id) {
+    public CompanyKeyResult toCkrEntity(long id, CompanyObjective co) {
         var entity = toCkrEntity();
         entity.setId(id);
+        entity.setCompanyObjective(co);
         return entity;
     }
 }

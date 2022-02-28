@@ -1,6 +1,7 @@
 package com.epro.ws2122.dto;
 
 import com.epro.ws2122.domain.BusinessUnitKeyResult;
+import com.epro.ws2122.domain.BusinessUnitObjective;
 import lombok.Data;
 
 @Data
@@ -20,9 +21,10 @@ public class BukrDTO {
         return entity;
     }
 
-    public BusinessUnitKeyResult toBukrEntity(long id) {
+    public BusinessUnitKeyResult toBukrEntity(long id, BusinessUnitObjective buo) {
         var entity = toBukrEntity();
         entity.setId(id);
+        entity.setBusinessUnitObjective(buo);
         return entity;
     }
 }

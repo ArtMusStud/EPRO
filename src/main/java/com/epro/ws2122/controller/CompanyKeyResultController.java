@@ -195,11 +195,12 @@ public class CompanyKeyResultController {
     */
     @PutMapping("/{id}")
     public ResponseEntity<?> replace(@RequestBody CkrDTO ckrDTO, @PathVariable long coId, @PathVariable("id") long id) {
-        if (ckrRepository.existsById(id)) {
-            var replacedCkr = ckrRepository.save(ckrDTO.toCkrEntity(id));
-            return ResponseEntity.ok(new CompanyKeyResultModel(replacedCkr));
-        }
-        return ResponseEntity.notFound().build();
+        var ckrOpt = ckrRepository.findById(id);
+        if (ckrOpt.isEmpty()) return ResponseEntity.notFound().build();
+        var ckr = ckrOpt.get();
+        ckr = ckrRepository.save(ckrDTO.toCkrEntity(id, ckr.getCompanyObjective()));
+        return ResponseEntity.ok(new CompanyKeyResultModel(ckr));
+
     }
 
     /*
@@ -209,18 +210,18 @@ public class CompanyKeyResultController {
     @PatchMapping(value = "/{id}", consumes = JsonPatcher.MEDIATYPE)
     public ResponseEntity<?> update(@RequestBody JsonPatch patch, @PathVariable long coId, @PathVariable("id") long id) {
         var ckrOpt = ckrRepository.findById(id);
-        if (ckrOpt.isPresent()) {
-            var ckrDTO = modelMapper.map(ckrOpt.get(), CkrDTO.class);
-            try {
-                ckrDTO = patcher.applyPatch(ckrDTO, patch);
-            } catch (JsonPatchException | JsonProcessingException e) {
-                e.printStackTrace();
-                return ResponseEntity.badRequest().build();
-            }
-            var ckr = ckrRepository.save(ckrDTO.toCkrEntity(id));
-            return ResponseEntity.ok(new CompanyKeyResultModel(ckr));
+        if (ckrOpt.isEmpty()) return ResponseEntity.notFound().build();
+        var ckr = ckrOpt.get();
+        var ckrDTO = modelMapper.map(ckr, CkrDTO.class);
+        try {
+            ckrDTO = patcher.applyPatch(ckrDTO, patch);
+        } catch (JsonPatchException | JsonProcessingException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.notFound().build();
+        ckr = ckrRepository.save(ckrDTO.toCkrEntity(id, ckr.getCompanyObjective()));
+        return ResponseEntity.ok(new CompanyKeyResultModel(ckr));
+
     }
 
     @PatchMapping(value = "{id}/update", consumes = JsonPatcher.MEDIATYPE)

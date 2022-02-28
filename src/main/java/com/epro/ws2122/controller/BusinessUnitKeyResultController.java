@@ -194,11 +194,11 @@ public class BusinessUnitKeyResultController {
     */
     @PutMapping("/{id}")
     public ResponseEntity<?> replace(@RequestBody BukrDTO buoDTO, @PathVariable long buoId, @PathVariable("id") long id) {
-        if (bukrRepository.existsById(id)) {
-            var replacedBukr = bukrRepository.save(buoDTO.toBukrEntity(id));
-            return ResponseEntity.ok(new BusinessUnitKeyResultModel(replacedBukr));
-        }
-        return ResponseEntity.notFound().build();
+        var bukrOpt = bukrRepository.findById(id);
+        if (bukrOpt.isEmpty()) return ResponseEntity.notFound().build();
+        var bukr = bukrOpt.get();
+        bukr = bukrRepository.save(buoDTO.toBukrEntity(id, bukr.getBusinessUnitObjective()));
+        return ResponseEntity.ok(new BusinessUnitKeyResultModel(bukr));
     }
 
     /*
@@ -208,15 +208,16 @@ public class BusinessUnitKeyResultController {
     @PatchMapping(value = "/{id}", consumes = JsonPatcher.MEDIATYPE)
     public ResponseEntity<?> update(@RequestBody JsonPatch patch, @PathVariable long buoId, @PathVariable("id") long id) {
         var bukrOpt = bukrRepository.findById(id);
-        if (!bukrOpt.isPresent()) return ResponseEntity.notFound().build();
-        var bukrDto = modelMapper.map(bukrOpt.get(), BukrDTO.class);
+        if (bukrOpt.isEmpty()) return ResponseEntity.notFound().build();
+        var bukr = bukrOpt.get();
+        var bukrDto = modelMapper.map(bukr, BukrDTO.class);
         try {
             bukrDto = patcher.applyPatch(bukrDto, patch);
         } catch (JsonPatchException | JsonProcessingException e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
-        var bukr = bukrRepository.save(bukrDto.toBukrEntity(id));
+        bukr = bukrRepository.save(bukrDto.toBukrEntity(id, bukr.getBusinessUnitObjective()));
         return ResponseEntity.ok(new BusinessUnitKeyResultModel(bukr));
     }
 
