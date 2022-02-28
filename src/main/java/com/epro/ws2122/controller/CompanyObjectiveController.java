@@ -1,10 +1,8 @@
 package com.epro.ws2122.controller;
 
 import com.epro.ws2122.dto.CoDTO;
-import com.epro.ws2122.model.CompanyKeyResultModel;
 import com.epro.ws2122.model.CompanyKeyResultSubresourceModel;
 import com.epro.ws2122.model.CompanyObjectiveModel;
-import com.epro.ws2122.model.CompanyObjectiveSubresourceModel;
 import com.epro.ws2122.repository.CompanyObjectiveRepository;
 import com.epro.ws2122.util.JsonPatcher;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -66,10 +64,6 @@ public class CompanyObjectiveController {
      * </ul>
      * @param id id of the company objective.
      * @return a company objective resource or null, and an HTTP status code.
-     */
-    /*
-        ToDo:
-            - add link to complete aggregation at level of requested CO
      */
     @GetMapping("/{id}")
     public ResponseEntity<RepresentationModel<CompanyObjectiveModel>> findOne(@PathVariable("id") long id) {
