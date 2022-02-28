@@ -19,4 +19,10 @@ public class CkrDTO {
 
         return entity;
     }
+
+    public CompanyKeyResult toCkrEntity(long id) {
+        var entity = toCkrEntity();
+        entity.setId(id);
+        return entity;
+    }
 }

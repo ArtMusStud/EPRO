@@ -13,6 +13,8 @@ import com.epro.ws2122.util.JsonPatcher;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
@@ -37,7 +39,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  * <ul>
  * <li>{@link #findOne(long, long) GET} for a single resource</li>
  * <li>{@link #findAll(long) GET} for a collection resource</li>
- * <li>{@link #update(BukrDTO, long, long) PATCH}</li>
+ * <li>{@link #update(JsonPatch, long, long) PATCH}</li>
  * <li>{@link #replace(BukrDTO, long, long) PUT}</li>
  * <li>{@link #create(BukrDTO, long) POST}</li>
  * <li>{@link #delete(long, long) DELETE}</li>
@@ -45,6 +47,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  */
 @RestController
 @RequestMapping("/business-unit-objectives/{buoId}/business-unit-key-results")
+@RequiredArgsConstructor
 public class BusinessUnitKeyResultController {
 
     /**
@@ -59,19 +62,16 @@ public class BusinessUnitKeyResultController {
     private final CompanyKeyResultRepository ckrRepository;
 
     /**
+     * Patcher for regular patch requests
+     */
+    private final JsonPatcher<BukrDTO> patcher;
+
+    /**
      * Patcher for current and confidence updates with comment, that should log into history
      */
-    private final JsonPatcher<KrUpdateDTO> patcher;
+    private final JsonPatcher<KrUpdateDTO> updatePatcher;
 
-    public BusinessUnitKeyResultController(BusinessUnitKeyResultRepository bukrRepository,
-                                           BusinessUnitObjectiveRepository buoRepository,
-                                           CompanyKeyResultRepository ckrRepository,
-                                           JsonPatcher<KrUpdateDTO> patcher) {
-        this.bukrRepository = bukrRepository;
-        this.buoRepository = buoRepository;
-        this.ckrRepository = ckrRepository;
-        this.patcher = patcher;
-    }
+    private final ModelMapper modelMapper;
 
     /**
      * Returns a business unit key result, depending on whether the uri path leads to an obtainable resource, along with an HTTP status code.
@@ -155,11 +155,13 @@ public class BusinessUnitKeyResultController {
 
     /*
      Todo:
-         - implement method
+         - hateoas?
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable long buoId, @PathVariable("id") long id) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP DELETE not implemented yet");
+        if (!bukrRepository.existsById(id)) return ResponseEntity.notFound().build();
+        bukrRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping()
@@ -184,20 +186,34 @@ public class BusinessUnitKeyResultController {
 
     /*
     Todo:
-        - implement method
+        - hateoas
     */
     @PutMapping("/{id}")
     public ResponseEntity<?> replace(@RequestBody BukrDTO buoDTO, @PathVariable long buoId, @PathVariable("id") long id) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
+        if (bukrRepository.existsById(id)) {
+            var replacedBukr = bukrRepository.save(buoDTO.toBukrEntity(id));
+            return ResponseEntity.ok(new BusinessUnitKeyResultModel(replacedBukr));
+        }
+        return ResponseEntity.notFound().build();
     }
 
     /*
     Todo:
-        - implement method
+        - hateoas
     */
-    @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody BukrDTO buoDTO, @PathVariable long buoId, @PathVariable("id") long id) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
+    @PatchMapping(value = "/{id}", consumes = JsonPatcher.MEDIATYPE)
+    public ResponseEntity<?> update(@RequestBody JsonPatch patch, @PathVariable long buoId, @PathVariable("id") long id) {
+        var bukrOpt = bukrRepository.findById(id);
+        if (!bukrOpt.isPresent()) return ResponseEntity.notFound().build();
+        var bukrDto = modelMapper.map(bukrOpt.get(), BukrDTO.class);
+        try {
+            bukrDto = patcher.applyPatch(bukrDto, patch);
+        } catch (JsonPatchException | JsonProcessingException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+        var bukr = bukrRepository.save(bukrDto.toBukrEntity(id));
+        return ResponseEntity.ok(new BusinessUnitKeyResultModel(bukr));
     }
 
     @PostMapping("/{id}/link")
@@ -229,7 +245,7 @@ public class BusinessUnitKeyResultController {
     @PatchMapping(value = "{id}/update", consumes = "application/json-patch+json")
     public ResponseEntity<?> updateWithComment(@RequestBody JsonPatch patch, @PathVariable String buoId, @PathVariable long id)
             throws JsonPatchException, JsonProcessingException {
-        KrUpdateDTO update = patcher.applyPatch(new KrUpdateDTO(), patch);
+        KrUpdateDTO update = updatePatcher.applyPatch(new KrUpdateDTO(), patch);
         return ResponseEntity.status(200)
                 .body(new BusinessUnitKeyResultModel((BusinessUnitKeyResult) bukrRepository.updateWithDto(id, update)));
     }
