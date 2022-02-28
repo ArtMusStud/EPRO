@@ -1,1 +1,4 @@
---- {}
+global:
+  postgresql:
+    auth:
+      postgresPassword:
