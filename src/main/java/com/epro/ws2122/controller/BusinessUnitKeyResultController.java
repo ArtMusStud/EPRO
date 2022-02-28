@@ -6,14 +6,17 @@ import com.epro.ws2122.dto.KrUpdateDTO;
 import com.epro.ws2122.model.BusinessUnitKeyResultModel;
 import com.epro.ws2122.model.BusinessUnitObjectiveSubresourceModel;
 import com.epro.ws2122.model.CompanyKeyResultSubresourceModel;
+import com.epro.ws2122.model.KeyResultHistoryModel;
 import com.epro.ws2122.repository.BusinessUnitKeyResultRepository;
 import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
 import com.epro.ws2122.repository.CompanyKeyResultRepository;
+import com.epro.ws2122.repository.KeyResultHistoryRepository;
 import com.epro.ws2122.util.JsonPatcher;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
 import org.springframework.http.HttpStatus;
@@ -36,11 +39,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  * Client requests that will be processed are:
  * <ul>
  * <li>{@link #findOne(long, long) GET} for a single resource</li>
- * <li>{@link #findAll(long) GET} for a collection resource</li>
- * <li>{@link #update(BukrDTO, long, long) PATCH}</li>
- * <li>{@link #replace(BukrDTO, long, long) PUT}</li>
- * <li>{@link #create(BukrDTO, long) POST}</li>
- * <li>{@link #delete(long, long) DELETE}</li>
+ * <li>{@link #findAll(long)} (long) GET} for a collection resource</li>
+ * <li>{@link #update(BukrDTO, long, long)} (BukrDTO, long, long) PATCH}</li>
+ * <li>{@link #replace(BukrDTO, long, long)} (BukrDTO, long, long) PUT}</li>
+ * <li>{@link #create(BukrDTO, long)} (BukrDTO, long) POST}</li>
+ * <li>{@link #delete(long, long)} (long, long) DELETE}</li>
  * </ul>
  */
 @RestController
@@ -57,19 +60,26 @@ public class BusinessUnitKeyResultController {
     private final BusinessUnitObjectiveRepository buoRepository;
 
     private final CompanyKeyResultRepository ckrRepository;
+    private CompanyKeyResultRepository customKeyResultRepository;
 
     /**
      * Patcher for current and confidence updates with comment, that should log into history
      */
     private final JsonPatcher<KrUpdateDTO> patcher;
 
+    private KeyResultHistoryRepository keyResultHistoryRepository;
+
     public BusinessUnitKeyResultController(BusinessUnitKeyResultRepository bukrRepository,
                                            BusinessUnitObjectiveRepository buoRepository,
                                            CompanyKeyResultRepository ckrRepository,
+                                           CompanyKeyResultRepository customKeyResultRepository,
+                                           KeyResultHistoryRepository keyResultHistoryRepository,
                                            JsonPatcher<KrUpdateDTO> patcher) {
         this.bukrRepository = bukrRepository;
         this.buoRepository = buoRepository;
         this.ckrRepository = ckrRepository;
+        this.customKeyResultRepository = customKeyResultRepository;
+        this.keyResultHistoryRepository = keyResultHistoryRepository;
         this.patcher = patcher;
     }
 
@@ -127,7 +137,7 @@ public class BusinessUnitKeyResultController {
      * @return business unit key result collection resource or an empty list, and an HTTP status code.
      */
     @GetMapping
-    public ResponseEntity<CollectionModel<BusinessUnitKeyResultModel>>findAll(@PathVariable long buoId) {
+    public ResponseEntity<CollectionModel<BusinessUnitKeyResultModel>> findAll(@PathVariable long buoId) {
         var buoOptional = buoRepository.findById(buoId);
         if (buoOptional.isPresent()) {
             var buo = buoOptional.get();
@@ -232,5 +242,40 @@ public class BusinessUnitKeyResultController {
         KrUpdateDTO update = patcher.applyPatch(new KrUpdateDTO(), patch);
         return ResponseEntity.status(200)
                 .body(new BusinessUnitKeyResultModel((BusinessUnitKeyResult) bukrRepository.updateWithDto(id, update)));
+    }
+
+    @PostMapping("/{id}/changes")
+    public ResponseEntity<?> updateWithComment(@RequestBody KrUpdateDTO krUpdateDTO, @PathVariable long id, @PathVariable long buoId) {
+        var buoOptional = buoRepository.findById(buoId);
+        var bukrOptional = bukrRepository.findById(id);
+        if (buoOptional.isPresent() && bukrOptional.isPresent()) {
+            customKeyResultRepository.updateCurrentAndConfidence(id, krUpdateDTO.getCurrent(),
+                    krUpdateDTO.getConfidence(), krUpdateDTO.getComment());
+
+            var bukrResource = new BusinessUnitKeyResultModel(bukrOptional.get());
+
+            return new ResponseEntity<>(EntityModel.of(bukrResource), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/{id}/changes")
+    public ResponseEntity<CollectionModel<KeyResultHistoryModel>> getHistory(@PathVariable long id, @PathVariable long buoId) {
+        var buoOptional = buoRepository.findById(buoId);
+        var bukrOptional = bukrRepository.findById(id);
+        if (buoOptional.isPresent() && bukrOptional.isPresent()) {
+            var bukr = bukrOptional.get();
+            var historyModels = keyResultHistoryRepository
+                    .findAllByKeyResultId(bukr.getId())
+                    .stream()
+                    .map(krh -> new KeyResultHistoryModel(krh))
+                    .collect(Collectors.toList());
+            var historyResource = CollectionModel.of(
+                    historyModels,
+                    linkTo(methodOn(BusinessUnitKeyResultController.class).updateWithComment(null, id, buoId)).withRel("changeBusinessUnitKeyResult"),
+                    linkTo(methodOn(BusinessUnitKeyResultController.class).findOne(buoId, id)).withRel("businessUnitKeyResult"));
+            return new ResponseEntity<>(historyResource, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

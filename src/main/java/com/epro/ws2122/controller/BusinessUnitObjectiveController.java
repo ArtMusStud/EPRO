@@ -4,6 +4,7 @@ import com.epro.ws2122.dto.BuoDTO;
 import com.epro.ws2122.model.BusinessUnitKeyResultSubresourceModel;
 import com.epro.ws2122.model.BusinessUnitObjectiveModel;
 import com.epro.ws2122.model.CompanyObjectiveModel;
+import com.epro.ws2122.repository.BusinessUnitKeyResultRepository;
 import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
@@ -41,10 +42,13 @@ public class BusinessUnitObjectiveController {
     /**
      * Repository from which to retrieve entities of type {@link com.epro.ws2122.domain.BusinessUnitObjective BusinessUnitObjective}.
      */
-    private final BusinessUnitObjectiveRepository repository;
+    private final BusinessUnitObjectiveRepository buoRepository;
+    private final BusinessUnitKeyResultRepository bukrRepostiory;
 
-    public BusinessUnitObjectiveController(BusinessUnitObjectiveRepository repository) {
-        this.repository = repository;
+    public BusinessUnitObjectiveController(BusinessUnitObjectiveRepository buoRepository,
+                                           BusinessUnitKeyResultRepository bukrRepostiory) {
+        this.buoRepository = buoRepository;
+        this.bukrRepostiory = bukrRepostiory;
     }
 
     /**
@@ -62,7 +66,7 @@ public class BusinessUnitObjectiveController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<RepresentationModel<BusinessUnitObjectiveModel>> findOne(@PathVariable("id") long id) {
-        var buoOptional = repository.findById(id);
+        var buoOptional = buoRepository.findById(id);
         if (buoOptional.isPresent()) {
             var buo = buoOptional.get();
             var buoResource = new BusinessUnitObjectiveModel(buo);
@@ -72,7 +76,8 @@ public class BusinessUnitObjectiveController {
                             .andAffordance(afford(methodOn(BusinessUnitObjectiveController.class).update(null, id)))
                             .andAffordance(afford(methodOn(BusinessUnitObjectiveController.class).delete(id))));
 
-            for (var subresource : buo.getBusinessUnitKeyResults()) {
+            var bukrList = bukrRepostiory.findAllByBusinessUnitObjective(buo);
+            for (var subresource : bukrList) {
                 var bukr = new BusinessUnitKeyResultSubresourceModel(id, subresource);
                 halModelBuilder.embed(bukr);
             }
@@ -96,7 +101,7 @@ public class BusinessUnitObjectiveController {
     @GetMapping
     public ResponseEntity<CollectionModel<BusinessUnitObjectiveModel>>findAll() {
         var buoModels = StreamSupport
-                .stream(repository.findAll().spliterator(), false)
+                .stream(buoRepository.findAll().spliterator(), false)
                 .map(buo -> new BusinessUnitObjectiveModel(buo)
                         .add(linkTo(methodOn(BusinessUnitObjectiveController.class)
                                 .findOne(buo.getId())).withSelfRel()
@@ -124,7 +129,7 @@ public class BusinessUnitObjectiveController {
 
     @PostMapping()
     public ResponseEntity<?> create(@RequestBody BuoDTO buoDTO) {
-        var savedBuo = repository.save(buoDTO.toBuEntity());
+        var savedBuo = buoRepository.save(buoDTO.toBuEntity());
         var buoResource = new BusinessUnitObjectiveModel(savedBuo);
         var halModelBuilder = HalModelBuilder.halModelOf(buoResource)
                 .link(linkTo(methodOn(BusinessUnitObjectiveController.class).findOne(savedBuo.getId())).withSelfRel()
