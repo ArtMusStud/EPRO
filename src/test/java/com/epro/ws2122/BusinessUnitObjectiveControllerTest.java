@@ -3,7 +3,6 @@ package com.epro.ws2122;
 import com.epro.ws2122.controller.BusinessUnitObjectiveController;
 import com.epro.ws2122.domain.BusinessUnitKeyResult;
 import com.epro.ws2122.domain.BusinessUnitObjective;
-import com.epro.ws2122.dto.BuoDTO;
 import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
 import com.epro.ws2122.util.JsonPatcher;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +35,10 @@ public class BusinessUnitObjectiveControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    BusinessUnitObjectiveRepository mockRepository;
+    BusinessUnitObjectiveRepository mockBuoRepository;
+
+    @MockBean
+    BusinessUnitKeyResultRepository mockBukrRepository;
 
     @MockBean
     JsonPatcher<BuoDTO> mockPatcher;
@@ -80,9 +82,10 @@ public class BusinessUnitObjectiveControllerTest {
                 .businessUnitKeyResults(Arrays.asList(businessUnitKeyResult_2, businessUnitKeyResult_3))
                 .build();
 
-        Mockito.when(mockRepository.findById(0L)).thenReturn(Optional.of(businessUnitObjective_0));
-        Mockito.when(mockRepository.findById(1L)).thenReturn(Optional.of(businessUnitObjective_1));
-        Mockito.when(mockRepository.findAll()).thenReturn(Arrays.asList(businessUnitObjective_0, businessUnitObjective_1));
+        Mockito.when(mockBuoRepository.findById(0L)).thenReturn(Optional.of(businessUnitObjective_0));
+        Mockito.when(mockBuoRepository.findById(1L)).thenReturn(Optional.of(businessUnitObjective_1));
+        Mockito.when(mockBukrRepository.findAllByBusinessUnitObjective(businessUnitObjective_0)).thenReturn(Arrays.asList(businessUnitKeyResult_0, businessUnitKeyResult_1));
+        Mockito.when(mockBuoRepository.findAll()).thenReturn(Arrays.asList(businessUnitObjective_0, businessUnitObjective_1));
     }
 
     @Test

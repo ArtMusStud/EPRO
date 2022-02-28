@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -16,7 +17,7 @@ import java.util.List;
 public class BusinessUnitObjective extends Objective {
 
     @OneToMany(mappedBy = "businessUnitObjective")
-    private List<BusinessUnitKeyResult> businessUnitKeyResults;
+    private List<BusinessUnitKeyResult> businessUnitKeyResults = new ArrayList<>();
 
     @Override
     public double getOverall() {

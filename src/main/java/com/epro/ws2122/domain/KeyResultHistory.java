@@ -18,7 +18,9 @@ public class KeyResultHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+//    @JsonIgnore
+//    @ToString.Exclude
     private KeyResult keyResult;
     private int version = 0;
 

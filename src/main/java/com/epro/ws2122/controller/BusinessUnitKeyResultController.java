@@ -39,7 +39,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  * <ul>
  * <li>{@link #findOne(long, long) GET} for a single resource</li>
  * <li>{@link #findAll(long) GET} for a collection resource</li>
- * <li>{@link #update(JsonPatch, long, long) PATCH}</li>
+ * <li>{@link #update(BukrDTO, long, long) PATCH}</li>
  * <li>{@link #replace(BukrDTO, long, long) PUT}</li>
  * <li>{@link #create(BukrDTO, long) POST}</li>
  * <li>{@link #delete(long, long) DELETE}</li>
@@ -127,7 +127,7 @@ public class BusinessUnitKeyResultController {
      * @return business unit key result collection resource or an empty list, and an HTTP status code.
      */
     @GetMapping
-    public ResponseEntity<CollectionModel<BusinessUnitKeyResultModel>>findAll(@PathVariable long buoId) {
+    public ResponseEntity<CollectionModel<BusinessUnitKeyResultModel>> findAll(@PathVariable long buoId) {
         var buoOptional = buoRepository.findById(buoId);
         if (buoOptional.isPresent()) {
             var buo = buoOptional.get();
@@ -153,10 +153,7 @@ public class BusinessUnitKeyResultController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-    /*
-     Todo:
-         - hateoas?
-     */
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable long buoId, @PathVariable("id") long id) {
         if (!bukrRepository.existsById(id)) return ResponseEntity.notFound().build();
@@ -188,10 +185,6 @@ public class BusinessUnitKeyResultController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    /*
-    Todo:
-        - hateoas
-    */
     @PutMapping("/{id}")
     public ResponseEntity<?> replace(@RequestBody BukrDTO buoDTO, @PathVariable long buoId, @PathVariable("id") long id) {
         var bukrOpt = bukrRepository.findById(id);
@@ -201,10 +194,6 @@ public class BusinessUnitKeyResultController {
         return ResponseEntity.ok(new BusinessUnitKeyResultModel(bukr));
     }
 
-    /*
-    Todo:
-        - hateoas
-    */
     @PatchMapping(value = "/{id}", consumes = JsonPatcher.MEDIATYPE)
     public ResponseEntity<?> update(@RequestBody JsonPatch patch, @PathVariable long buoId, @PathVariable("id") long id) {
         var bukrOpt = bukrRepository.findById(id);
@@ -253,5 +242,40 @@ public class BusinessUnitKeyResultController {
         KrUpdateDTO update = updatePatcher.applyPatch(new KrUpdateDTO(), patch);
         return ResponseEntity.status(200)
                 .body(new BusinessUnitKeyResultModel((BusinessUnitKeyResult) bukrRepository.updateWithDto(id, update)));
+    }
+
+    @PostMapping("/{id}/changes")
+    public ResponseEntity<?> updateWithComment(@RequestBody KrUpdateDTO krUpdateDTO, @PathVariable long id, @PathVariable long buoId) {
+        var buoOptional = buoRepository.findById(buoId);
+        var bukrOptional = bukrRepository.findById(id);
+        if (buoOptional.isPresent() && bukrOptional.isPresent()) {
+            customKeyResultRepository.updateCurrentAndConfidence(id, krUpdateDTO.getCurrent(),
+                    krUpdateDTO.getConfidence(), krUpdateDTO.getComment());
+
+            var bukrResource = new BusinessUnitKeyResultModel(bukrOptional.get());
+
+            return new ResponseEntity<>(EntityModel.of(bukrResource), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/{id}/changes")
+    public ResponseEntity<CollectionModel<KeyResultHistoryModel>> getHistory(@PathVariable long id, @PathVariable long buoId) {
+        var buoOptional = buoRepository.findById(buoId);
+        var bukrOptional = bukrRepository.findById(id);
+        if (buoOptional.isPresent() && bukrOptional.isPresent()) {
+            var bukr = bukrOptional.get();
+            var historyModels = keyResultHistoryRepository
+                    .findAllByKeyResultId(bukr.getId())
+                    .stream()
+                    .map(krh -> new KeyResultHistoryModel(krh))
+                    .collect(Collectors.toList());
+            var historyResource = CollectionModel.of(
+                    historyModels,
+                    linkTo(methodOn(BusinessUnitKeyResultController.class).updateWithComment(null, id, buoId)).withRel("changeBusinessUnitKeyResult"),
+                    linkTo(methodOn(BusinessUnitKeyResultController.class).findOne(buoId, id)).withRel("businessUnitKeyResult"));
+            return new ResponseEntity<>(historyResource, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
