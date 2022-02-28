@@ -6,9 +6,8 @@ import com.epro.ws2122.dto.KrUpdateDTO;
 import com.epro.ws2122.model.BusinessUnitKeyResultModel;
 import com.epro.ws2122.model.BusinessUnitObjectiveSubresourceModel;
 import com.epro.ws2122.model.CompanyKeyResultSubresourceModel;
-import com.epro.ws2122.repository.BusinessUnitKeyResultRepository;
-import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
-import com.epro.ws2122.repository.CompanyKeyResultRepository;
+import com.epro.ws2122.model.KeyResultHistoryModel;
+import com.epro.ws2122.repository.*;
 import com.epro.ws2122.util.JsonPatcher;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
@@ -16,6 +15,7 @@ import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
 import org.springframework.http.HttpStatus;
@@ -39,7 +39,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  * <ul>
  * <li>{@link #findOne(long, long) GET} for a single resource</li>
  * <li>{@link #findAll(long) GET} for a collection resource</li>
- * <li>{@link #update(BukrDTO, long, long) PATCH}</li>
+ * <li>{@link #update(JsonPatch, long, long) PATCH}</li>
  * <li>{@link #replace(BukrDTO, long, long) PUT}</li>
  * <li>{@link #create(BukrDTO, long) POST}</li>
  * <li>{@link #delete(long, long) DELETE}</li>
@@ -60,6 +60,10 @@ public class BusinessUnitKeyResultController {
     private final BusinessUnitObjectiveRepository buoRepository;
 
     private final CompanyKeyResultRepository ckrRepository;
+
+    private final KeyResultHistoryRepository keyResultHistoryRepository;
+
+    private final CustomKeyResultRepositoryImpl customKeyResultRepository;
 
     /**
      * Patcher for regular patch requests
@@ -168,7 +172,7 @@ public class BusinessUnitKeyResultController {
             var buo = buoOptional.get();
             var bukr = bukrDTO.toBukrEntity();
             bukr.setBusinessUnitObjective(buo);
-            buo.getBusinessUnitKeyResults().add(bukr);
+//            buo.getBusinessUnitKeyResults().add(bukr);
             bukr = bukrRepository.save(bukr);
             buo = buoRepository.save(buo);
             var bukrResource = new BusinessUnitKeyResultModel(bukr);

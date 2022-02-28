@@ -3,6 +3,8 @@ package com.epro.ws2122;
 import com.epro.ws2122.controller.BusinessUnitObjectiveController;
 import com.epro.ws2122.domain.BusinessUnitKeyResult;
 import com.epro.ws2122.domain.BusinessUnitObjective;
+import com.epro.ws2122.dto.BuoDTO;
+import com.epro.ws2122.repository.BusinessUnitKeyResultRepository;
 import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
 import com.epro.ws2122.util.JsonPatcher;
 import org.junit.jupiter.api.BeforeEach;

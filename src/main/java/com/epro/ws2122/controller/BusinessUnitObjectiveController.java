@@ -124,8 +124,8 @@ public class BusinessUnitObjectiveController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable long id) {
-        if (!repository.existsById(id)) return ResponseEntity.notFound().build();
-        repository.deleteById(id);
+        if (!buoRepository.existsById(id)) return ResponseEntity.notFound().build();
+        buoRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -144,14 +144,14 @@ public class BusinessUnitObjectiveController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> replace(@RequestBody BuoDTO buoDTO, @PathVariable long id) {
-        if (!repository.existsById(id)) return ResponseEntity.notFound().build();
-        var buo = repository.save(buoDTO.toBuEntity(id));
+        if (!buoRepository.existsById(id)) return ResponseEntity.notFound().build();
+        var buo = buoRepository.save(buoDTO.toBuEntity(id));
         return ResponseEntity.ok(new BusinessUnitObjectiveModel(buo));
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> update(@RequestBody JsonPatch patch, @PathVariable long id) {
-        var buoOpt = repository.findById(id);
+        var buoOpt = buoRepository.findById(id);
         if (buoOpt.isEmpty()) return ResponseEntity.notFound().build();
         var buoDto = modelMapper.map(buoOpt.get(), BuoDTO.class);
         try {
@@ -160,7 +160,7 @@ public class BusinessUnitObjectiveController {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
-        var buo = repository.save(buoDto.toBuEntity(id));
+        var buo = buoRepository.save(buoDto.toBuEntity(id));
         return ResponseEntity.ok(new BusinessUnitObjectiveModel(buo));
     }
 }
