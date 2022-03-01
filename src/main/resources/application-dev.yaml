@@ -20,7 +20,7 @@ spring:
             create-source: metadata
             scripts:
               action: create
-              create-target: "./chart/initdb/schema.sql"
+              create-target: "./chart/schema.sql"
 
 #logging:
 #  level:

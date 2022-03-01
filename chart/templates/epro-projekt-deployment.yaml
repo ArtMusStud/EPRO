@@ -38,6 +38,8 @@ spec:
     spec:
       containers:
       - env:
+        - name: DB_CONNECT
+          value: $({{ upper .Release.Name }}_POSTGRESQL_SERVICE_HOST)
         - name: KUBERNETES_NAMESPACE
           valueFrom:
             fieldRef:

@@ -4,6 +4,11 @@ global:
       database: test
       postgresPassword: test
 postgresql:
+  ## remove image for amd64
+  image:
+    registry: ghcr.io
+    repository: zcube/bitnami-compat/postgresql
+    tag: 14
   primary:
     initdb:
       scripts:
