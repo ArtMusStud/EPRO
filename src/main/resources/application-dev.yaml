@@ -1,0 +1,32 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+
+# to load schema.sql file uncomment
+#  sql:
+#    init:
+#      mode: always
+
+#To generate schema.sql file uncomment
+    properties:
+      javax:
+        persistence:
+          schema-generation:
+            create-source: metadata
+            scripts:
+              action: create
+              create-target: "./chart/initdb/schema.sql"
+
+#logging:
+#  level:
+#    org:
+#      hibernate:
+#        type: trace
+#server:
+#  error:
+#    include-stacktrace: never

@@ -1,38 +1,8 @@
 spring:
-  datasource:
-    driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://${POSTGRES_SERVICE_HOST}/eproj
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
+  application:
+    name: '@name@'
+  profiles:
+    active: '@activatedProperties@'
   jpa:
-    database: POSTGRESQL
     hibernate:
-      ddl-auto: create-drop
-    show-sql: true
-    defer-datasource-initialization: true
-  sql:
-    init:
-      platform: postgres
-
-# to load schema.sql file uncomment
-#  sql:
-#    init:
-#      mode: always
-
-# To generate schema.sql file uncomment
-#    properties:
-#      javax:
-#        persistence:
-#          schema-generation:
-#            create-source: metadata
-#            scripts:
-#              action: create
-#              create-target: "./src/main/resources/schema.sql"
-#logging:
-#  level:
-#    org:
-#      hibernate:
-#        type: trace
-#server:
-#  error:
-#    include-stacktrace: never
+      ddl-auto: none

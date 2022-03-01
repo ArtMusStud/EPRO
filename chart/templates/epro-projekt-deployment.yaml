@@ -46,6 +46,8 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
+        - name: POSTGRES_DB
+          value: {{ .Values.global.postgresql.auth.database }}
         - name: POSTGRES_USER
           value: postgres
         - name: POSTGRES_PASSWORD
@@ -54,7 +56,7 @@ spec:
          {{ else }}
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-{{ .Values.global.postgresql.auth.database }}
+              name: {{ .Release.Name }}-postgresql
               key: postgres-password
               {{- end }}
         image: ws2122/epro-projekt:latest
