@@ -19,6 +19,9 @@
     <properties>
         <java.version>11</java.version>
         <jkube.version>1.7.0</jkube.version>
+        <spring-boot.build-image.imageName>epro/${project.artifactId}:${project.version}</spring-boot.build-image.imageName>
+        <jkube.generator.name>${spring-boot.build-image.imageName}</jkube.generator.name>
+        <docker.skip.tag>true</docker.skip.tag>
         <jkube.enricher.jkube-service.type>NodePort</jkube.enricher.jkube-service.type>
     </properties>
 
