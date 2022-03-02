@@ -1,14 +1,14 @@
 global:
   postgresql:
     auth:
-      database: test
-      postgresPassword: test
+      database:
+      postgresPassword:
 postgresql:
-  ## remove image for amd64
-  image:
-    registry: ghcr.io
-    repository: zcube/bitnami-compat/postgresql
-    tag: 14
+  ## remove hashtags image for aarch64
+  #image:
+  #  registry: ghcr.io
+  #  repository: zcube/bitnami-compat/postgresql
+  #  tag: 14
   primary:
     initdb:
       scripts:
