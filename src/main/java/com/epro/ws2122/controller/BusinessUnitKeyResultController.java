@@ -6,14 +6,16 @@ import com.epro.ws2122.dto.KrUpdateDTO;
 import com.epro.ws2122.model.BusinessUnitKeyResultModel;
 import com.epro.ws2122.model.BusinessUnitObjectiveSubresourceModel;
 import com.epro.ws2122.model.CompanyKeyResultSubresourceModel;
-import com.epro.ws2122.repository.BusinessUnitKeyResultRepository;
-import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
-import com.epro.ws2122.repository.CompanyKeyResultRepository;
+import com.epro.ws2122.model.KeyResultHistoryModel;
+import com.epro.ws2122.repository.*;
 import com.epro.ws2122.util.JsonPatcher;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
 import org.springframework.http.HttpStatus;
@@ -37,7 +39,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  * <ul>
  * <li>{@link #findOne(long, long) GET} for a single resource</li>
  * <li>{@link #findAll(long) GET} for a collection resource</li>
- * <li>{@link #update(BukrDTO, long, long) PATCH}</li>
+ * <li>{@link #update(JsonPatch, long, long) PATCH}</li>
  * <li>{@link #replace(BukrDTO, long, long) PUT}</li>
  * <li>{@link #create(BukrDTO, long) POST}</li>
  * <li>{@link #delete(long, long) DELETE}</li>
@@ -45,6 +47,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  */
 @RestController
 @RequestMapping("/business-unit-objectives/{buoId}/business-unit-key-results")
+@RequiredArgsConstructor
 public class BusinessUnitKeyResultController {
 
     /**
@@ -58,20 +61,21 @@ public class BusinessUnitKeyResultController {
 
     private final CompanyKeyResultRepository ckrRepository;
 
+    private final KeyResultHistoryRepository keyResultHistoryRepository;
+
+    private final CustomKeyResultRepositoryImpl customKeyResultRepository;
+
+    /**
+     * Patcher for regular patch requests
+     */
+    private final JsonPatcher<BukrDTO> patcher;
+
     /**
      * Patcher for current and confidence updates with comment, that should log into history
      */
-    private final JsonPatcher<KrUpdateDTO> patcher;
+    private final JsonPatcher<KrUpdateDTO> updatePatcher;
 
-    public BusinessUnitKeyResultController(BusinessUnitKeyResultRepository bukrRepository,
-                                           BusinessUnitObjectiveRepository buoRepository,
-                                           CompanyKeyResultRepository ckrRepository,
-                                           JsonPatcher<KrUpdateDTO> patcher) {
-        this.bukrRepository = bukrRepository;
-        this.buoRepository = buoRepository;
-        this.ckrRepository = ckrRepository;
-        this.patcher = patcher;
-    }
+    private final ModelMapper modelMapper;
 
     /**
      * Returns a business unit key result, depending on whether the uri path leads to an obtainable resource, along with an HTTP status code.
@@ -127,7 +131,7 @@ public class BusinessUnitKeyResultController {
      * @return business unit key result collection resource or an empty list, and an HTTP status code.
      */
     @GetMapping
-    public ResponseEntity<CollectionModel<BusinessUnitKeyResultModel>>findAll(@PathVariable long buoId) {
+    public ResponseEntity<CollectionModel<BusinessUnitKeyResultModel>> findAll(@PathVariable long buoId) {
         var buoOptional = buoRepository.findById(buoId);
         if (buoOptional.isPresent()) {
             var buo = buoOptional.get();
@@ -153,13 +157,12 @@ public class BusinessUnitKeyResultController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-    /*
-     Todo:
-         - implement method
-     */
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable long buoId, @PathVariable("id") long id) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP DELETE not implemented yet");
+        if (!bukrRepository.existsById(id)) return ResponseEntity.notFound().build();
+        bukrRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping()
@@ -167,14 +170,18 @@ public class BusinessUnitKeyResultController {
         var buoOptional = buoRepository.findById(buoId);
         if (buoOptional.isPresent()) {
             var buo = buoOptional.get();
-            var savedBukr = bukrRepository.save(bukrDTO.toBukrEntity());
-            var bukrResource = new BusinessUnitKeyResultModel(savedBukr);
+            var bukr = bukrDTO.toBukrEntity();
+            bukr.setBusinessUnitObjective(buo);
+//            buo.getBusinessUnitKeyResults().add(bukr);
+            bukr = bukrRepository.save(bukr);
+            buo = buoRepository.save(buo);
+            var bukrResource = new BusinessUnitKeyResultModel(bukr);
             var halModelBuilder = HalModelBuilder.halModelOf(bukrResource)
                     .embed(new BusinessUnitObjectiveSubresourceModel(buo))
-                    .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findOne(buoId, savedBukr.getId())).withSelfRel()
-                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).replace(null, buoId, savedBukr.getId())))
-                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).update(null, buoId, savedBukr.getId())))
-                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).delete(buoId, savedBukr.getId()))))
+                    .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findOne(buoId, bukr.getId())).withSelfRel()
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).replace(null, buoId, bukr.getId())))
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).update(null, buoId, bukr.getId())))
+                            .andAffordance(afford(methodOn(BusinessUnitKeyResultController.class).delete(buoId, bukr.getId()))))
                     .link(linkTo(methodOn(BusinessUnitKeyResultController.class).findAll(buoId)).withRel("businessUnitKeyResults"));
 
             return new ResponseEntity<>(halModelBuilder.build(), HttpStatus.CREATED);
@@ -182,22 +189,29 @@ public class BusinessUnitKeyResultController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    /*
-    Todo:
-        - implement method
-    */
     @PutMapping("/{id}")
     public ResponseEntity<?> replace(@RequestBody BukrDTO buoDTO, @PathVariable long buoId, @PathVariable("id") long id) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PUT not implemented yet");
+        var bukrOpt = bukrRepository.findById(id);
+        if (bukrOpt.isEmpty()) return ResponseEntity.notFound().build();
+        var bukr = bukrOpt.get();
+        bukr = bukrRepository.save(buoDTO.toBukrEntity(id, bukr.getBusinessUnitObjective()));
+        return ResponseEntity.ok(new BusinessUnitKeyResultModel(bukr));
     }
 
-    /*
-    Todo:
-        - implement method
-    */
-    @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody BukrDTO buoDTO, @PathVariable long buoId, @PathVariable("id") long id) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("HTTP PATCH not implemented yet");
+    @PatchMapping(value = "/{id}", consumes = JsonPatcher.MEDIATYPE)
+    public ResponseEntity<?> update(@RequestBody JsonPatch patch, @PathVariable long buoId, @PathVariable("id") long id) {
+        var bukrOpt = bukrRepository.findById(id);
+        if (bukrOpt.isEmpty()) return ResponseEntity.notFound().build();
+        var bukr = bukrOpt.get();
+        var bukrDto = modelMapper.map(bukr, BukrDTO.class);
+        try {
+            bukrDto = patcher.applyPatch(bukrDto, patch);
+        } catch (JsonPatchException | JsonProcessingException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+        bukr = bukrRepository.save(bukrDto.toBukrEntity(id, bukr.getBusinessUnitObjective()));
+        return ResponseEntity.ok(new BusinessUnitKeyResultModel(bukr));
     }
 
     @PostMapping("/{id}/link")
@@ -229,8 +243,43 @@ public class BusinessUnitKeyResultController {
     @PatchMapping(value = "{id}/update", consumes = "application/json-patch+json")
     public ResponseEntity<?> updateWithComment(@RequestBody JsonPatch patch, @PathVariable String buoId, @PathVariable long id)
             throws JsonPatchException, JsonProcessingException {
-        KrUpdateDTO update = patcher.applyPatch(new KrUpdateDTO(), patch);
+        KrUpdateDTO update = updatePatcher.applyPatch(new KrUpdateDTO(), patch);
         return ResponseEntity.status(200)
                 .body(new BusinessUnitKeyResultModel((BusinessUnitKeyResult) bukrRepository.updateWithDto(id, update)));
+    }
+
+    @PostMapping("/{id}/changes")
+    public ResponseEntity<?> updateWithComment(@RequestBody KrUpdateDTO krUpdateDTO, @PathVariable long id, @PathVariable long buoId) {
+        var buoOptional = buoRepository.findById(buoId);
+        var bukrOptional = bukrRepository.findById(id);
+        if (buoOptional.isPresent() && bukrOptional.isPresent()) {
+            customKeyResultRepository.updateCurrentAndConfidence(id, krUpdateDTO.getCurrent(),
+                    krUpdateDTO.getConfidence(), krUpdateDTO.getComment());
+
+            var bukrResource = new BusinessUnitKeyResultModel(bukrOptional.get());
+
+            return new ResponseEntity<>(EntityModel.of(bukrResource), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/{id}/changes")
+    public ResponseEntity<CollectionModel<KeyResultHistoryModel>> getHistory(@PathVariable long id, @PathVariable long buoId) {
+        var buoOptional = buoRepository.findById(buoId);
+        var bukrOptional = bukrRepository.findById(id);
+        if (buoOptional.isPresent() && bukrOptional.isPresent()) {
+            var bukr = bukrOptional.get();
+            var historyModels = keyResultHistoryRepository
+                    .findAllByKeyResultId(bukr.getId())
+                    .stream()
+                    .map(krh -> new KeyResultHistoryModel(krh))
+                    .collect(Collectors.toList());
+            var historyResource = CollectionModel.of(
+                    historyModels,
+                    linkTo(methodOn(BusinessUnitKeyResultController.class).updateWithComment(null, id, buoId)).withRel("changeBusinessUnitKeyResult"),
+                    linkTo(methodOn(BusinessUnitKeyResultController.class).findOne(buoId, id)).withRel("businessUnitKeyResult"));
+            return new ResponseEntity<>(historyResource, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

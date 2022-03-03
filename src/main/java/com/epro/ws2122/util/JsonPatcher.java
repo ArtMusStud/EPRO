@@ -16,6 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @param <T> any type
  */
 public class JsonPatcher<T> {
+
+    public static final String MEDIATYPE = "application/json-patch+json";
+
     private Class<T> clazz;
 
     @Autowired

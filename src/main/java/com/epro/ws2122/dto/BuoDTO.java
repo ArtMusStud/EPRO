@@ -17,4 +17,10 @@ public class BuoDTO {
 
         return entity;
     }
+
+    public BusinessUnitObjective toBuEntity(long id) {
+        var entity = toBuEntity();
+        entity.setId(id);
+        return entity;
+    }
 }
