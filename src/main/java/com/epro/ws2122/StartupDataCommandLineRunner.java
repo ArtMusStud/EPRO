@@ -1,5 +1,6 @@
 package com.epro.ws2122;
 
+import com.epro.ws2122.config.WebSecurityConfig;
 import com.epro.ws2122.domain.BusinessUnitKeyResult;
 import com.epro.ws2122.domain.BusinessUnitObjective;
 import com.epro.ws2122.domain.CompanyKeyResult;
@@ -13,26 +14,19 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Component
 @Profile("!test")
 public class StartupDataCommandLineRunner implements CommandLineRunner {
 
-    BusinessUnitKeyResultRepository bukrRepository;
-    BusinessUnitObjectiveRepository buoRepository;
-    CompanyKeyResultRepository ckrRepository;
-    CompanyObjectiveRepository coRepository;
-
-    public StartupDataCommandLineRunner(BusinessUnitKeyResultRepository bukrRepository,
-                                        BusinessUnitObjectiveRepository buoRepository,
-                                        CompanyKeyResultRepository ckrRepository,
-                                        CompanyObjectiveRepository coRepository) {
-        this.bukrRepository = bukrRepository;
-        this.buoRepository = buoRepository;
-        this.ckrRepository = ckrRepository;
-        this.coRepository = coRepository;
-    }
+    private final BusinessUnitKeyResultRepository bukrRepository;
+    private final BusinessUnitObjectiveRepository buoRepository;
+    private final CompanyKeyResultRepository ckrRepository;
+    private final CompanyObjectiveRepository coRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     @Override
     public void run(String... args) {
