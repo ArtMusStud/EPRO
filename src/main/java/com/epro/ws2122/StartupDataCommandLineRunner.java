@@ -4,16 +4,17 @@ import com.epro.ws2122.domain.BusinessUnitKeyResult;
 import com.epro.ws2122.domain.BusinessUnitObjective;
 import com.epro.ws2122.domain.CompanyKeyResult;
 import com.epro.ws2122.domain.CompanyObjective;
-import com.epro.ws2122.repository.BusinessUnitKeyResultRepository;
-import com.epro.ws2122.repository.BusinessUnitObjectiveRepository;
-import com.epro.ws2122.repository.CompanyKeyResultRepository;
-import com.epro.ws2122.repository.CompanyObjectiveRepository;
+import com.epro.ws2122.domain.userRoles.Role;
+import com.epro.ws2122.domain.userRoles.User;
+import com.epro.ws2122.repository.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
+@RequiredArgsConstructor
 @Component
 @Profile("!test")
 public class StartupDataCommandLineRunner implements CommandLineRunner {
@@ -34,18 +35,42 @@ public class StartupDataCommandLineRunner implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         bukrRepository.deleteAll();
         buoRepository.deleteAll();
         ckrRepository.deleteAll();
         coRepository.deleteAll();
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
 
-        var co = new CompanyObjective().builder()
+        Role readOnlyRole = new Role();
+        readOnlyRole.setName(WebSecurityConfig.ROLE_PREFIX + WebSecurityConfig.READ_ONLY_USER);
+        Role coRole = new Role();
+        coRole.setName(WebSecurityConfig.ROLE_PREFIX + WebSecurityConfig.CO_OKR_ADMIN);
+        Role buoRole = new Role();
+        buoRole.setName(WebSecurityConfig.ROLE_PREFIX + WebSecurityConfig.BUO_OKR_ADMIN);
+        User readOnlyUser = new User();
+        readOnlyUser.setUsername("readonly");
+        readOnlyUser.setPassword("{noop}pw");
+        readOnlyUser.setRole(readOnlyRole);
+        User coAdmin = new User();
+        coAdmin.setUsername("coadmin");
+        coAdmin.setPassword("{noop}pw");
+        coAdmin.setRole(coRole);
+        User buoAdmin = new User();
+        buoAdmin.setUsername("buoadmin");
+        buoAdmin.setPassword("{noop}pw");
+        buoAdmin.setRole(buoRole);
+        roleRepository.saveAll(List.of(readOnlyRole, coRole, buoRole));
+        userRepository.saveAll(List.of(readOnlyUser, coAdmin, buoAdmin));
+
+
+        var co = CompanyObjective.builder()
                 .name("Company Objective 0")
                 .startDate(LocalDate.of(2022, 1, 1))
                 .build();
 
-        var ckr = new CompanyKeyResult().builder()
+        var ckr = CompanyKeyResult.builder()
                 .name("Company Key Result 0")
                 .confidence(100)
                 .current(99)
@@ -53,16 +78,18 @@ public class StartupDataCommandLineRunner implements CommandLineRunner {
                 .companyObjective(co)
                 .build();
 
-        var buo = new BusinessUnitObjective();
-        buo.setStartDate(LocalDate.of(2022, 2, 1));
-        buo.setName("Business Unit Objective 0");
+        var buo = BusinessUnitObjective.builder()
+                .startDate(LocalDate.of(2022, 2, 1))
+                .name("Business Unit Objective 0")
+                .build();
 
-        var bukr = new BusinessUnitKeyResult();
-        bukr.setName("Business Unit Key Result 0");
-        bukr.setCurrent(0);
-        bukr.setGoal(100);
-        bukr.setConfidence(20);
-        bukr.setBusinessUnitObjective(buo);
+        var bukr = BusinessUnitKeyResult.builder()
+                .name("Business Unit Key Result 0")
+                .current(0)
+                .goal(100)
+                .confidence(20)
+                .businessUnitObjective(buo)
+                .build();
 
         coRepository.save(co);
         ckrRepository.save(ckr);
