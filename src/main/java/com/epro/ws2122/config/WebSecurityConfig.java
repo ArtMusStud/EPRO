@@ -12,24 +12,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final String READ_ONLY_USER = "Read Only User";
-    private final String CO_OKR_ADMIN = "CO OKR Admin";
-    private final String BUO_OKR_ADMIN = "BUO OKR Admin";
-
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth)
-            throws Exception
-    {
-        auth.inMemoryAuthentication()
-                .withUser("user1")
-                .password("{noop}password")
-                .roles(READ_ONLY_USER);
-
-        auth.inMemoryAuthentication()
-                .withUser("admin")
-                .password("{noop}password")
-                .roles(CO_OKR_ADMIN, BUO_OKR_ADMIN, READ_ONLY_USER);
-    }
+    public static final String ROLE_PREFIX = "ROLE_";
+    public static final String READ_ONLY_USER = "Read Only User";
+    public static final String CO_OKR_ADMIN = "CO OKR Admin";
+    public static final String BUO_OKR_ADMIN = "BUO OKR Admin";
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
