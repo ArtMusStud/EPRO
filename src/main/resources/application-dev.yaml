@@ -13,14 +13,14 @@ spring:
 #      mode: always
 
 #To generate schema.sql file uncomment
-    properties:
-      javax:
-        persistence:
-          schema-generation:
-            create-source: metadata
-            scripts:
-              action: create
-              create-target: "./chart/schema.sql"
+#    properties:
+#      javax:
+#        persistence:
+#          schema-generation:
+#            create-source: metadata
+#            scripts:
+#              action: create
+#              create-target: "./chart/schema.sql"
 
 #logging:
 #  level:
