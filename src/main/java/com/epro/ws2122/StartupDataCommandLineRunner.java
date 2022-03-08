@@ -29,6 +29,7 @@ public class StartupDataCommandLineRunner implements CommandLineRunner {
     private final CompanyObjectiveRepository coRepository;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder encoder;
 
     @Override
     public void run(String... args) {
@@ -46,17 +47,18 @@ public class StartupDataCommandLineRunner implements CommandLineRunner {
         coRole.setName(WebSecurityConfig.ROLE_PREFIX + WebSecurityConfig.CO_OKR_ADMIN);
         Role buoRole = new Role();
         buoRole.setName(WebSecurityConfig.ROLE_PREFIX + WebSecurityConfig.BUO_OKR_ADMIN);
+
         User readOnlyUser = new User();
         readOnlyUser.setUsername("readonly");
         readOnlyUser.setPassword(encoder.encode("pw"));
         readOnlyUser.setRole(readOnlyRole);
         User coAdmin = new User();
         coAdmin.setUsername("coadmin");
-        coAdmin.setPassword("{noop}pw");
+        coAdmin.setPassword(encoder.encode("copw"));
         coAdmin.setRole(coRole);
         User buoAdmin = new User();
         buoAdmin.setUsername("buoadmin");
-        buoAdmin.setPassword("{noop}pw");
+        buoAdmin.setPassword(encoder.encode("buopw"));
         buoAdmin.setRole(buoRole);
         roleRepository.saveAll(List.of(readOnlyRole, coRole, buoRole));
         userRepository.saveAll(List.of(readOnlyUser, coAdmin, buoAdmin));

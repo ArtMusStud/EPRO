@@ -34,9 +34,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        /* ToDo:
-            - BUO OKR Admins dürfen nur ihre eigenen Resourcen bearbeiten
-         */
         http.csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/company-objectives/**").hasAnyRole(CO_OKR_ADMIN, BUO_OKR_ADMIN, READ_ONLY_USER)
                 .antMatchers(HttpMethod.GET, "/company-objectives").hasAnyRole(CO_OKR_ADMIN, BUO_OKR_ADMIN, READ_ONLY_USER)
