@@ -165,8 +165,11 @@ public class BusinessUnitKeyResultController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable long buoId, @PathVariable("id") long id) {
-        if (!bukrRepository.existsById(id)) return ResponseEntity.notFound().build();
-        bukrRepository.deleteById(id);
+        var bukrOpt = bukrRepository.findById(id);
+        if (bukrOpt.isEmpty()) return ResponseEntity.notFound().build();
+        var bukr = bukrOpt.get();
+        if (bukr.getOwner() != getAuthenticatedUser()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        bukrRepository.delete(bukr);
         return ResponseEntity.noContent().build();
     }
 
@@ -200,6 +203,7 @@ public class BusinessUnitKeyResultController {
         var bukrOpt = bukrRepository.findById(id);
         if (bukrOpt.isEmpty()) return ResponseEntity.notFound().build();
         var bukr = bukrOpt.get();
+        if (bukr.getOwner() != getAuthenticatedUser()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         bukr = bukrRepository.save(buoDTO.toBukrEntity(id, bukr.getBusinessUnitObjective()));
         return ResponseEntity.ok(new BusinessUnitKeyResultModel(bukr));
     }
@@ -209,6 +213,7 @@ public class BusinessUnitKeyResultController {
         var bukrOpt = bukrRepository.findById(id);
         if (bukrOpt.isEmpty()) return ResponseEntity.notFound().build();
         var bukr = bukrOpt.get();
+        if (bukr.getOwner() != getAuthenticatedUser()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         var bukrDto = modelMapper.map(bukr, BukrDTO.class);
         try {
             bukrDto = patcher.applyPatch(bukrDto, patch);
@@ -228,6 +233,7 @@ public class BusinessUnitKeyResultController {
         if (buoOptional.isPresent() && bukrOptional.isPresent() && ckrOptional.isPresent()) {
             var buo = buoOptional.get();
             var bukr = bukrOptional.get();
+            if (bukr.getOwner() != getAuthenticatedUser()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             var ckr = ckrOptional.get();
             var bukrResource = new BusinessUnitKeyResultModel(bukr);
 
@@ -246,12 +252,14 @@ public class BusinessUnitKeyResultController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PatchMapping(value = "{id}/update", consumes = "application/json-patch+json")
+    @PatchMapping(value = "{id}/update", consumes = JsonPatcher.MEDIATYPE)
     public ResponseEntity<?> updateWithComment(@RequestBody JsonPatch patch, @PathVariable String buoId, @PathVariable long id)
             throws JsonPatchException, JsonProcessingException {
         KrUpdateDTO update = updatePatcher.applyPatch(new KrUpdateDTO(), patch);
+        var bukr = (BusinessUnitKeyResult) bukrRepository.updateWithDto(id, update);
+        if (bukr.getOwner() != getAuthenticatedUser()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         return ResponseEntity.status(200)
-                .body(new BusinessUnitKeyResultModel((BusinessUnitKeyResult) bukrRepository.updateWithDto(id, update)));
+                .body(new BusinessUnitKeyResultModel(bukr));
     }
 
     @PostMapping("/{id}/changes")
@@ -261,8 +269,9 @@ public class BusinessUnitKeyResultController {
         if (buoOptional.isPresent() && bukrOptional.isPresent()) {
             customKeyResultRepository.updateCurrentAndConfidence(id, krUpdateDTO.getCurrent(),
                     krUpdateDTO.getConfidence(), krUpdateDTO.getComment());
-
-            var bukrResource = new BusinessUnitKeyResultModel(bukrOptional.get());
+            var bukr = bukrOptional.get();
+            if (bukr.getOwner() != getAuthenticatedUser()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            var bukrResource = new BusinessUnitKeyResultModel(bukr);
 
             return new ResponseEntity<>(EntityModel.of(bukrResource), HttpStatus.OK);
         }
