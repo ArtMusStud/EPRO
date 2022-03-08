@@ -11,6 +11,8 @@ import com.epro.ws2122.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -37,6 +39,7 @@ public class StartupDataCommandLineRunner implements CommandLineRunner {
         userRepository.deleteAll();
         roleRepository.deleteAll();
 
+
         Role readOnlyRole = new Role();
         readOnlyRole.setName(WebSecurityConfig.ROLE_PREFIX + WebSecurityConfig.READ_ONLY_USER);
         Role coRole = new Role();
@@ -45,7 +48,7 @@ public class StartupDataCommandLineRunner implements CommandLineRunner {
         buoRole.setName(WebSecurityConfig.ROLE_PREFIX + WebSecurityConfig.BUO_OKR_ADMIN);
         User readOnlyUser = new User();
         readOnlyUser.setUsername("readonly");
-        readOnlyUser.setPassword("{noop}pw");
+        readOnlyUser.setPassword(encoder.encode("pw"));
         readOnlyUser.setRole(readOnlyRole);
         User coAdmin = new User();
         coAdmin.setUsername("coadmin");
