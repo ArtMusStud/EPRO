@@ -172,16 +172,11 @@ public class BusinessUnitKeyResultController {
 
     @PostMapping()
     public ResponseEntity<?> create(@RequestBody BukrDTO bukrDTO, @PathVariable long buoId) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        var username = auth.getName();
-        User authenticatedUser = userRepository.findByUsername(username);
-
         var buoOptional = buoRepository.findById(buoId);
         if (buoOptional.isPresent()) {
             var buo = buoOptional.get();
             var bukr = bukrDTO.toBukrEntity();
-            bukr.setOwner(authenticatedUser);
-
+            bukr.setOwner(getAuthenticatedUser());
             bukr.setBusinessUnitObjective(buo);
 //            buo.getBusinessUnitKeyResults().add(bukr);
             bukr = bukrRepository.save(bukr);
@@ -292,5 +287,11 @@ public class BusinessUnitKeyResultController {
             return new ResponseEntity<>(historyResource, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    private User getAuthenticatedUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        var username = auth.getName();
+        return userRepository.findByUsername(username);
     }
 }
