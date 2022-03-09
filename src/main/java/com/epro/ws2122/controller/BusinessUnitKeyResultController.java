@@ -199,21 +199,25 @@ public class BusinessUnitKeyResultController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> replace(@RequestBody BukrDTO buoDTO, @PathVariable long buoId, @PathVariable("id") long id) {
+    public ResponseEntity<?> replace(@RequestBody BukrDTO bukrDTO, @PathVariable long buoId, @PathVariable("id") long id) {
+        User authenticatedUser = getAuthenticatedUser();
         var bukrOpt = bukrRepository.findById(id);
         if (bukrOpt.isEmpty()) return ResponseEntity.notFound().build();
         var bukr = bukrOpt.get();
-        if (!bukr.getOwner().equals(getAuthenticatedUser())) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        bukr = bukrRepository.save(buoDTO.toBukrEntity(id, bukr.getBusinessUnitObjective()));
+        if (!bukr.getOwner().equals(authenticatedUser)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        bukr = bukrRepository.save(
+                bukrDTO.toBukrEntity(id, bukr.getBusinessUnitObjective(), authenticatedUser)
+        );
         return ResponseEntity.ok(new BusinessUnitKeyResultModel(bukr));
     }
 
     @PatchMapping(value = "/{id}", consumes = JsonPatcher.MEDIATYPE)
     public ResponseEntity<?> update(@RequestBody JsonPatch patch, @PathVariable long buoId, @PathVariable("id") long id) {
+        User authenticatedUser = getAuthenticatedUser();
         var bukrOpt = bukrRepository.findById(id);
         if (bukrOpt.isEmpty()) return ResponseEntity.notFound().build();
         var bukr = bukrOpt.get();
-        if (!bukr.getOwner().equals(getAuthenticatedUser())) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (!bukr.getOwner().equals(authenticatedUser)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         var bukrDto = modelMapper.map(bukr, BukrDTO.class);
         try {
             bukrDto = patcher.applyPatch(bukrDto, patch);
@@ -221,7 +225,9 @@ public class BusinessUnitKeyResultController {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
-        bukr = bukrRepository.save(bukrDto.toBukrEntity(id, bukr.getBusinessUnitObjective()));
+        bukr = bukrRepository.save(
+                bukrDto.toBukrEntity(id, bukr.getBusinessUnitObjective(), authenticatedUser)
+        );
         return ResponseEntity.ok(new BusinessUnitKeyResultModel(bukr));
     }
 
