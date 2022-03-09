@@ -1,6 +1,7 @@
 package com.epro.ws2122.controller;
 
 import com.epro.ws2122.domain.BusinessUnitKeyResult;
+import com.epro.ws2122.domain.userRoles.User;
 import com.epro.ws2122.dto.BukrDTO;
 import com.epro.ws2122.dto.KrUpdateDTO;
 import com.epro.ws2122.model.BusinessUnitKeyResultModel;
@@ -20,6 +21,8 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -76,6 +79,8 @@ public class BusinessUnitKeyResultController {
     private final JsonPatcher<KrUpdateDTO> updatePatcher;
 
     private final ModelMapper modelMapper;
+
+    private final UserRepository userRepository;
 
     /**
      * Returns a business unit key result, depending on whether the uri path leads to an obtainable resource, along with an HTTP status code.
@@ -160,8 +165,11 @@ public class BusinessUnitKeyResultController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable long buoId, @PathVariable("id") long id) {
-        if (!bukrRepository.existsById(id)) return ResponseEntity.notFound().build();
-        bukrRepository.deleteById(id);
+        var bukrOpt = bukrRepository.findById(id);
+        if (bukrOpt.isEmpty()) return ResponseEntity.notFound().build();
+        var bukr = bukrOpt.get();
+        if (!bukr.getOwner().equals(getAuthenticatedUser())) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        bukrRepository.delete(bukr);
         return ResponseEntity.noContent().build();
     }
 
@@ -171,6 +179,7 @@ public class BusinessUnitKeyResultController {
         if (buoOptional.isPresent()) {
             var buo = buoOptional.get();
             var bukr = bukrDTO.toBukrEntity();
+            bukr.setOwner(getAuthenticatedUser());
             bukr.setBusinessUnitObjective(buo);
 //            buo.getBusinessUnitKeyResults().add(bukr);
             bukr = bukrRepository.save(bukr);
@@ -190,19 +199,25 @@ public class BusinessUnitKeyResultController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> replace(@RequestBody BukrDTO buoDTO, @PathVariable long buoId, @PathVariable("id") long id) {
+    public ResponseEntity<?> replace(@RequestBody BukrDTO bukrDTO, @PathVariable long buoId, @PathVariable("id") long id) {
+        User authenticatedUser = getAuthenticatedUser();
         var bukrOpt = bukrRepository.findById(id);
         if (bukrOpt.isEmpty()) return ResponseEntity.notFound().build();
         var bukr = bukrOpt.get();
-        bukr = bukrRepository.save(buoDTO.toBukrEntity(id, bukr.getBusinessUnitObjective()));
+        if (!bukr.getOwner().equals(authenticatedUser)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        bukr = bukrRepository.save(
+                bukrDTO.toBukrEntity(id, bukr.getBusinessUnitObjective(), authenticatedUser)
+        );
         return ResponseEntity.ok(new BusinessUnitKeyResultModel(bukr));
     }
 
     @PatchMapping(value = "/{id}", consumes = JsonPatcher.MEDIATYPE)
     public ResponseEntity<?> update(@RequestBody JsonPatch patch, @PathVariable long buoId, @PathVariable("id") long id) {
+        User authenticatedUser = getAuthenticatedUser();
         var bukrOpt = bukrRepository.findById(id);
         if (bukrOpt.isEmpty()) return ResponseEntity.notFound().build();
         var bukr = bukrOpt.get();
+        if (!bukr.getOwner().equals(authenticatedUser)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         var bukrDto = modelMapper.map(bukr, BukrDTO.class);
         try {
             bukrDto = patcher.applyPatch(bukrDto, patch);
@@ -210,7 +225,9 @@ public class BusinessUnitKeyResultController {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
-        bukr = bukrRepository.save(bukrDto.toBukrEntity(id, bukr.getBusinessUnitObjective()));
+        bukr = bukrRepository.save(
+                bukrDto.toBukrEntity(id, bukr.getBusinessUnitObjective(), authenticatedUser)
+        );
         return ResponseEntity.ok(new BusinessUnitKeyResultModel(bukr));
     }
 
@@ -222,6 +239,7 @@ public class BusinessUnitKeyResultController {
         if (buoOptional.isPresent() && bukrOptional.isPresent() && ckrOptional.isPresent()) {
             var buo = buoOptional.get();
             var bukr = bukrOptional.get();
+            if (!bukr.getOwner().equals(getAuthenticatedUser())) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             var ckr = ckrOptional.get();
             var bukrResource = new BusinessUnitKeyResultModel(bukr);
 
@@ -240,12 +258,14 @@ public class BusinessUnitKeyResultController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PatchMapping(value = "{id}/update", consumes = "application/json-patch+json")
+    @PatchMapping(value = "{id}/update", consumes = JsonPatcher.MEDIATYPE)
     public ResponseEntity<?> updateWithComment(@RequestBody JsonPatch patch, @PathVariable String buoId, @PathVariable long id)
             throws JsonPatchException, JsonProcessingException {
         KrUpdateDTO update = updatePatcher.applyPatch(new KrUpdateDTO(), patch);
+        var bukr = (BusinessUnitKeyResult) bukrRepository.updateWithDto(id, update);
+        if (!bukr.getOwner().equals(getAuthenticatedUser())) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         return ResponseEntity.status(200)
-                .body(new BusinessUnitKeyResultModel((BusinessUnitKeyResult) bukrRepository.updateWithDto(id, update)));
+                .body(new BusinessUnitKeyResultModel(bukr));
     }
 
     @PostMapping("/{id}/changes")
@@ -255,8 +275,9 @@ public class BusinessUnitKeyResultController {
         if (buoOptional.isPresent() && bukrOptional.isPresent()) {
             customKeyResultRepository.updateCurrentAndConfidence(id, krUpdateDTO.getCurrent(),
                     krUpdateDTO.getConfidence(), krUpdateDTO.getComment());
-
-            var bukrResource = new BusinessUnitKeyResultModel(bukrOptional.get());
+            var bukr = bukrOptional.get();
+            if (!bukr.getOwner().equals(getAuthenticatedUser())) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            var bukrResource = new BusinessUnitKeyResultModel(bukr);
 
             return new ResponseEntity<>(EntityModel.of(bukrResource), HttpStatus.OK);
         }
@@ -281,5 +302,11 @@ public class BusinessUnitKeyResultController {
             return new ResponseEntity<>(historyResource, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    private User getAuthenticatedUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        var username = auth.getName();
+        return userRepository.findByUsername(username);
     }
 }

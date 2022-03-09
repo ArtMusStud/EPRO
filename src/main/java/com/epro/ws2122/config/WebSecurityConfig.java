@@ -1,42 +1,39 @@
 package com.epro.ws2122.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final String READ_ONLY_USER = "Read Only User";
-    private final String CO_OKR_ADMIN = "CO OKR Admin";
-    private final String BUO_OKR_ADMIN = "BUO OKR Admin";
+    public static final String ROLE_PREFIX = "ROLE_";
+    public static final String READ_ONLY_USER = "Read Only User";
+    public static final String CO_OKR_ADMIN = "CO OKR Admin";
+    public static final String BUO_OKR_ADMIN = "BUO OKR Admin";
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth)
-            throws Exception
-    {
-        auth.inMemoryAuthentication()
-                .withUser("user1")
-                .password("{noop}password")
-                .roles(READ_ONLY_USER);
-
-        auth.inMemoryAuthentication()
-                .withUser("admin")
-                .password("{noop}password")
-                .roles(CO_OKR_ADMIN, BUO_OKR_ADMIN, READ_ONLY_USER);
+    @Bean(name = "pwdEncoder")
+    public PasswordEncoder getPasswordEncoder() {
+        DelegatingPasswordEncoder delPasswordEncoder = (DelegatingPasswordEncoder) PasswordEncoderFactories
+                .createDelegatingPasswordEncoder();
+        BCryptPasswordEncoder bcryptPasswordEncoder = new BCryptPasswordEncoder();
+        delPasswordEncoder.setDefaultPasswordEncoderForMatches(bcryptPasswordEncoder);
+        return delPasswordEncoder;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        /* ToDo:
-            - BUO OKR Admins dürfen nur ihre eigenen Resourcen bearbeiten
-         */
         http.csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/company-objectives/**").hasAnyRole(CO_OKR_ADMIN, BUO_OKR_ADMIN, READ_ONLY_USER)
                 .antMatchers(HttpMethod.GET, "/company-objectives").hasAnyRole(CO_OKR_ADMIN, BUO_OKR_ADMIN, READ_ONLY_USER)
