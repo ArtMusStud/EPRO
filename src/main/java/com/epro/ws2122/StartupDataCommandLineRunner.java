@@ -11,7 +11,6 @@ import com.epro.ws2122.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -56,12 +55,16 @@ public class StartupDataCommandLineRunner implements CommandLineRunner {
         coAdmin.setUsername("coadmin");
         coAdmin.setPassword(encoder.encode("copw"));
         coAdmin.setRole(coRole);
-        User buoAdmin = new User();
-        buoAdmin.setUsername("buoadmin");
-        buoAdmin.setPassword(encoder.encode("buopw"));
-        buoAdmin.setRole(buoRole);
+        User buoAdmin1 = new User();
+        buoAdmin1.setUsername("buoadmin1");
+        buoAdmin1.setPassword(encoder.encode("buopw"));
+        buoAdmin1.setRole(buoRole);
+        User buoAdmin2 = new User();
+        buoAdmin2.setUsername("buoadmin2");
+        buoAdmin2.setPassword(encoder.encode("buopw"));
+        buoAdmin2.setRole(buoRole);
         roleRepository.saveAll(List.of(readOnlyRole, coRole, buoRole));
-        userRepository.saveAll(List.of(readOnlyUser, coAdmin, buoAdmin));
+        userRepository.saveAll(List.of(readOnlyUser, coAdmin, buoAdmin1, buoAdmin2));
 
 
         var co = CompanyObjective.builder()
@@ -88,6 +91,7 @@ public class StartupDataCommandLineRunner implements CommandLineRunner {
                 .goal(100)
                 .confidence(20)
                 .businessUnitObjective(buo)
+                .owner(buoAdmin1)
                 .build();
 
         coRepository.save(co);
